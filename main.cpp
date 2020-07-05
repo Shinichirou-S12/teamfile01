@@ -391,7 +391,7 @@ LPDIRECT3DDEVICE9 GetDevice(void)
 void DrawFPS(void)
 {
 	TCHAR str[256];
-
+	PLAYER *player = GetPlayer();
 	
 	{	// テキスト描画
 		RECT rect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
@@ -402,7 +402,7 @@ void DrawFPS(void)
 	{	// テキスト描画
 		RECT rect = { 0, 32, SCREEN_WIDTH, SCREEN_HEIGHT };
 		char temp[256];
-		sprintf(temp, "X:%f Y:%f\n", 1.23f, 4.56f);
+		sprintf(temp, "X:%f Y:%f\n", player->pos.x, player->pos.y);
 		wsprintf( str, _T("%s\n"), temp );
 		g_pD3DXFont->DrawText( NULL, str, -1, &rect, DT_LEFT, D3DCOLOR_ARGB( 0xff, 0xff, 0xff, 0xff ) );
 	}
