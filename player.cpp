@@ -33,12 +33,10 @@ void CheckCameraFollowPlayer(void);			//カメラついて
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
-static LPDIRECT3DTEXTURE9		g_pD3D_IdleTexture = NULL;				// テクスチャへのポインタ
-static LPDIRECT3DTEXTURE9		g_pD3D_RunTexture = NULL;				// テクスチャへのポインタ
-static LPDIRECT3DTEXTURE9		g_pD3D_JumpTexture = NULL;				// テクスチャへのポインタ
-static LPDIRECT3DTEXTURE9		g_pD3D_FallingTexture = NULL;			// テクスチャへのポインタ
+static LPDIRECT3DTEXTURE9		g_pD3D_Texture[STATE_MAX] = { NULL };	// テクスチャへのポインタ
+
 static LPDIRECT3DTEXTURE9		g_pD3D_AtkTexture[Atk_Max] = { NULL };	// テクスチャへのポインタ
-static PLAYER_ANIM_DATE		g_AtkAniDate[Atk_Max] = {				// テクスチャへのポインタ
+static PLAYER_ANIM_DATE			g_AtkAniDate[Atk_Max] = {				// テクスチャへのポインタ
 	{PLAYER_ATK1_TEXTURE_PATTERN_DIVIDE_X, PLAYER_ATK1_TEXTURE_PATTERN_DIVIDE_Y, PLAYER_ATK1_ANIM_PATTERN_NUM, PLAYER_ATK1_TIME_ANIMATION},
 	{PLAYER_ATK2_TEXTURE_PATTERN_DIVIDE_X, PLAYER_ATK2_TEXTURE_PATTERN_DIVIDE_Y, PLAYER_ATK2_ANIM_PATTERN_NUM, PLAYER_ATK2_TIME_ANIMATION},
 	{PLAYER_ATK3_TEXTURE_PATTERN_DIVIDE_X, PLAYER_ATK3_TEXTURE_PATTERN_DIVIDE_Y, PLAYER_ATK3_ANIM_PATTERN_NUM, PLAYER_ATK3_TIME_ANIMATION},
@@ -54,7 +52,6 @@ static PLAYER				g_player;								// ポリゴンデータ
 //*****************************************************************************
 void SetVertexManChara(void);
 
-
 //=============================================================================
 // 初期化処理
 //=============================================================================
@@ -67,23 +64,27 @@ HRESULT InitPlayer(int type)
 		// ひま
 		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
 			TEXTURE_PLAYER_IDLE,				// ファイルの名前
-			&g_pD3D_IdleTexture);				// 読み込むメモリー
+			&g_pD3D_Texture[IDLE]);				// 読み込むメモリー
 
 		// 移動
 		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
-			TEXTURE_PLAYER_RUN,				// ファイルの名前
-			&g_pD3D_RunTexture);				// 読み込むメモリー
+			TEXTURE_PLAYER_RUN,					// ファイルの名前
+			&g_pD3D_Texture[RUN]);				// 読み込むメモリー
 
 		// ジャンプ
 		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
 			TEXTURE_PLAYER_JUMP,				// ファイルの名前
-			&g_pD3D_JumpTexture);				// 読み込むメモリー
+			&g_pD3D_Texture[JUMP]);				// 読み込むメモリー
 
 		// 落ちる
 		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
-			TEXTURE_PLAYER_FALLING,			// ファイルの名前
-			&g_pD3D_FallingTexture);			// 読み込むメモリー
+			TEXTURE_PLAYER_FALLING,				// ファイルの名前
+			&g_pD3D_Texture[FALLING]);			// 読み込むメモリー
 
+		// 攻撃-------------------------
+		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
+			TEXTURE_PLAYER_ATK1,				// ファイルの名前
+			&g_pD3D_Texture[ATTACK1]);			// 読み込むメモリー
 
 		// 攻撃-------------------------
 		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
@@ -136,7 +137,7 @@ HRESULT InitPlayer(int type)
 	g_player.AtkDeRespTime = 0;
 
 	// PLAYERアニメーションの初期化
-	g_player.Texture = g_pD3D_IdleTexture;
+	g_player.Texture = g_pD3D_Texture[IDLE];
 	g_player.animeCnt.PatDivX = PLAYER_IDLE_TEXTURE_PATTERN_DIVIDE_X;	// テクスチャの内分割数Xを初期化
 	g_player.animeCnt.PatDivY = PLAYER_IDLE_TEXTURE_PATTERN_DIVIDE_Y;	// テクスチャの内分割数Yを初期化
 	g_player.animeCnt.AnimPatNum = PLAYER_IDLE_ANIM_PATTERN_NUM;		// アニメーションパターン数を初期化
@@ -155,27 +156,15 @@ HRESULT InitPlayer(int type)
 //=============================================================================
 void UninitPlayer(void)
 {
+	for (int i = 0; i < STATE_MAX; i++)
+	{
+		if (&g_pD3D_Texture[i] != NULL)
+		{// テクスチャの開放
+			g_pD3D_Texture[i]->Release();
+			g_pD3D_Texture[i] = NULL;
+		}
+	}
 
-	if (&g_pD3D_IdleTexture != NULL)
-	{// テクスチャの開放
-		g_pD3D_IdleTexture->Release();
-		g_pD3D_IdleTexture = NULL;
-	}
-	if (&g_pD3D_RunTexture != NULL)
-	{// テクスチャの開放
-		g_pD3D_RunTexture->Release();
-		g_pD3D_RunTexture = NULL;
-	}
-	if (&g_pD3D_JumpTexture != NULL)
-	{// テクスチャの開放
-		g_pD3D_JumpTexture->Release();
-		g_pD3D_JumpTexture = NULL;
-	}
-	if (&g_pD3D_FallingTexture != NULL)
-	{// テクスチャの開放
-		g_pD3D_FallingTexture->Release();
-		g_pD3D_FallingTexture = NULL;
-	}
 	for (int i = 0; i < Atk_Max; i++)
 	{
 		if (&g_pD3D_AtkTexture[i] != NULL)
@@ -240,7 +229,6 @@ void UpdatePlayer(void)
 
 	// キャラアニメーションモード------------------------------------
 	SetPlayerAnimation();
-	//SetVertexPlayer();
 	// テクスチャを更新--------------------------------
 	SetVertexManChara();
 
@@ -338,17 +326,17 @@ void SetTexturePlayer(VERTEX_2D *Vtx, int cntPattern)
 
 	if (g_player.direction == Right)
 	{
-		g_player.vertexWk[0].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY);
-		g_player.vertexWk[1].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY);
-		g_player.vertexWk[2].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY + sizeY);
-		g_player.vertexWk[3].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY + sizeY);
+		Vtx[0].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY);
+		Vtx[1].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY);
+		Vtx[2].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY + sizeY);
+		Vtx[3].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY + sizeY);
 	}
 	else if (g_player.direction == Left)
 	{
-		g_player.vertexWk[1].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY);
-		g_player.vertexWk[0].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY);
-		g_player.vertexWk[3].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY + sizeY);
-		g_player.vertexWk[2].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY + sizeY);
+		Vtx[1].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY);
+		Vtx[0].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY);
+		Vtx[3].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY + sizeY);
+		Vtx[2].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY + sizeY);
 	}
 
 }
@@ -435,7 +423,7 @@ void PlayerJump(void)
 		g_player.pos.y -= (PLAYER_ACCELE * g_player.jumpForce);
 		g_player.jumpForce -= 3.0f;
 
-		if (GetKeyboardPress(DIK_SPACE) && g_player.jumpForce <= 25)
+		if (GetKeyboardPress(DIK_SPACE) && g_player.jumpForce <= PLAYER_JUMP_HIGH)
 		{
 			g_player.jumpForce += 2.0f;
 		}
@@ -458,11 +446,11 @@ void PlayerMoving(void)
 		{
 			g_player.moveSpeed = 0.0f;
 		}
-		g_player.direction = Right;				// 
+		g_player.direction = Right;					// 
 		g_player.keyPressing = true;				//
-		g_player.state.running = true;			// ランニングtrue
+		g_player.state.running = true;				// ランニングtrue
 		g_player.state.idle = false;				// false
-		g_player.Texture = g_pD3D_RunTexture;		// テキスチャー
+		g_player.Texture = g_pD3D_Texture[RUN];		// テキスチャー
 
 		// キャラ移動スピード++
 		g_player.moveSpeed += PLAYER_MOVE_SPEED / 10.0f;
@@ -480,11 +468,11 @@ void PlayerMoving(void)
 		{
 			g_player.moveSpeed = 0.0f;
 		}
-		g_player.direction = Left;				// 左移動
+		g_player.direction = Left;					// 左移動
 		g_player.keyPressing = true;				// 
-		g_player.state.running = true;			// ランニングtrue
+		g_player.state.running = true;				// ランニングtrue
 		g_player.state.idle = false;				// false
-		g_player.Texture = g_pD3D_RunTexture;		// テキスチャー
+		g_player.Texture = g_pD3D_Texture[RUN];		// テキスチャー
 
 		// キャラ移動スピード++
 		g_player.moveSpeed -= PLAYER_MOVE_SPEED / 20;
@@ -495,16 +483,9 @@ void PlayerMoving(void)
 			g_player.moveSpeed = -PLAYER_MOVE_SPEED;
 		}
 	}
-	//else if (GetKeyboardPress(DIK_DOWN))
-	//{
-
-	//	g_player.state.falling = true;
-	//	g_player.pos.y = +1.0f;
-
-	//}
 }
 //=============================================================================
-// プレイヤー攻击
+// プレイヤー攻撃
 //=============================================================================
 void PlayerAttack(void)
 {
@@ -608,7 +589,7 @@ void SetPlayerAnimation(void)
 		// ジャンプアニメーション---------------------------------------
 		if (g_player.state.jumping == true)
 		{
-			g_player.Texture = g_pD3D_JumpTexture;
+			g_player.Texture = g_pD3D_Texture[JUMP];
 			g_player.animeCnt.PatDivX = PLAYER_JUMP_TEXTURE_PATTERN_DIVIDE_X;
 			g_player.animeCnt.PatDivY = PLAYER_JUMP_TEXTURE_PATTERN_DIVIDE_Y;
 			g_player.animeCnt.AnimPatNum = PLAYER_JUMP_ANIM_PATTERN_NUM;
@@ -624,7 +605,7 @@ void SetPlayerAnimation(void)
 		// 落ちるアニメーション----------------------------------------
 		else if (g_player.state.falling == true)
 		{
-			g_player.Texture = g_pD3D_FallingTexture;
+			g_player.Texture = g_pD3D_Texture[FALLING];
 			g_player.animeCnt.PatDivX = PLAYER_FALLING_TEXTURE_PATTERN_DIVIDE_X;
 			g_player.animeCnt.PatDivY = PLAYER_FALLING_TEXTURE_PATTERN_DIVIDE_Y;
 			g_player.animeCnt.AnimPatNum = PLAYER_FALLING_ANIM_PATTERN_NUM;
@@ -658,7 +639,7 @@ void SetPlayerAnimation(void)
 		else if (g_player.state.idle == true)
 		{
 			// Idleアニメーション
-			g_player.Texture = g_pD3D_IdleTexture;
+			g_player.Texture = g_pD3D_Texture[IDLE];
 			g_player.animeCnt.PatDivX = PLAYER_IDLE_TEXTURE_PATTERN_DIVIDE_X;
 			g_player.animeCnt.PatDivY = PLAYER_IDLE_TEXTURE_PATTERN_DIVIDE_Y;
 			g_player.animeCnt.AnimPatNum = PLAYER_IDLE_ANIM_PATTERN_NUM;
@@ -702,7 +683,6 @@ void PlayerFalling(void)
 						D3DXVECTOR2(MAP_TEXTURE_SIZE_X * 2.0f, MAP_TEXTURE_SIZE_Y * 2.0f)))
 					{
 						g_player.pos = g_player.oldpos;
-						//g_player.pos.y += (g_player.pos.y - PLAYER_SIZE_ATK1_Y + 5) - (map->pos.y + MAP_TEXTURE_SIZE_X);
 						g_player.state.falling = false;
 						g_player.state.Grounded = true;
 						g_player.jumpForce = PLAYER_JUMP_HIGH;
@@ -718,7 +698,6 @@ void PlayerFalling(void)
 						D3DXVECTOR2(MAP_TEXTURE_SIZE_X * 2.0f, MAP_TEXTURE_SIZE_Y * 2.0f)))
 					{
 						g_player.pos = g_player.oldpos;
-						/*g_player.pos.y += (g_player.pos.y - COLLISON_SIZE_Y) - (map->pos.y + MAP_TEXTURE_SIZE_X);*/
 						g_player.state.falling = false;
 						g_player.state.Grounded = true;
 						g_player.jumpForce = PLAYER_JUMP_HIGH;

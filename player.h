@@ -183,7 +183,15 @@ enum PLAYER_ATK_ANIME
 	Atk_Max,
 };
 
-
+enum PLAYER_STATE_ANIME
+{
+	IDLE,
+	RUN,
+	JUMP,
+	FALLING,
+	ATTACK1,
+	STATE_MAX,
+};
 
 //*****************************************************************************
 // プロトタイプ宣言
