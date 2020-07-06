@@ -9,7 +9,7 @@
 #include "input.h"
 #include "file.h"
 #include "checkhit.h"
-
+#include "bullet.h"
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
@@ -295,8 +295,11 @@ HRESULT Init(HWND hWnd, BOOL bWindow)
 
 	InitMap();
 
-	// ポリゴンの初期化処理
+	// プレイヤーの初期化処理
 	InitPlayer(0);
+
+	// バレットの初期化処理
+	InitBullet(0);
 
 	return S_OK;
 }
@@ -315,8 +318,10 @@ void Uninit(void)
 	{// Direct3Dオブジェクトの開放
 		g_pD3D->Release();
 	}
+	// バレットの終了処理
+	UninitBullet();
 
-	// ポリゴンの終了処理
+	// プレイヤー終了処理
 	UninitPlayer();
 
 	// 入力処理の終了処理
@@ -339,6 +344,7 @@ void Update(void)
 
 	UpdatePlayer();
 
+	UpdateBullet();
 
 }
 
@@ -353,12 +359,15 @@ void Draw(void)
 	// Direct3Dによる描画の開始
 	if(SUCCEEDED(g_pD3DDevice->BeginScene()))
 	{
-		// ポリゴンの描画処理
+		// マップの描画処理
 		DrawMap();
 
-
+		// プレイヤーの描画処理
 		DrawPlayer();
 		
+		// バレットの描画処理
+		DrawBullet();
+
 #ifdef _DEBUG
 		// FPS表示
 		DrawFPS();

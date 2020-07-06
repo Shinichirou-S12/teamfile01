@@ -108,7 +108,7 @@
 // 最大攻撃遅延速度-----------------------
 #define MAX_ATK_DELAY_RESPONSE_TIME						(100)
 
-typedef struct					// PLAYERアニメーション用属性構造体
+typedef struct							// PLAYERアニメーション用属性構造体
 {
 	int		PatDivX;					// アニメパターンのテクスチャ内分割数（X)
 	int		PatDivY;					// アニメパターンのテクスチャ内分割数（Y)
