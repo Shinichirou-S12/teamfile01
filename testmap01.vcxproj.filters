@@ -33,7 +33,9 @@
     <ClCompile Include="controller.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+
     <ClCompile Include="playerTest.cpp">
+
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="bullet.cpp">
@@ -62,7 +64,9 @@
     <ClInclude Include="workLog.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+
     <ClInclude Include="playerTest.h">
+
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="bullet.h">
