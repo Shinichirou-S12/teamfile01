@@ -6,6 +6,30 @@
 #ifndef ___CHECKHIT_H___
 #define ___CHECKHIT_H___
 
+enum CHECKBLOCK
+{
+	TOP,
+	UNDER,
+	LEFT_MAPCHIP,
+	RIGHT_MAPCHIP,
+	NOTTOUCHED,
+	MAXCHECKBLOCK
+};
+
+
+/**************************************************************************//**
+	@brief		CheckHitBB_MAP
+	@brief		BBMAP‚ÌÕ“Ë”»’è
+	@param[in]	pos1		pos1‚ÌÀ•W
+	@param[in]	pos2		pos2‚ÌÀ•W
+	@param[in]	size1		size1‚Ì‘å‚«‚³
+	@param[in]	size2		size2‚Ì‘å‚«‚³
+	@param[in]	moveSpeed	ˆÚ“®‘¬“x
+	@return		true	“–‚½‚Á‚Ä‚¢‚é
+				false	“–‚½‚Á‚Ä‚¢‚È‚¢
+*//***************************************************************************/
+int CheckHitBB_MAP(D3DXVECTOR3 pos1, D3DXVECTOR3 pos_mapchip, D3DXVECTOR2 size1, D3DXVECTOR2 size_mapchip, float moveSpeed);
+
 /**************************************************************************//**
 	@brief		CheckHitBB
 	@brief		BB‚ÌÕ“Ë”»’è

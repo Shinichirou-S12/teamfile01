@@ -19,6 +19,7 @@ enum COMAND
 {
 	STARTBUTTON,		//!< スタートボタン
 	ATTACK,				//!< 攻撃
+	JUMPMOVE,			//!< ジャンプ移動
 	RIGHTMOVE,			//!< 右移動
 	LEFTMOVE,			//!< 左移動
 	UPMOVE,				//!< 上移動

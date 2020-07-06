@@ -112,23 +112,26 @@ void UninitMap(void)
 // 更新処理
 void UpdateMap(void)
 {
-	PLAYER *player = GetPlayer();
-	bool use = false;
-	for (int i = 0; i < SIZE_Y; i++)
-	{
-		for (int j = 0; j < SIZE_X; j++)
-		{
-			if (mapBlock[i][j].type != -1)
-			{
-				if (CheckHitBB(player->pos, mapBlock[i][j].pos,
-					D3DXVECTOR2(PLAYER_TEXTURE_SIZE_X, PLAYER_TEXTURE_SIZE_Y * 2.0f),
-					D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y)) == 1)
-				{
-					player->pos = player->oldPos;
-				}
-			}
-		}
-	}
+	//PLAYER *player = GetPlayer();
+	//for (int i = 0; i < SIZE_Y; i++)
+	//{
+	//	for (int j = 0; j < SIZE_X; j++)
+	//	{
+	//		if (mapBlock[i][j].type != -1)
+	//		{
+	//			if (CheckHitBB(player->pos, mapBlock[i][j].pos,
+	//				D3DXVECTOR2(PLAYER_SIZE_STAND_X, PLAYER_SIZE_STAND_Y),
+	//				D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y )) == 1)
+	//			{
+	//				player->state.falling = false;
+	//				player->state.Grounded = true;
+	//				player->jumpForce = PLAYER_JUMP_HIGH;
+
+	//				player->pos.y = player->oldpos.y;
+	//			}
+	//		}
+	//	}
+	//}
 }
 
 // 描画処理
