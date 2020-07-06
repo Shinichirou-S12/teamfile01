@@ -9,7 +9,7 @@
 #include "input.h"
 #include "file.h"
 #include "checkhit.h"
-
+#include "playerTest.h"
 #include "bullet.h"
 #include "life.h"
 #include "score.h"
@@ -307,7 +307,7 @@ HRESULT Init(HWND hWnd, BOOL bWindow)
 
 	// プレイヤーの初期化処理
 
-	InitPlayer(0);
+	InitPlayer();
 
 	// バレットの初期化処理
 	InitBullet(0);

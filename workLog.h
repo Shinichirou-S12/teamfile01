@@ -12,3 +12,5 @@
 
 // 2020/07/01 劉 テストのためlogを書きます
 // 2020/07/06 劉 score,timer,life追加
+
+// 2020/07/06 北出 player.cppやcontroller.cppを変更しました。

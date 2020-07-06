@@ -16,7 +16,7 @@
 #define PLAYER_ACCELE								(16.0f)				// ‰Á‘¬“x
 
 // Move‘¬“x-----------------------------------
-#define PLAYER_MOVE_SPEED							(8.0f)				// ˆÚ“®—Ê
+//#define PLAYER_MOVE_SPEED							(8.0f)				// ˆÚ“®—Ê
 #define	PLAYER_ROTATE								(D3DX_PI * 0.02f)	// ‰ñ“]—Ê
 
 // Å‘åUŒ‚’x‰„‘¬“x-----------------------
