@@ -9,6 +9,9 @@
 #include "input.h"
 #include "file.h"
 #include "checkhit.h"
+#include "score.h"
+#include "timer.h"
+#include "life.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -295,6 +298,10 @@ HRESULT Init(HWND hWnd, BOOL bWindow)
 
 	InitMap();
 
+	InitScore();
+	InitTimer();
+	InitLife();
+
 	// ポリゴンの初期化処理
 	InitPlayer(0);
 
@@ -315,6 +322,10 @@ void Uninit(void)
 	{// Direct3Dオブジェクトの開放
 		g_pD3D->Release();
 	}
+
+	UninitScore();
+	UninitTimer();
+	UninitLife();
 
 	// ポリゴンの終了処理
 	UninitPlayer();
@@ -339,6 +350,9 @@ void Update(void)
 
 	UpdatePlayer();
 
+	UpdateScore();
+	UpdateTimer();
+	UpdateLife();
 
 }
 
@@ -356,9 +370,12 @@ void Draw(void)
 		// ポリゴンの描画処理
 		DrawMap();
 
-
 		DrawPlayer();
 		
+		DrawScore();
+		DrawTimer();
+		DrawLife();
+
 #ifdef _DEBUG
 		// FPS表示
 		DrawFPS();
