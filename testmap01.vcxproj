@@ -132,6 +132,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="bullet.cpp" />
     <ClCompile Include="checkhit.cpp" />
     <ClCompile Include="controller.cpp" />
     <ClCompile Include="file.cpp" />
@@ -141,6 +142,7 @@
     <ClCompile Include="playerTest.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bullet.h" />
     <ClInclude Include="checkhit.h" />
     <ClInclude Include="controller.h" />
     <ClInclude Include="file.h" />

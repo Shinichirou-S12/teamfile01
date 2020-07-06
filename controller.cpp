@@ -21,11 +21,11 @@ bool GetInput(int nCommand)
 		break;
 
 	case ATTACK:
-		return GetKeyboardTrigger(DIK_A) || IsButtonTriggered(0, BUTTON_B);
+		return GetKeyboardTrigger(DIK_SPACE) || IsButtonTriggered(0, BUTTON_X);
 		break;
 
 	case JUMPMOVE:
-		return GetKeyboardTrigger(DIK_SPACE) || IsButtonTriggered(0, BUTTON_A);
+		return GetKeyboardTrigger(DIK_UP) || IsButtonTriggered(0, BUTTON_A);
 		break;
 
 	case RIGHTMOVE:

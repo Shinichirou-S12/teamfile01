@@ -1,6 +1,6 @@
 //=============================================================================
 //
-// プレイヤー処理 [player.cpp]
+// プレイヤー処理 [playerTest.cpp]
 // Author : 
 //
 //=============================================================================
@@ -18,6 +18,8 @@
 #define PLAYER_HP	(6)
 #define PLAYER_TIME_SHOT	(5)
 #define MAX_DIFFUSE	(255)
+#define PLAYER_INVINCIVLE	(10)
+#define PLAYER_MOVE_SPEED	(2.0f)
 //*****************************************************************************
 // プロトタイプ宣言
 //*****************************************************************************
@@ -26,10 +28,13 @@ void SetTexturePlayer(VERTEX_2D *Vtx, int cntPattern);
 void SetVertexPlayer(VERTEX_2D *Vtx);
 void animPlayerState(int * animState);
 
+void Invincible(void);
+
 void FallPlayer(void);
 void JumpPlayer(void);
-void IdlePlayer(void);
+//void IdlePlayer(void);
 void AttackPlayer(void);
+void PlayerMoving(void);
 
 void Restriction(void);
 
@@ -69,6 +74,7 @@ HRESULT InitPlayer(void)
 	g_player.mapPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				// マップ座標データを初期化
 	g_player.scrollPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				// スクロール座標データを初期化
 	g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);					// 回転データを初期化
+	g_player.moveSpeed = PLAYER_MOVE_SPEED;
 
 	// アニメパターン番号をランダムで初期化
 	g_player.animeCnt.PatternAnim = rand() % PLAYER_IDLE_TEXTURE_PATTERN_DIVIDE_X;	
@@ -128,9 +134,106 @@ void UpdatePlayer(void)
 		g_player.countShot++;			// 連射のカウント用
 		g_player.scrollPos.x = 0.0f;	// 画面スクロール用の変数
 
+		Invincible();
+		if (g_player.jumpForce == 0)	// プレイヤーがジャンプしていないと立ち状態になる
+		{
+			g_player.state = IDLE;
+		}
+
+		// キー入力で移動 
+		if (GetInput(JUMPMOVE))	// ジャンプ関係
+		{
+			if (g_player.dropSpeed > 1 && g_player.jumpForce <= 1)	//「地上からジャンプしてからの一回だけ空中ジャンプ」と「足場から自由落下からの一回だけ空中ジャンプ」をするための判定
+			{
+				g_player.dropSpeed = 0;	//重力加速度を0にすることで、再びプレイヤーが上昇をはじめる
+				g_player.jumpForce++;	// すぐ下のjump++と合わせてjumpが2以上になるので、どのようなタイミングでも「空中ジャンプ後はジャンプできない」
+										// SE再生
+				//PlaySound(SOUND_LABEL_SE_jump2);
+				//playerWk[1].use = true;
+			}
+			else
+			{
+				//PlaySound(SOUND_LABEL_SE_jump);
+			}
+
+			g_player.jumpForce++;		// ジャンプの切り替え、1以上でジャンプ状態になる
+			g_player.state = JUMP;		// テクスチャは「ジャンプ」
+		}
+
+		PlayerMoving();
+
+		g_player.mapPos += g_player.scrollPos;	// どれだけスクロールしたかを保持、イベントに使用
+
+		Restriction();
+		JumpPlayer();
+		FallPlayer();
+
+		animPlayerState(&g_player.state);
+		AttackPlayer();
+
+		SetVertexPlayer(g_player.vertexWk);
+		SetTexturePlayer(g_player.vertexWk, g_player.animeCnt.PatternAnim);
+	}
+}
+
+//=============================================================================
+// プレイヤーの無敵状態の確認
+//=============================================================================
+void Invincible(void)
+{
+	if (g_player.invincible == true)
+	{
+		g_player.countInvincible++;
+
+		if (g_player.countInvincible >= PLAYER_INVINCIVLE)
+		{
+			g_player.invincible = false;
+			g_player.countInvincible = 0;
+		}
+	}
+}
+
+//=============================================================================
+// プレイヤー移動
+//=============================================================================
+void PlayerMoving(void)
+{
+	// 右移動----------------------------------------
+	if (GetInput(RIGHTMOVE))
+	{
+		g_player.pos.x += g_player.moveSpeed;
+		if (g_player.pos.x >= SCREEN_WIDTH / 2)	// プレイヤーが画面中央辺りに来たらステージ自体がスクロールする
+		{
+			//if (playerWk[0].pos_MAP.x < boss->initialpos.x - SCREEN_CENTER_X - MAPCHIP_TEXTURE_SIZE_X - 3.0f)
+			{
+				g_player.scrollPos.x += g_player.moveSpeed;
+			}
+		}
+
+		g_player.direction = Right;					// 左移動
+		g_player.keyPressing = true;				// 
+		g_player.state = RUN;						// ランニングtrue
+
+	}
+	// 左移動-----------------------------------------
+	else if (GetInput(LEFTMOVE))
+	{
+		g_player.pos.x -= g_player.moveSpeed;
+		if (g_player.pos.x <= MAP_TEXTURE_SIZE_X * (SIZE_X / 2))	// プレイヤーが画面中央辺りに来たらステージ自体がスクロールする
+		{
+			//if (playerWk[0].pos_MAP.x < boss->initialpos.x - SCREEN_CENTER_X - MAPCHIP_TEXTURE_SIZE_X - 3.0f)
+			{
+				g_player.scrollPos.x -= g_player.moveSpeed;
+			}
+		}
+
+		g_player.direction = Left;					// 左移動
+		g_player.keyPressing = true;				// 
+		g_player.state = RUN;						// ランニングtrue
 
 	}
 }
+
 
 //=============================================================================
 // プレイヤーの落下処理
@@ -170,12 +273,30 @@ void JumpPlayer(void)
 		g_player.pos.y -= PLAYER_ACCELE;
 		g_player.state = JUMP;		// テクスチャは「ジャンプ」
 
-
 		g_player.textureSize = D3DXVECTOR2(PLAYER_TEXTURE_SIZE_X, PLAYER_TEXTURE_SIZE_Y);
 
 	}
 
 	/* 着地したらジャンプを０にしてジャンプ状態を解除する。その処理はFallPlayer内にある */
+}
+
+
+//=============================================================================
+// プレイヤーの攻撃
+//=============================================================================
+void AttackPlayer(void)
+{
+	if (GetInput(ATTACK))
+	{
+		D3DXVECTOR3 pos = g_player.pos;
+		if (g_player.countShot >= PLAYER_TIME_SHOT || g_player.jumpForce > 1)	// 連射用のカウントが規定値を超えているか、二段ジャンプ中なら弾発射
+		{
+			//SetBullet(pos, g_player.direction, g_player.jumpForce);		// 
+			g_player.countShot = 0;	// 
+
+			//PlaySound(SOUND_LABEL_SE_shot2);
+		}
+	}
 }
 
 //=============================================================================
@@ -344,3 +465,58 @@ PLAYER *GetPlayer(void)
 {
 	return(&g_player);
 }
+
+//=============================================================================
+// プレイヤーの横移動で画面外やブロックを貫通しないための処理
+//=============================================================================
+void Restriction(void)
+{
+	MAP *mapchip = GetMapData();
+	//int *scene = GetScene();
+
+	for (int j = 0; j < SIZE_X * SIZE_Y; j++)
+	{
+
+		switch (CheckHitBB_MAP(g_player.pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_SIZE_X, PLAYER_TEXTURE_SIZE_Y),
+			D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), g_player.moveSpeed))	// ブロックのどこに触れているか
+		{
+		case LEFT_MAPCHIP:
+			g_player.pos.x = mapchip[j].pos.x - MAP_TEXTURE_SIZE_X - PLAYER_TEXTURE_SIZE_X;	// 左からブロックに突っ込むとブロックの左に戻す
+			break;
+		case RIGHT_MAPCHIP:
+			g_player.pos.x = mapchip[j].pos.x + MAP_TEXTURE_SIZE_X + PLAYER_TEXTURE_SIZE_X;	// 右からブロックに突っ込むとブロックの右に戻す
+			break;
+		case UNDER:
+			g_player.pos.y = mapchip[j].pos.y + MAP_TEXTURE_SIZE_Y + PLAYER_TEXTURE_SIZE_Y;	// 下からブロックに突っ込むとブロックの下に戻す
+			break;
+		}
+		mapchip++;
+	}
+
+	//if (*scene == SCENE_TUTORIAL || playerWk[0].pos_MAP.x >= boss->initialpos.x - SCREEN_CENTER_X - MAPCHIP_TEXTURE_SIZE_X - 3.0f)
+	//{
+	//	if (g_player.pos.x <= PLAYER_TEXTURE_SIZE_X)	//チュートリアル中&ボス戦は画面いっぱいに動かせる
+	//	{
+	//		g_player.pos.x = PLAYER_TEXTURE_SIZE_X;
+	//	}
+
+	//	if (g_player.pos.x >= SCREEN_WIDTH - PLAYER_TEXTURE_SIZE_X)	//チュートリアル中&ボス戦は画面いっぱいに動かせる
+	//	{
+	//		g_player.pos.x = SCREEN_WIDTH - PLAYER_TEXTURE_SIZE_X;
+	//	}
+
+	//}
+	/*else*/
+	{
+		if (g_player.pos.x <= MAP_TEXTURE_SIZE_X * (SIZE_X / 2))	//画面左より左に行けないようにする
+		{
+			g_player.pos.x = MAP_TEXTURE_SIZE_X * (SIZE_X / 2);
+		}
+
+		if (g_player.pos.x >= SCREEN_WIDTH / 2)	//画面中央より右に行けないようにする
+		{
+			g_player.pos.x = SCREEN_WIDTH / 2;
+		}
+	}
+}
+
