@@ -139,8 +139,9 @@
     <ClCompile Include="life.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="player.cpp" />
-    <ClCompile Include="score.cpp" />
-    <ClCompile Include="timer.cpp" />
+
+    <ClCompile Include="playerTest.cpp" />
+
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="checkhit.h" />
@@ -150,8 +151,10 @@
     <ClInclude Include="life.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="player.h" />
-    <ClInclude Include="score.h" />
-    <ClInclude Include="timer.h" />
+
+
+    <ClInclude Include="playerTest.h" />
+
     <ClInclude Include="workLog.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

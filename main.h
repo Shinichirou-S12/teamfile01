@@ -31,7 +31,6 @@
 #define SCREEN_CENTER_Y	(SCREEN_HEIGHT / 2)	// ウインドウの中心Ｙ座標
 
 #define	NUM_VERTEX		(4)					// 頂点数
-#define	NUM_PLAYER		(2)					// ポリゴン数
 #define NUM_POLYGON		(2)					// ポリゴン数
 // 頂点フォーマット( 頂点座標[2D] / 反射光 / テクスチャ座標 )
 #define	FVF_VERTEX_2D	(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1)
