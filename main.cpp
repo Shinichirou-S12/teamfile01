@@ -11,6 +11,9 @@
 #include "checkhit.h"
 
 #include "bullet.h"
+#include "life.h"
+#include "score.h"
+#include "timer.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -297,6 +300,10 @@ HRESULT Init(HWND hWnd, BOOL bWindow)
 
 	InitMap();
 
+	// UIなどの初期化処理
+	InitScore();
+	InitLife();
+	InitTimer();
 
 	// プレイヤーの初期化処理
 
@@ -325,6 +332,10 @@ void Uninit(void)
 	// バレットの終了処理
 	UninitBullet();
 
+	// UIなどの終了処理
+	UninitScore();
+	UninitLife();
+	UninitTimer();
 
 	// プレイヤー終了処理
 
@@ -350,6 +361,10 @@ void Update(void)
 
 	UpdatePlayer();
 
+	// UIなどの更新処理
+	UpdateScore();
+	UpdateLife();
+	UpdateTimer();
 
 	UpdateBullet();
 
@@ -376,6 +391,11 @@ void Draw(void)
 		
 		// バレットの描画処理
 		DrawBullet();
+
+		// UIなどの描画処理
+		DrawScore();
+		DrawLife();
+		DrawTimer();
 
 
 #ifdef _DEBUG
