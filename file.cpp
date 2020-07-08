@@ -92,7 +92,7 @@ HRESULT InitMap(void)
 									MAP_TEXTURE_SIZE_Y + (i * MAP_TEXTURE_SIZE_Y * 2), 0.0f);
 
 			mapBlock[i][j].type = data[i][j];
-
+			mapBlock[i][j].move = D3DXVECTOR3(0.0f, 2.0f, 0.0f);	// 移動量
 			MakeVertexMap(j,i);
 		}
 	}
@@ -121,7 +121,14 @@ void UpdateMap(void)
 		for (int j = 0; j < SIZE_X; j++)
 		{
 			//mapBlock[i][j].pos.x -= player->scrollPos.x;
-
+			if (mapBlock[i][j].type == 1)
+			{
+				mapBlock[i][j].pos.y -= mapBlock[i][j].move.y;
+				if (mapBlock[i][j].pos.y < -MAP_TEXTURE_SIZE_Y)
+				{
+					mapBlock[i][j].pos.y = SCREEN_HEIGHT + MAP_TEXTURE_SIZE_Y * 2;
+				}
+			}
 			SetVertexMapChip(i, j);
 		}
 	}

@@ -27,10 +27,10 @@
 #define MAX_ATK_DELAY_RESPONSE_TIME					(100)
 
 // Idleアニメーション----------------------
-#define	TEXTURE_PLAYER_PERFECT_IDLE					"data/TEXTURE/CharaTest/ユニティちゃん_待機.png"		// 読み込むテクスチャファイル名
-#define	TEXTURE_PLAYER_THREE_IDLE					"data/TEXTURE/CharaTest/ユニティちゃん_待機.png"		// 読み込むテクスチャファイル名
-#define	TEXTURE_PLAYER_TWO_IDLE						"data/TEXTURE/CharaTest/ユニティちゃん_待機.png"		// 読み込むテクスチャファイル名
-#define	TEXTURE_PLAYER_ONE_IDLE						"data/TEXTURE/CharaTest/ユニティちゃん_待機.png"		// 読み込むテクスチャファイル名
+#define	TEXTURE_PLAYER_PERFECT_IDLE					"data/TEXTURE/CharaTest/ユニティちゃん_待機.png"	// 読み込むテクスチャファイル名
+#define	TEXTURE_PLAYER_THREE_IDLE					"data/TEXTURE/CharaTest/idle_parts_three.png"		// 読み込むテクスチャファイル名
+#define	TEXTURE_PLAYER_TWO_IDLE						"data/TEXTURE/CharaTest/idle_parts_two.png"			// 読み込むテクスチャファイル名
+#define	TEXTURE_PLAYER_ONE_IDLE						"data/TEXTURE/CharaTest/idle_parts_one.png"			// 読み込むテクスチャファイル名
 
 #define PLAYER_IDLE_TEXTURE_PATTERN_DIVIDE_X		(8)										// アニメパターンのテクスチャ内分割数（X)
 #define PLAYER_IDLE_TEXTURE_PATTERN_DIVIDE_Y		(1)										// アニメパターンのテクスチャ内分割数（Y)
@@ -38,10 +38,10 @@
 #define PLAYER_IDLE_TIME_ANIMATION					(20)									// アニメーションの切り替わるカウント
 
 // Runningアニメーション----------------------
-#define	TEXTURE_PLAYER_PERFECT_RUN					"data/TEXTURE/CharaTest/run.png"		// 読み込むテクスチャファイル名
-#define	TEXTURE_PLAYER_THREE_RUN					"data/TEXTURE/CharaTest/run.png"		// 読み込むテクスチャファイル名
-#define	TEXTURE_PLAYER_TWO_RUN						"data/TEXTURE/CharaTest/run.png"		// 読み込むテクスチャファイル名
-#define	TEXTURE_PLAYER_ONE_RUN						"data/TEXTURE/CharaTest/run.png"		// 読み込むテクスチャファイル名
+#define	TEXTURE_PLAYER_PERFECT_RUN					"data/TEXTURE/CharaTest/run.png"				// 読み込むテクスチャファイル名
+#define	TEXTURE_PLAYER_THREE_RUN					"data/TEXTURE/CharaTest/run_parts_three.png"	// 読み込むテクスチャファイル名
+#define	TEXTURE_PLAYER_TWO_RUN						"data/TEXTURE/CharaTest/run_parts_two.png"		// 読み込むテクスチャファイル名
+#define	TEXTURE_PLAYER_ONE_RUN						"data/TEXTURE/CharaTest/run_parts_one.png"		// 読み込むテクスチャファイル名
 
 #define PLAYER_RUN_TEXTURE_PATTERN_DIVIDE_X			(9)										// アニメパターンのテクスチャ内分割数（X)
 #define PLAYER_RUN_TEXTURE_PATTERN_DIVIDE_Y			(1)										// アニメパターンのテクスチャ内分割数（Y)

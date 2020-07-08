@@ -46,6 +46,7 @@ typedef struct
 	D3DXVECTOR3		rot;						// ポリゴンの回転量
 	int				type;
 	float			countPos;
+	D3DXVECTOR3		move;						// ポリゴンの移動量
 
 	bool			scroll;
 	LPDIRECT3DTEXTURE9	Texture;				// テクスチャ情報
