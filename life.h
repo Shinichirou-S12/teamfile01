@@ -28,5 +28,5 @@ void DrawLife(void);
 //引数:０以外の整数（1や-1）
 //効果:引数に合わせてlifeの増減をする（UIのみ）
 void ChangeLife(int value);
-
+CHANGE_LIFE *GetLifeState(void);
 #endif

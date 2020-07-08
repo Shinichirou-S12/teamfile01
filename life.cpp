@@ -312,3 +312,8 @@ void ChangeLife(int nValue)
 	}
 }
 
+CHANGE_LIFE *GetLifeState(void)
+{
+	return &g_lifeStatus;
+}
+

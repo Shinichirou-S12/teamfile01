@@ -7,8 +7,11 @@
 
 #include "main.h"
 
-#define SIZE_X	(20)
+#define SIZE_X	(60)
 #define SIZE_Y	(15)
+
+//#define MAP_TEXTURE_SIZE_BB_X			(16.0f/2.0f)		    // テクスチャサイズ
+//#define MAP_TEXTURE_SIZE_BB_Y			(16.0f/2.0f)		    // 同上
 
 #define MAP_TEXTURE_SIZE_X			(16.0f)		    // テクスチャサイズ
 #define MAP_TEXTURE_SIZE_Y			(16.0f)		    // 同上
@@ -42,7 +45,9 @@ typedef struct
 	D3DXVECTOR3		pos;						// ポリゴンの移動量
 	D3DXVECTOR3		rot;						// ポリゴンの回転量
 	int				type;
+	float			countPos;
 
+	bool			scroll;
 	LPDIRECT3DTEXTURE9	Texture;				// テクスチャ情報
 	VERTEX_2D		vertexWk[NUM_VERTEX];		// 頂点情報格納ワーク
 }MAP;

@@ -12,6 +12,7 @@
 #include "checkhit.h"
 #include "player.h"
 #include "input.h"
+#include "playerTest.h"
 
 /*******************************************************************************
 * マクロ定義
@@ -27,6 +28,7 @@
 *******************************************************************************/
 HRESULT MakeVertexMap(int x, int y);
 void SetTexture(int x, int y);
+void SetVertexMapChip(int y, int x);
 
 /*******************************************************************************
 * グローバル変数
@@ -112,26 +114,17 @@ void UninitMap(void)
 // 更新処理
 void UpdateMap(void)
 {
-	//PLAYER *player = GetPlayer();
-	//for (int i = 0; i < SIZE_Y; i++)
-	//{
-	//	for (int j = 0; j < SIZE_X; j++)
-	//	{
-	//		if (mapBlock[i][j].type != -1)
-	//		{
-	//			if (CheckHitBB(player->pos, mapBlock[i][j].pos,
-	//				D3DXVECTOR2(PLAYER_SIZE_STAND_X, PLAYER_SIZE_STAND_Y),
-	//				D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y )) == 1)
-	//			{
-	//				player->state.falling = false;
-	//				player->state.Grounded = true;
-	//				player->jumpForce = PLAYER_JUMP_HIGH;
+	PLAYER *player = GetPlayer();
 
-	//				player->pos.y = player->oldpos.y;
-	//			}
-	//		}
-	//	}
-	//}
+	for (int i = 0; i < SIZE_Y; i++)
+	{
+		for (int j = 0; j < SIZE_X; j++)
+		{
+			//mapBlock[i][j].pos.x -= player->scrollPos.x;
+
+			SetVertexMapChip(i, j);
+		}
+	}
 }
 
 // 描画処理
@@ -222,6 +215,31 @@ HRESULT MakeVertexMap(int x, int y)
 
 	return S_OK;
 }
+
+//=============================================================================
+// 頂点座標の設定
+//=============================================================================
+void SetVertexMapChip(int y, int x)
+{
+	// 頂点座標の設定
+	mapBlock[y][x].vertexWk[0].vtx.x = mapBlock[y][x].pos.x - MAP_TEXTURE_SIZE_X;
+	mapBlock[y][x].vertexWk[0].vtx.y = mapBlock[y][x].pos.y - MAP_TEXTURE_SIZE_Y;
+	mapBlock[y][x].vertexWk[0].vtx.z = 0.0f;
+	
+	mapBlock[y][x].vertexWk[1].vtx.x = mapBlock[y][x].pos.x + MAP_TEXTURE_SIZE_X;
+	mapBlock[y][x].vertexWk[1].vtx.y = mapBlock[y][x].pos.y - MAP_TEXTURE_SIZE_Y;
+	mapBlock[y][x].vertexWk[1].vtx.z = 0.0f;
+
+	mapBlock[y][x].vertexWk[2].vtx.x = mapBlock[y][x].pos.x - MAP_TEXTURE_SIZE_X;
+	mapBlock[y][x].vertexWk[2].vtx.y = mapBlock[y][x].pos.y + MAP_TEXTURE_SIZE_Y;
+	mapBlock[y][x].vertexWk[2].vtx.z = 0.0f;
+
+	mapBlock[y][x].vertexWk[3].vtx.x = mapBlock[y][x].pos.x + MAP_TEXTURE_SIZE_X;
+	mapBlock[y][x].vertexWk[3].vtx.y = mapBlock[y][x].pos.y + MAP_TEXTURE_SIZE_Y;
+	mapBlock[y][x].vertexWk[3].vtx.z = 0.0f;
+}
+
+
 
 void SetTexture(int x, int y)
 {
