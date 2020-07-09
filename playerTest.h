@@ -90,6 +90,7 @@ typedef struct					// PLAYER構造体
 	float				moveSpeed;			// 移動量
 	float				radius;				// 半径
 	float				baseAngle;			// 角度
+	float				checkTopTexSize;	// topの当たり判定用
 
 	bool				moveble;			// 移動可能
 	bool				keyPressing;
@@ -109,6 +110,7 @@ typedef struct					// PLAYER構造体
 	bool				AtkDeReSwi;			// (Delay response switch)
 	int					AtkDeRespTime;		// (Delay response time)
 	D3DXVECTOR2			textureSize;		// テクスチャサイズ
+	D3DXVECTOR2			coltextureSize;		// 移動貫通処理の当たり判定用テクスチャサイズ
 
 
 	int					direction;			// PLAYERの方向

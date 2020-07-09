@@ -17,7 +17,7 @@
 // マクロ定義
 //*****************************************************************************
 #define PLAYER_HP	(4)
-#define PLAYER_TIME_SHOT	(5)
+#define PLAYER_TIME_SHOT	(CHANGE_TIME)
 #define MAX_DIFFUSE	(255)
 #define PLAYER_INVINCIVLE	(10)
 #define PLAYER_MOVE_SPEED	(2.0f)
@@ -122,6 +122,9 @@ HRESULT InitPlayer(void)
 	g_player.animeCnt.PatternAnim = rand() % PLAYER_IDLE_TEXTURE_PATTERN_DIVIDE_X;	
 
 	g_player.textureSize = D3DXVECTOR2(PLAYER_TEXTURE_SIZE_X, PLAYER_TEXTURE_SIZE_Y);
+	g_player.coltextureSize = D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_X, PLAYER_TEXTURE_BB_SIZE_Y);
+	g_player.checkTopTexSize = PLAYER_TEXTURE_BB_SIZE_TOP_X;
+
 	g_player.state = IDLE;
 	g_player.partsState = PERFECT;
 	g_player.Texture = g_pD3DTexture[g_player.state][g_player.partsState];
@@ -336,13 +339,50 @@ void FallPlayer(void)
 	{
 		if ((g_player.jumpForce < 1) || g_player.dropSpeed >= PLAYER_ACCELE)	// ブロック横でジャンプするとブロック上辺に張り付くバグを抑制する処理
 		{
-			if (mapchip->type != -1)
+			if (mapchip->type == 1)
 			{
 				if (CheckHitBB_MAP(g_player.pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_TOP_X, PLAYER_TEXTURE_SIZE_Y),
 					D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), g_player.moveSpeed) == TOP)	// ブロックの上に立っているとき
 				{
 					g_player.dropSpeed = 0;		// 重力加速度をリセット
-					g_player.pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y - PLAYER_TEXTURE_SIZE_Y;	// 上からブロックに突っ込むと、ブロックの上に戻す
+
+					// 上からブロックに突っ込むと、ブロックの上に戻す
+					// テクスチャサイズに合わせて高さの変更を行う
+					if (g_player.partsState <= TWO)
+					{
+						g_player.pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y -
+							(PLAYER_TEXTURE_SIZE_X / (MAXPARTS - g_player.partsState - (0.5f * g_player.partsState)
+								+ (5.0f * (TWO - g_player.partsState))));
+					}
+					else
+					{
+						g_player.pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y - PLAYER_TEXTURE_SIZE_X;
+					}
+					g_player.jumpForce = 0;		// ジャンプ回数をリセット
+					g_player.rot.z = 0;			// 回転ジャンプの回転リセット
+					break;
+				}
+			}
+
+			if (mapchip->type == 0)
+			{
+				if (CheckHitBB_MAP(g_player.pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_X, PLAYER_TEXTURE_SIZE_Y),
+					D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), g_player.moveSpeed) == TOP)	// ブロックの上に立っているとき
+				{
+					g_player.dropSpeed = 0;		// 重力加速度をリセット
+
+					// 上からブロックに突っ込むと、ブロックの上に戻す
+					// テクスチャサイズに合わせて高さの変更を行う
+					if (g_player.partsState <= TWO)
+					{
+						g_player.pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y - 
+							(PLAYER_TEXTURE_SIZE_X / (MAXPARTS - g_player.partsState - (0.5f * g_player.partsState) 
+								+(5.0f * (TWO - g_player.partsState))));
+					}
+					else
+					{
+						g_player.pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y -  PLAYER_TEXTURE_SIZE_X;
+					}
 					g_player.jumpForce = 0;		// ジャンプ回数をリセット
 					g_player.rot.z = 0;			// 回転ジャンプの回転リセット
 					break;

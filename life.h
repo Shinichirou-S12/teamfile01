@@ -9,6 +9,8 @@
 
 #include "main.h"
 
+#define CHANGE_TIME			(30)							// ライフ変化時にかかるフレーム数
+
 enum CHANGE_LIFE
 {
 	ADD,

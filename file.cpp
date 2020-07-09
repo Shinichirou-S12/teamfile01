@@ -123,7 +123,7 @@ void UpdateMap(void)
 			//mapBlock[i][j].pos.x -= player->scrollPos.x;
 			if (mapBlock[i][j].type == 1)
 			{
-				mapBlock[i][j].pos.y -= mapBlock[i][j].move.y;
+				//mapBlock[i][j].pos.y -= mapBlock[i][j].move.y;
 				if (mapBlock[i][j].pos.y < -MAP_TEXTURE_SIZE_Y)
 				{
 					mapBlock[i][j].pos.y = SCREEN_HEIGHT + MAP_TEXTURE_SIZE_Y * 2;
