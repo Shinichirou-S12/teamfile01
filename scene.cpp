@@ -6,6 +6,9 @@
 // インクルードファイル
 #include "main.h"
 #include "scene.h"
+#include "titlescene.h"
+#include "gamescene.h"
+#include "resultscene.h"
 
 // マクロ定義
 #define SCENE_START	(SCENE_TITLE)
@@ -19,10 +22,13 @@ void InitScene(void)
 	switch (g_scene)
 	{
 	case SCENE_TITLE:
+		InitTitleScene();
 		break;
 	case SCENE_GAME:
+		InitGameScene();
 		break;
 	case SCENE_RESULT:
+		InitResultScene();
 		break;
 	default:
 		break;
@@ -35,10 +41,13 @@ void UninitScene(void)
 	switch (g_scene)
 	{
 	case SCENE_TITLE:
+		UninitTitleScene();
 		break;
 	case SCENE_GAME:
+		UninitGameScene();
 		break;
 	case SCENE_RESULT:
+		UninitResultScene();
 		break;
 	default:
 		break;
@@ -51,10 +60,13 @@ void UpdateScene(void)
 	switch (g_scene)
 	{
 	case SCENE_TITLE:
+		UpdateTitleScene();
 		break;
 	case SCENE_GAME:
+		UpdateGameScene();
 		break;
 	case SCENE_RESULT:
+		UpdateResultScene();
 		break;
 	default:
 		break;
@@ -67,10 +79,13 @@ void DrawScene(void)
 	switch (g_scene)
 	{
 	case SCENE_TITLE:
+		DrawTitleScene();
 		break;
 	case SCENE_GAME:
+		DrawGameScene();
 		break;
 	case SCENE_RESULT:
+		DrawResultScene();
 		break;
 	default:
 		break;

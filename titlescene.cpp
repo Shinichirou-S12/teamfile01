@@ -18,19 +18,19 @@ void InitTitleScene(void)
 }
 
 // I—¹ˆ—
-void UninitScene(void)
+void UninitTitleScene(void)
 {
 	UninitBg();
 }
 
 // XVˆ—
-void UpdateScene(void)
+void UpdateTitleScene(void)
 {
 	UpdateBg();
 }
 
 // •`‰æˆ—
-void DrawScene(void)
+void DrawTitleScene(void)
 {
 	DrawBg();
 }
