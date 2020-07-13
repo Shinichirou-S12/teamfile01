@@ -6,6 +6,7 @@
 //=============================================================================
 #include "life.h"
 #include "input.h"
+#include "playerTest.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -100,6 +101,13 @@ void UpdateLife(void)
 {
 	static int count=0;				// 線形補間するためのカウント
 	float radious, alpha, posY;		// 補間の角度、透明度、高さ
+	
+	PLAYER *player = GetPlayer();
+
+	if (!player->use)
+	{
+		return;
+	}
 
 	// 線形補間する
 	if (g_lifeStatus != NONE)
