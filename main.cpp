@@ -5,6 +5,7 @@
 //
 //=============================================================================
 #include "main.h"
+#include "scene.h"
 #include "player.h"
 #include "input.h"
 #include "file.h"
