@@ -5,6 +5,7 @@
 //
 //=============================================================================
 #include "main.h"
+#include "scene.h"
 #include "playerTest.h"
 #include "controller.h"
 #include "input.h"
@@ -180,6 +181,11 @@ void UninitPlayer(void)
 //=============================================================================
 void UpdatePlayer(void)
 {
+	if (!g_player.use)
+	{
+		SetScene(SCENE_RESULT);
+	}
+
 	// アニメーションのパターンを更新------------------
 	g_player.animeCnt.CountAnim++;
 
