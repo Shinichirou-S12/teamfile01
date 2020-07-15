@@ -6,15 +6,8 @@
 //=============================================================================
 #include "main.h"
 #include "scene.h"
-//#include "player.h"
 #include "input.h"
-//#include "file.h"
-//#include "checkhit.h"
-//#include "bullet.h"
 #include "playerTest.h"
-//#include "timer.h"
-//#include "life.h"
-//#include "score.h"
 
 //*****************************************************************************
 // É}ÉNÉçíËã`

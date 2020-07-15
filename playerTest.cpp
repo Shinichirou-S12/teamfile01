@@ -9,7 +9,7 @@
 #include "playerTest.h"
 #include "controller.h"
 #include "input.h"
-#include "file.h"
+#include "map.h"
 #include "bullet.h"
 #include "checkhit.h"
 #include "life.h"
@@ -118,12 +118,13 @@ HRESULT InitPlayer(void)
 	g_player.use = true;
 	g_player.scroll = false;
 	g_player.countMove = 0;
+	g_player.countScroll = 0;
+
 
 	// アニメパターン番号をランダムで初期化
 	g_player.animeCnt.PatternAnim = rand() % PLAYER_IDLE_TEXTURE_PATTERN_DIVIDE_X;	
 
 	g_player.textureSize = D3DXVECTOR2(PLAYER_TEXTURE_SIZE_X, PLAYER_TEXTURE_SIZE_Y);
-	g_player.coltextureSize = D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_X, PLAYER_TEXTURE_BB_SIZE_Y);
 	g_player.checkTopTexSize = PLAYER_TEXTURE_BB_SIZE_TOP_X;
 
 	g_player.state = IDLE;
@@ -233,7 +234,8 @@ void UpdatePlayer(void)
 			g_player.jumpForce++;		// ジャンプの切り替え、1以上でジャンプ状態になる
 			g_player.state = JUMP;		// テクスチャは「ジャンプ」
 		}
-		if (g_player.scroll)
+
+		if (g_player.scroll && g_player.countScroll < 2)
 		{
 			MAP *mapchip = GetMapData();
 
@@ -244,6 +246,46 @@ void UpdatePlayer(void)
 				{
 					mapchip->pos.x -= 10.0f;
 					mapchip++;
+				}
+			}
+			g_player.countMove++;
+
+			if (g_player.countMove == (SCREEN_WIDTH / 10))
+			{
+				g_player.scroll = false;
+				g_player.countMove = 0;
+			}
+
+		}
+
+		else if (g_player.scroll && g_player.countScroll == 2)
+		{
+			MAP *mapchip2 = GetMapData2();
+
+			if (g_player.countMove != (SCREEN_WIDTH / 10))
+			{
+				g_player.pos.x -= 10.0f;
+			}
+			g_player.countMove++;
+
+			if (g_player.countMove == (SCREEN_WIDTH / 10))
+			{
+				g_player.scroll = false;
+				g_player.countMove = 0;
+			}
+		}
+
+		else if (g_player.scroll && g_player.countScroll == 3)
+		{
+			MAP *mapchip2 = GetMapData2();
+
+			if (g_player.countMove != (SCREEN_WIDTH / 10))
+			{
+				g_player.pos.x -= 10.0f;
+				for (int j = 0; j < (SIZE_X * SIZE_Y); j++)
+				{
+					mapchip2->pos.x -= 10.0f;
+					mapchip2++;
 				}
 			}
 			g_player.countMove++;
@@ -307,7 +349,6 @@ void PlayerMoving(void)
 		}
 
 		g_player.direction = Right;					// 左移動
-		g_player.keyPressing = true;				// 
 		g_player.state = RUN;						// ランニングtrue
 
 	}
@@ -324,7 +365,6 @@ void PlayerMoving(void)
 		}
 
 		g_player.direction = Left;					// 左移動
-		g_player.keyPressing = true;				// 
 		g_player.state = RUN;						// ランニングtrue
 
 	}
@@ -337,65 +377,128 @@ void PlayerMoving(void)
 void FallPlayer(void)
 {
 	MAP *mapchip = GetMapData();
+	MAP *mapchip2 = GetMapData2();
 
 	g_player.pos.y += g_player.dropSpeed * 1.0f;	// 加速度的に下へ移動、重力加速度
 	g_player.dropSpeed++;
 
-	for (int i = 0; i < (SIZE_Y * SIZE_X); i++)
+	if (g_player.countScroll <= 3)
 	{
-		if ((g_player.jumpForce < 1) || g_player.dropSpeed >= PLAYER_ACCELE)	// ブロック横でジャンプするとブロック上辺に張り付くバグを抑制する処理
+		for (int i = 0; i < (SIZE_Y * SIZE_X); i++)
 		{
-			if (mapchip->type == 1)
+			if ((g_player.jumpForce < 1) || g_player.dropSpeed >= PLAYER_ACCELE)	// ブロック横でジャンプするとブロック上辺に張り付くバグを抑制する処理
 			{
-				if (CheckHitBB_MAP(g_player.pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_TOP_X, PLAYER_TEXTURE_SIZE_Y),
-					D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), g_player.moveSpeed) == TOP)	// ブロックの上に立っているとき
+				if (mapchip->type == 1 || mapchip->type == 10)
 				{
-					g_player.dropSpeed = 0;		// 重力加速度をリセット
+					if (CheckHitBB_MAP(g_player.pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_TOP_X, PLAYER_TEXTURE_SIZE_Y),
+						D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), g_player.moveSpeed) == TOP)	// ブロックの上に立っているとき
+					{
+						g_player.dropSpeed = 0;		// 重力加速度をリセット
 
-					// 上からブロックに突っ込むと、ブロックの上に戻す
-					// テクスチャサイズに合わせて高さの変更を行う
-					if (g_player.partsState <= TWO)
-					{
-						g_player.pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y -
-							(PLAYER_TEXTURE_SIZE_X / (MAXPARTS - g_player.partsState - (0.5f * g_player.partsState)
-								+ (5.0f * (TWO - g_player.partsState))));
+						// 上からブロックに突っ込むと、ブロックの上に戻す
+						// テクスチャサイズに合わせて高さの変更を行う
+						if (g_player.partsState <= TWO)
+						{
+							g_player.pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y -
+								(PLAYER_TEXTURE_SIZE_X / (MAXPARTS - g_player.partsState - (0.5f * g_player.partsState)
+									+ (5.0f * (TWO - g_player.partsState))));
+						}
+						else
+						{
+							g_player.pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y - PLAYER_TEXTURE_SIZE_X;
+						}
+						g_player.jumpForce = 0;		// ジャンプ回数をリセット
+						g_player.rot.z = 0;			// 回転ジャンプの回転リセット
+						break;
 					}
-					else
+				}
+
+				if (mapchip->type == 0)
+				{
+					if (CheckHitBB_MAP(g_player.pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_X, PLAYER_TEXTURE_SIZE_Y),
+						D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), g_player.moveSpeed) == TOP)	// ブロックの上に立っているとき
 					{
-						g_player.pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y - PLAYER_TEXTURE_SIZE_X;
+						g_player.dropSpeed = 0;		// 重力加速度をリセット
+
+						// 上からブロックに突っ込むと、ブロックの上に戻す
+						// テクスチャサイズに合わせて高さの変更を行う
+						if (g_player.partsState <= TWO)
+						{
+							g_player.pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y -
+								(PLAYER_TEXTURE_SIZE_X / (MAXPARTS - g_player.partsState - (0.5f * g_player.partsState)
+									+ (5.0f * (TWO - g_player.partsState))));
+						}
+						else
+						{
+							g_player.pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y - PLAYER_TEXTURE_SIZE_X;
+						}
+						g_player.jumpForce = 0;		// ジャンプ回数をリセット
+						g_player.rot.z = 0;			// 回転ジャンプの回転リセット
+						break;
 					}
-					g_player.jumpForce = 0;		// ジャンプ回数をリセット
-					g_player.rot.z = 0;			// 回転ジャンプの回転リセット
-					break;
 				}
 			}
-
-			if (mapchip->type == 0)
-			{
-				if (CheckHitBB_MAP(g_player.pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_X, PLAYER_TEXTURE_SIZE_Y),
-					D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), g_player.moveSpeed) == TOP)	// ブロックの上に立っているとき
-				{
-					g_player.dropSpeed = 0;		// 重力加速度をリセット
-
-					// 上からブロックに突っ込むと、ブロックの上に戻す
-					// テクスチャサイズに合わせて高さの変更を行う
-					if (g_player.partsState <= TWO)
-					{
-						g_player.pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y - 
-							(PLAYER_TEXTURE_SIZE_X / (MAXPARTS - g_player.partsState - (0.5f * g_player.partsState) 
-								+(5.0f * (TWO - g_player.partsState))));
-					}
-					else
-					{
-						g_player.pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y -  PLAYER_TEXTURE_SIZE_X;
-					}
-					g_player.jumpForce = 0;		// ジャンプ回数をリセット
-					g_player.rot.z = 0;			// 回転ジャンプの回転リセット
-					break;
-				}
-			}
+			mapchip++;
 		}
-		mapchip++;
+	}
+	else
+	{
+		for (int i = 0; i < (SIZE_Y * SIZE_X); i++)
+		{
+			if ((g_player.jumpForce < 1) || g_player.dropSpeed >= PLAYER_ACCELE)	// ブロック横でジャンプするとブロック上辺に張り付くバグを抑制する処理
+			{
+				if (mapchip2->type == 1 || mapchip2->type == 10)
+				{
+					if (CheckHitBB_MAP(g_player.pos, mapchip2->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_TOP_X, PLAYER_TEXTURE_SIZE_Y),
+						D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), g_player.moveSpeed) == TOP)	// ブロックの上に立っているとき
+					{
+						g_player.dropSpeed = 0;		// 重力加速度をリセット
+
+						// 上からブロックに突っ込むと、ブロックの上に戻す
+						// テクスチャサイズに合わせて高さの変更を行う
+						if (g_player.partsState <= TWO)
+						{
+							g_player.pos.y = mapchip2->pos.y - MAP_TEXTURE_SIZE_Y -
+								(PLAYER_TEXTURE_SIZE_X / (MAXPARTS - g_player.partsState - (0.5f * g_player.partsState)
+									+ (5.0f * (TWO - g_player.partsState))));
+						}
+						else
+						{
+							g_player.pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y - PLAYER_TEXTURE_SIZE_X;
+						}
+						g_player.jumpForce = 0;		// ジャンプ回数をリセット
+						g_player.rot.z = 0;			// 回転ジャンプの回転リセット
+						break;
+					}
+				}
+
+				if (mapchip2->type == 0)
+				{
+					if (CheckHitBB_MAP(g_player.pos, mapchip2->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_X, PLAYER_TEXTURE_SIZE_Y),
+						D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), g_player.moveSpeed) == TOP)	// ブロックの上に立っているとき
+					{
+						g_player.dropSpeed = 0;		// 重力加速度をリセット
+
+						// 上からブロックに突っ込むと、ブロックの上に戻す
+						// テクスチャサイズに合わせて高さの変更を行う
+						if (g_player.partsState <= TWO)
+						{
+							g_player.pos.y = mapchip2->pos.y - MAP_TEXTURE_SIZE_Y -
+								(PLAYER_TEXTURE_SIZE_X / (MAXPARTS - g_player.partsState - (0.5f * g_player.partsState)
+									+ (5.0f * (TWO - g_player.partsState))));
+						}
+						else
+						{
+							g_player.pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y - PLAYER_TEXTURE_SIZE_X;
+						}
+						g_player.jumpForce = 0;		// ジャンプ回数をリセット
+						g_player.rot.z = 0;			// 回転ジャンプの回転リセット
+						break;
+					}
+				}
+			}
+			mapchip2++;
+		}
 	}
 }
 
@@ -613,27 +716,54 @@ PLAYER *GetPlayer(void)
 void Restriction(void)
 {
 	MAP *mapchip = GetMapData();
-	//int *scene = GetScene();
+	MAP *mapchip2 = GetMapData2();
 
-	for (int j = 0; j < SIZE_X * SIZE_Y; j++)
+	if (g_player.countScroll < 2)
 	{
-		if (mapchip->type != -1)
+		for (int j = 0; j < SIZE_X * SIZE_Y; j++)
 		{
-			switch (CheckHitBB_MAP(g_player.pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_X, PLAYER_TEXTURE_SIZE_Y),
-				D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), g_player.moveSpeed))	// ブロックのどこに触れているか
+			if (mapchip->type != -1 && mapchip->type != 15)
 			{
-			case LEFT_MAPCHIP:
-				g_player.pos.x = mapchip->pos.x - MAP_TEXTURE_SIZE_X - PLAYER_TEXTURE_SIZE_X;	// 左からブロックに突っ込むとブロックの左に戻す
-				break;
-			case RIGHT_MAPCHIP:
-				g_player.pos.x = mapchip->pos.x + MAP_TEXTURE_SIZE_X + PLAYER_TEXTURE_SIZE_X;	// 右からブロックに突っ込むとブロックの右に戻す
-				break;
-			case UNDER:
-				g_player.pos.y = mapchip->pos.y + MAP_TEXTURE_SIZE_Y + PLAYER_TEXTURE_SIZE_Y;	// 下からブロックに突っ込むとブロックの下に戻す
-				break;
+				switch (CheckHitBB_MAP(g_player.pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_X, PLAYER_TEXTURE_SIZE_Y),
+					D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), g_player.moveSpeed))	// ブロックのどこに触れているか
+				{
+				case LEFT_MAPCHIP:
+					g_player.pos.x = mapchip->pos.x - MAP_TEXTURE_SIZE_X - PLAYER_TEXTURE_SIZE_X;	// 左からブロックに突っ込むとブロックの左に戻す
+					break;
+				case RIGHT_MAPCHIP:
+					g_player.pos.x = mapchip->pos.x + MAP_TEXTURE_SIZE_X + PLAYER_TEXTURE_SIZE_X;	// 右からブロックに突っ込むとブロックの右に戻す
+					break;
+				case UNDER:
+					g_player.pos.y = mapchip->pos.y + MAP_TEXTURE_SIZE_Y + PLAYER_TEXTURE_SIZE_Y;	// 下からブロックに突っ込むとブロックの下に戻す
+					break;
+				}
 			}
+			mapchip++;
 		}
-		mapchip++;
+	}
+
+	else
+	{
+		for (int j = 0; j < SIZE_X * SIZE_Y; j++)
+		{
+			if (mapchip2->type != -1 && mapchip2->type != 15)
+			{
+				switch (CheckHitBB_MAP(g_player.pos, mapchip2->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_X, PLAYER_TEXTURE_SIZE_Y),
+					D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), g_player.moveSpeed))	// ブロックのどこに触れているか
+				{
+				case LEFT_MAPCHIP:
+					g_player.pos.x = mapchip2->pos.x - MAP_TEXTURE_SIZE_X - PLAYER_TEXTURE_SIZE_X;	// 左からブロックに突っ込むとブロックの左に戻す
+					break;
+				case RIGHT_MAPCHIP:
+					g_player.pos.x = mapchip2->pos.x + MAP_TEXTURE_SIZE_X + PLAYER_TEXTURE_SIZE_X;	// 右からブロックに突っ込むとブロックの右に戻す
+					break;
+				case UNDER:
+					g_player.pos.y = mapchip2->pos.y + MAP_TEXTURE_SIZE_Y + PLAYER_TEXTURE_SIZE_Y;	// 下からブロックに突っ込むとブロックの下に戻す
+					break;
+				}
+			}
+			mapchip2++;
+		}
 	}
 
 	if (g_player.pos.x <= MAP_TEXTURE_SIZE_X)	//画面左より左に行けないようにする
@@ -644,6 +774,7 @@ void Restriction(void)
 	if (g_player.pos.x == SCREEN_WIDTH)	//画面中央より右に行けないようにする
 	{
 		g_player.scroll = true;
+		g_player.countScroll++;
 	}
 }
 
