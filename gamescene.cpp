@@ -8,6 +8,8 @@
 #include "bullet.h"
 #include "playerTest.h"
 #include "file.h"
+#include "map01.h"
+#include "map02.h"
 #include "life.h"
 #include "score.h"
 #include "timer.h"
@@ -26,8 +28,14 @@ void InitGameScene(void)
 	// ファイルの読み込み
 	InitFile();
 
+	// ファイル2の読み込み
+	InitFile2();
+
 	// マップの初期化処理
 	InitMap();
+
+	// マップ2の初期化処理
+	InitMap2();
 
 	// ライフの初期化処理
 	InitLife();
@@ -48,6 +56,9 @@ void UninitGameScene(void)
 	// プレイヤーの終了処理
 	UninitPlayer();
 
+	// マップ2の終了処理
+	UninitMap2();
+
 	// マップの終了処理
 	UninitMap();
 
@@ -66,6 +77,9 @@ void UpdateGameScene(void)
 {
 	// マップの更新処理
 	UpdateMap();
+
+	// マップ2の更新処理
+	UpdateMap2();
 
 	// プレイヤーの更新処理
 	UpdatePlayer();
@@ -88,6 +102,9 @@ void DrawGameScene(void)
 {
 	// マップの描画処理
 	DrawMap();
+
+	// マップ2の描画処理
+	DrawMap2();
 
 	// スコアの描画処理
 	DrawScore();
