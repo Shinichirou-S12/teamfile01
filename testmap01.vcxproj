@@ -142,7 +142,6 @@
     <ClCompile Include="life.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map01.cpp" />
-    <ClCompile Include="map02.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="playerTest.cpp" />
     <ClCompile Include="result.cpp" />
@@ -164,7 +163,6 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="map01.h" />
-    <ClInclude Include="map02.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="playerTest.h" />
     <ClInclude Include="result.h" />

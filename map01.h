@@ -8,6 +8,7 @@
 
 #include "main.h"
 
+// プロトタイプ宣言
 HRESULT InitMap(void);
 void UninitMap(void);
 void UpdateMap(void);

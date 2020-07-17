@@ -81,7 +81,6 @@ typedef struct
 typedef struct					// PLAYER構造体
 {
 	D3DXVECTOR3			pos;				// 位置
-	D3DXVECTOR3			mapPos;				// マップ用の位置
 	D3DXVECTOR3			scrollPos;			// カメラ用の位置
 	D3DXVECTOR3			rot;				// ポリゴンの向き(回転)
 	D3DXVECTOR3			scl;				// ポリゴンの大きさ(スケール)
@@ -93,7 +92,6 @@ typedef struct					// PLAYER構造体
 	float				checkTopTexSize;	// topの当たり判定用
 
 	bool				moveble;			// 移動可能
-	//bool				keyPressing;
 	bool				invincible;			// 無敵状態
 	bool				use;				// 使用状態かどうか
 	bool				scroll;
@@ -105,13 +103,7 @@ typedef struct					// PLAYER構造体
 	int					hp;					// 体力
 	int					jumpForce;			// ジャンプ力
 	float				dropSpeed;			// 落下速度（重力）
-	//int					AtkPat;				// 攻撃タイプ
-
-	//int					NextAtkPat;
-	//bool				AtkDeReSwi;			// (Delay response switch)
-	//int					AtkDeRespTime;		// (Delay response time)
 	D3DXVECTOR2			textureSize;		// テクスチャサイズ
-	//D3DXVECTOR2			coltextureSize;		// 移動貫通処理の当たり判定用テクスチャサイズ
 
 
 	int					direction;			// PLAYERの方向

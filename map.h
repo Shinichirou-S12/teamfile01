@@ -9,6 +9,7 @@
 
 #define SIZE_X	(40)
 #define SIZE_Y	(15)
+#define MAP_MAXDATA	(3)
 
 //#define MAP_TEXTURE_SIZE_BB_X			(16.0f/2.0f)		    // テクスチャサイズ
 //#define MAP_TEXTURE_SIZE_BB_Y			(16.0f/2.0f)		    // 同上
@@ -54,4 +55,3 @@ typedef struct
 }MAP;
 
 MAP *GetMapData(void);
-MAP *GetMapData2(void);
