@@ -30,6 +30,9 @@ void InitGameScene(void)
 	// ファイル2の読み込み
 	InitFile2();
 
+	// ファイル3の読み込み
+	InitFile3();
+
 	// マップの初期化処理
 	InitMap();
 
