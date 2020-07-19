@@ -24,14 +24,16 @@ void InitGameScene(void)
 	// プレイヤーの初期化処理
 	InitPlayer();
 
-	// ファイルの読み込み
-	InitFile();
+	//// ファイルの読み込み
+	//InitFile();
 
-	// ファイル2の読み込み
-	InitFile2();
+	//// ファイル2の読み込み
+	//InitFile2();
 
-	// ファイル3の読み込み
-	InitFile3();
+	//// ファイル3の読み込み
+	//InitFile3();
+
+	OpenFile();
 
 	// マップの初期化処理
 	InitMap();

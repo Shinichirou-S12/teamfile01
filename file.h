@@ -5,18 +5,6 @@
 //
 //=============================================================================
 
-// プロトタイプ宣言
-HRESULT InitFile(void);
+HRESULT OpenFile(void);
 
-HRESULT InitFile2(void);
-
-HRESULT InitFile3(void);
-
-// 1つ目のマップデータ
-int *GetMapDataType(void);
-
-// 2つ目のマップデータ
-int *GetMapDataType2(void);
-
-// 3つ目のマップデータ
-int *GetMapDataType3(void);
+int *GetFileData(void);

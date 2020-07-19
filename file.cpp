@@ -14,114 +14,52 @@
 /*******************************************************************************
 * グローバル変数
 *******************************************************************************/
-int data[SIZE_Y][SIZE_X]  =	{ NULL };
-int data2[SIZE_Y][SIZE_X] = { NULL };
-int data3[SIZE_Y][SIZE_X] = { NULL };
 
-/*******************************************************************************
- 関数名:	HRESULT InitFile(void)
- 引数:		無し
- 戻り値:
- 説明:
-*******************************************************************************/
-HRESULT InitFile(void)
+// ファイルリスト
+const char *const fileName[MAP_MAXDATA]=
 {
-	data[SIZE_Y][SIZE_X] = { 0 };
-	FILE *fp;
+	"data/DATA2/maptest01.csv",
+	"data/DATA2/maptest02.csv",
+	"data/DATA2/maptest03.csv",
+};
+
+FILE *fp[MAP_MAXDATA];
+
+int datas[MAP_MAXDATA][SIZE_Y][SIZE_X] = { 0 };
+
+// ファイルを開く処理
+HRESULT OpenFile(void)
+{
 	char buff[SIZE_Y * SIZE_X], *pbuff;
 
-	fp = fopen("data/DATA2/maptest01.csv", "r");
-
-	if (fp == NULL)
+	for (int k = 0; k < MAP_MAXDATA; k++)
 	{
-		return S_FALSE;
-	}
+		fp[k] = fopen(fileName[k], "r");
 
-	for (int i = 0; i < SIZE_Y; i++)
-	{
-		fgets(buff, SIZE_Y * SIZE_X, fp);
-		pbuff = buff;
-		for (int j = 0; j < SIZE_X; j++)
+		if (fp[k] == NULL)
 		{
-			data[i][j] = (int)strtod(pbuff, &pbuff);
-			pbuff++;
+			return S_FALSE;
 		}
-	}
 
-	fclose(fp);
+		for (int i = 0; i < SIZE_Y; i++)
+		{
+			fgets(buff, SIZE_Y * SIZE_X, fp[k]);
+			pbuff = buff;
+			for (int j = 0; j < SIZE_X; j++)
+			{
+				datas[k][i][j] = (int)strtod(pbuff, &pbuff);
+				pbuff++;
+			}
+		}
+
+		fclose(fp[k]);
+	}
 
 	return S_OK;
 }
 
-HRESULT InitFile2(void)
+// データ取得関数
+int *GetFileData(void)
 {
-	data2[SIZE_Y][SIZE_X] = { 0 };
-	FILE *fp;
-	char buff[SIZE_Y * SIZE_X], *pbuff;
-
-	fp = fopen("data/DATA2/maptest02.csv", "r");
-
-	if (fp == NULL)
-	{
-		return S_FALSE;
-	}
-
-	for (int i = 0; i < SIZE_Y; i++)
-	{
-		fgets(buff, SIZE_Y * SIZE_X, fp);
-		pbuff = buff;
-		for (int j = 0; j < SIZE_X; j++)
-		{
-			data2[i][j] = (int)strtod(pbuff, &pbuff);
-			pbuff++;
-		}
-	}
-
-	fclose(fp);
-
-	return S_OK;
-}
-
-HRESULT InitFile3(void)
-{
-	data3[SIZE_Y][SIZE_X] = { 0 };
-	FILE *fp;
-	char buff[SIZE_Y * SIZE_X], *pbuff;
-
-	fp = fopen("data/DATA2/maptest03.csv", "r");
-
-	if (fp == NULL)
-	{
-		return S_FALSE;
-	}
-
-	for (int i = 0; i < SIZE_Y; i++)
-	{
-		fgets(buff, SIZE_Y * SIZE_X, fp);
-		pbuff = buff;
-		for (int j = 0; j < SIZE_X; j++)
-		{
-			data3[i][j] = (int)strtod(pbuff, &pbuff);
-			pbuff++;
-		}
-	}
-
-	fclose(fp);
-
-	return S_OK;
-}
-
-int *GetMapDataType(void)
-{
-	return &data[0][0];
-}
-
-int *GetMapDataType2(void)
-{
-	return &data2[0][0];
-}
-
-int *GetMapDataType3(void)
-{
-	return &data3[0][0];
+	return &datas[0][0][0];
 }
