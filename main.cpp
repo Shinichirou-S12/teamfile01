@@ -6,8 +6,15 @@
 //=============================================================================
 #include "main.h"
 #include "scene.h"
+#include "player.h"
 #include "input.h"
+#include "file.h"
+#include "checkhit.h"
+#include "bullet.h"
 #include "playerTest.h"
+#include "timer.h"
+#include "life.h"
+#include "score.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -290,7 +297,21 @@ HRESULT Init(HWND hWnd, BOOL bWindow)
 		OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, _T("Terminal"), &g_pD3DXFont );
 #endif
 	
-	InitScene();
+	InitFile();
+
+	InitMap();
+
+	// プレイヤーの初期化処理
+	InitPlayer();
+
+	// バレットの初期化処理
+	InitBullet(0);
+	
+	// UI周りの初期化
+	InitLife();
+	InitScore();
+	InitTimer();
+
 	return S_OK;
 }
 
@@ -309,11 +330,21 @@ void Uninit(void)
 		g_pD3D->Release();
 	}
 
-	UninitScene();
+	// UI周りの終了処理
+	UninitTimer();
+	UninitScore();
+	UninitLife();
+
+	// バレットの終了処理
+	UninitBullet();
+
+	// プレイヤー終了処理
+	UninitPlayer();
 
 	// 入力処理の終了処理
 	UninitInput();
 
+	UninitMap();
 }
 
 //=============================================================================
@@ -324,7 +355,17 @@ void Update(void)
 	// 入力の更新処理
 	UpdateInput();
 	
-	UpdateScene();
+	UpdateMap();
+
+	UpdatePlayer();
+
+	UpdateBullet();
+
+	UpdateLife();
+
+	UpdateTimer();
+
+	UpdateScore();
 }
 
 //=============================================================================
@@ -338,7 +379,20 @@ void Draw(void)
 	// Direct3Dによる描画の開始
 	if(SUCCEEDED(g_pD3DDevice->BeginScene()))
 	{
-		DrawScene();
+		// マップの描画処理
+		DrawMap();
+
+		DrawScore();
+
+		DrawTimer();
+
+		DrawLife();
+
+		// プレイヤーの描画処理
+		DrawPlayer();
+		
+		// バレットの描画処理
+		DrawBullet();
 
 #ifdef _DEBUG
 		// FPS表示

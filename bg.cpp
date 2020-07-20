@@ -86,7 +86,7 @@ void UpdateBg(void)
 
 	if (GetInput(STARTBUTTON))
 	{
-		SetScene(SCENE_GAME);
+		SetScene(scene);
 	}
 	else
 	{

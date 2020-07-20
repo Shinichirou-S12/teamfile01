@@ -6,7 +6,6 @@
 //=============================================================================
 #include "score.h"
 #include "input.h"
-#include "playerTest.h"
 
 //*****************************************************************************
 // ƒ}ƒNƒ’è‹`
@@ -106,13 +105,6 @@ void UninitScore(void)
 //=============================================================================
 void UpdateScore(void)
 {
-	PLAYER *player = GetPlayer();
-
-	if (!player->use)
-	{
-		return;
-	}
-
 	for (int nCntPlace = 0; nCntPlace < NUM_PLACE; nCntPlace++)
 	{
 		int number;
