@@ -7,6 +7,8 @@
 #include "main.h"
 #include "result.h"
 #include "resultscene.h"
+#include "result_score.h"
+#include "score.h"
 
 // マクロ定義
 
@@ -15,6 +17,9 @@ void InitResultScene(void)
 {
 	// ロゴと背景の初期化処理
 	InitResult(0);
+
+	// スコア
+	InitResult_Score(0);
 }
 
 // 終了処理
@@ -22,6 +27,10 @@ void UninitResultScene(void)
 {
 	// ロゴと背景の終了処理
 	UninitResult();
+
+	UninitResult_Score();
+
+	UninitScore();
 }
 
 // 更新処理
@@ -29,6 +38,9 @@ void UpdateResultScene(void)
 {
 	// ロゴと背景の更新処理
 	UpdateResult();
+
+	// リザルトスコアの更新処理
+	UpdateResult_Score();
 }
 
 // 描画処理
@@ -36,4 +48,7 @@ void DrawResultScene(void)
 {
 	// ロゴと背景の描画処理
 	DrawResult();
+
+	// リザルトスコアの描画処理
+	DrawResult_Score();
 }

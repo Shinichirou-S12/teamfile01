@@ -148,6 +148,8 @@
     <ClCompile Include="playerTest.cpp" />
     <ClCompile Include="result.cpp" />
     <ClCompile Include="resultscene.cpp" />
+    <ClCompile Include="result_score.cpp" />
+    <ClCompile Include="savefile.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="score.cpp" />
     <ClCompile Include="timer.cpp" />
@@ -171,6 +173,8 @@
     <ClInclude Include="playerTest.h" />
     <ClInclude Include="result.h" />
     <ClInclude Include="resultscene.h" />
+    <ClInclude Include="result_score.h" />
+    <ClInclude Include="savefile.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="score.h" />
     <ClInclude Include="timer.h" />

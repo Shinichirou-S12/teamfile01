@@ -146,10 +146,6 @@ void UpdatePlayer(void)
 		g_player.animeCnt.PatternAnim = (g_player.animeCnt.PatternAnim + 1) % g_player.animeCnt.AnimPatNum;
 	}
 
-		if (g_player.hp <= 0 || g_player.pos.y > SCREEN_HEIGHT + PLAYER_TEXTURE_SIZE_Y * 5)
-		{
-			g_player.use = false;
-		}
 
 		g_player.countShot++;			// 連射のカウント用
 		g_player.scrollPos.x = 0.0f;	// 画面スクロール用の変数
@@ -212,6 +208,11 @@ void UpdatePlayer(void)
 		JumpPlayer();
 		FallPlayer();
 		AttackPlayer();
+
+		if (g_player.hp <= 0 || g_player.pos.y > SCREEN_HEIGHT + PLAYER_TEXTURE_SIZE_Y * 5)
+		{
+			g_player.use = false;
+		}
 
 		animPlayerState(&g_player.state, &g_player.partsState);
 
@@ -429,7 +430,7 @@ void DrawPlayer(void)
 	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
-	if (g_player.use == true)			// 使用している状態なら描画する
+	if (g_player.use == true || g_player.hp > 0)			// 使用している状態なら描画する
 	{
 		// テクスチャの設定
 		pDevice->SetTexture(0, g_player.Texture);

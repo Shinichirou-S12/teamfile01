@@ -20,6 +20,20 @@ struct SCORE
 	bool		use;		// 使用中かどうか
 };
 
+struct LANKING_SCORE
+{
+	int num;
+};
+
+
+typedef struct					// セーブデータの構造体
+{
+	// スコアデータを保存
+	LANKING_SCORE r_score;	// ランキングスコア
+	int		  score;	// プレイ後のスコア
+} SAVEDATA;
+
+
 //*****************************************************************************
 // プロトタイプ宣言
 //*****************************************************************************
@@ -28,6 +42,7 @@ void UninitScore(void);
 void UpdateScore(void);
 void DrawScore(void);
 
+LANKING_SCORE *GetResult_Score(void);
 void ChangeScore(int value);
-
+int GetScore(void);
 #endif

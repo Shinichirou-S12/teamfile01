@@ -399,4 +399,9 @@ void ResetChangeScore(void)
 
 }
 
+// ƒXƒRƒAæ“¾ŠÖ”
+int GetScore(void)
+{
+	return g_score;
+}
 

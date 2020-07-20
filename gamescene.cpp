@@ -54,14 +54,17 @@ void UninitGameScene(void)
 	// プレイヤーの終了処理
 	UninitPlayer();
 
+	// エネミーの終了処理
+	UninitEnemy();
+
 	// マップの終了処理
 	UninitMap();
 
 	// ライフの終了処理
 	UninitLife();
 
-	// スコアの終了処理
-	UninitScore();
+	//// スコアの終了処理
+	//UninitScore();
 
 	// タイマーの終了処理
 	UninitTimer();
@@ -75,6 +78,9 @@ void UpdateGameScene(void)
 
 	// プレイヤーの更新処理
 	UpdatePlayer();
+
+	// エネミーの更新処理
+	UpdateEnemy();
 
 	// 弾の更新処理
 	UpdateBullet();
@@ -104,6 +110,9 @@ void DrawGameScene(void)
 	// ライフの描画処理
 	DrawLife();
 
+	// エネミーの描画処理
+	DrawEnemy();
+	
 	// プレイヤーの描画処理
 	DrawPlayer();
 
