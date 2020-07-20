@@ -136,9 +136,11 @@
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="checkhit.cpp" />
     <ClCompile Include="controller.cpp" />
+    <ClCompile Include="enemy.cpp" />
     <ClCompile Include="file.cpp" />
     <ClCompile Include="gamescene.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="item.cpp" />
     <ClCompile Include="life.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map01.cpp" />
@@ -156,9 +158,11 @@
     <ClInclude Include="bullet.h" />
     <ClInclude Include="checkhit.h" />
     <ClInclude Include="controller.h" />
+    <ClInclude Include="enemy.h" />
     <ClInclude Include="file.h" />
     <ClInclude Include="gamescene.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="item.h" />
     <ClInclude Include="life.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="map.h" />

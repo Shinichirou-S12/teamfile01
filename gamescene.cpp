@@ -12,6 +12,8 @@
 #include "life.h"
 #include "score.h"
 #include "timer.h"
+#include "enemy.h"
+#include "item.h"
 
 // マクロ定義
 
@@ -24,15 +26,10 @@ void InitGameScene(void)
 	// プレイヤーの初期化処理
 	InitPlayer();
 
-	//// ファイルの読み込み
-	//InitFile();
+	// エネミーの初期化処理
+	InitEnemy(0);
 
-	//// ファイル2の読み込み
-	//InitFile2();
-
-	//// ファイル3の読み込み
-	//InitFile3();
-
+	// ファイルの読み込み
 	OpenFile();
 
 	// マップの初期化処理
@@ -53,7 +50,7 @@ void UninitGameScene(void)
 {
 	// 弾の終了処理
 	UninitBullet();
-
+	
 	// プレイヤーの終了処理
 	UninitPlayer();
 

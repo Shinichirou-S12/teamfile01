@@ -15,7 +15,7 @@
 * グローバル変数
 *******************************************************************************/
 
-// ファイルリスト
+// CSVのマップファイルリスト
 const char *const fileName[MAP_MAXDATA]=
 {
 	"data/DATA2/maptest01.csv",
@@ -25,15 +25,17 @@ const char *const fileName[MAP_MAXDATA]=
 
 FILE *fp[MAP_MAXDATA];
 
-int datas[MAP_MAXDATA][SIZE_Y][SIZE_X] = { 0 };
+int datas[MAP_MAXDATA][SIZE_Y][SIZE_X] = { NULL };
 
 // ファイルを開く処理
 HRESULT OpenFile(void)
 {
+	// CSVファイルを受け取る用のbufferと一文字ずつメモリを動かすためのポインタ
 	char buff[SIZE_Y * SIZE_X], *pbuff;
 
 	for (int k = 0; k < MAP_MAXDATA; k++)
 	{
+		// 開くファイルをリストから指定
 		fp[k] = fopen(fileName[k], "r");
 
 		if (fp[k] == NULL)
@@ -41,6 +43,7 @@ HRESULT OpenFile(void)
 			return S_FALSE;
 		}
 
+		// 一文字ずつデータに値を格納する（csvファイルのカンマは除く）
 		for (int i = 0; i < SIZE_Y; i++)
 		{
 			fgets(buff, SIZE_Y * SIZE_X, fp[k]);

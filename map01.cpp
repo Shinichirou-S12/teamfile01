@@ -42,9 +42,6 @@ MAP mapBlock[MAP_MAXDATA][SIZE_Y][SIZE_X];
 HRESULT InitMap(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
-	//int *data = GetMapDataType();
-	//int *data2 = GetMapDataType2();
-	//int *data3 = GetMapDataType3();
 
 	int *data = GetFileData();
 
@@ -57,7 +54,7 @@ HRESULT InitMap(void)
 	{
 		for (int i = 0; i < SIZE_Y; i++)
 		{
-			for (int j = 0; j < SIZE_X; j++)
+			for (int j = 0; j < SIZE_X; j++, *data++)
 			{
 				mapBlock[k][i][j].use = true;
 				mapBlock[k][i][j].Texture = g_pD3DTextureMap;
@@ -65,36 +62,8 @@ HRESULT InitMap(void)
 					MAP_TEXTURE_SIZE_Y + (i * MAP_TEXTURE_SIZE_Y * 2), 0.0f);
 
 				mapBlock[k][i][j].type = *data;
-				//switch (k)
-				//{
-				//case 0:
-				//	mapBlock[k][i][j].type = *data;
-				//	break;
-				//case 1:
-				//	mapBlock[k][i][j].type = *data2;
-				//	break;
-				//case 2:
-				//	mapBlock[k][i][j].type = *data3;
-				//default:
-				//	break;
-				//}
 				mapBlock[k][i][j].move = D3DXVECTOR3(0.0f, 2.0f, 0.0f);	// ˆÚ“®—Ê
 				MakeVertexMap(j, i, k);
-
-				//switch (k)
-				//{
-				//case 0:
-				//	data++;
-				//	break;
-				//case 1:
-				//	data2++;
-				//	break;
-				//case 2:
-				//	data3++;
-				//default:
-				//	break;
-				//}
-				*data++;
 			}
 		}
 	}
