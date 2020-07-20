@@ -6,7 +6,6 @@
 //=============================================================================
 #include "timer.h"
 #include "input.h"
-#include "playerTest.h"
 
 //*****************************************************************************
 // ƒ}ƒNƒ’è‹`
@@ -106,13 +105,6 @@ void UninitTimer(void)
 //=============================================================================
 void UpdateTimer(void)
 {
-	PLAYER *player = GetPlayer();
-
-	if (!player->use)
-	{
-		return;
-	}
-
 	if(g_bEnableTimer)
 	{
 		g_nTimer--;

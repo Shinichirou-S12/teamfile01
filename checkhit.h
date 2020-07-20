@@ -16,6 +16,7 @@ enum CHECKBLOCK
 	MAXCHECKBLOCK
 };
 
+
 /**************************************************************************//**
 	@brief		CheckHitBB_MAP
 	@brief		BBMAPの衝突判定
@@ -52,21 +53,5 @@ bool CheckHitBB(D3DXVECTOR3 pos1, D3DXVECTOR3 pos2, D3DXVECTOR2 size1, D3DXVECTO
 				false	pos1とpos2が当たっていない
 *//***************************************************************************/
 bool CheckHitBC(D3DXVECTOR3 pos1, D3DXVECTOR3 pos2, float size1, float size2);
-
-/**************************************************************************//**
-	@brief		FallCheckHitPlayer
-	@brief		プレイヤーの落下処理の時の当たり判定
-	@param		なし
-	@return		なし
-*//***************************************************************************/
-void FallCheckHitPlayer(void);
-
-/**************************************************************************//**
-	@brief		Restriction
-	@brief		プレイヤーの横移動で画面外やブロックを貫通しないための処理
-	@param		なし
-	@return		なし
-*//***************************************************************************/
-void Restriction(void);
 
 #endif
