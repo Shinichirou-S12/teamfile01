@@ -5,10 +5,11 @@
 //
 //=============================================================================
 #include "main.h"
+#include "scene.h"
 #include "playerTest.h"
 #include "controller.h"
 #include "input.h"
-#include "file.h"
+#include "map.h"
 #include "bullet.h"
 #include "checkhit.h"
 #include "life.h"
@@ -25,13 +26,14 @@
 //*****************************************************************************
 // プロトタイプ宣言
 //*****************************************************************************
+void ReadTexturePlayer(void);
+
 HRESULT MakeVertexPlayer(void);
 void SetTexturePlayer(VERTEX_2D *Vtx, int cntPattern);
 void SetVertexPlayer(VERTEX_2D *Vtx);
 void animPlayerState(int * animState, int * partsState);
 
 void Invincible(void);
-
 void FallPlayer(void);
 void JumpPlayer(void);
 void AttackPlayer(void);
@@ -51,78 +53,24 @@ static PLAYER					g_player;		// プレイヤー構造体
 //=============================================================================
 HRESULT InitPlayer(void)
 {
-	LPDIRECT3DDEVICE9	pDevice = GetDevice();
-
-	{
-		// アイドル状態
-		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
-			TEXTURE_PLAYER_PERFECT_IDLE,		// ファイルの名前
-			&g_pD3DTexture[IDLE][PERFECT]);		// 読み込むメモリー
-
-		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
-			TEXTURE_PLAYER_THREE_IDLE,			// ファイルの名前
-			&g_pD3DTexture[IDLE][THREE]);		// 読み込むメモリー
-
-		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
-			TEXTURE_PLAYER_TWO_IDLE,			// ファイルの名前
-			&g_pD3DTexture[IDLE][TWO]);			// 読み込むメモリー
-
-		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
-			TEXTURE_PLAYER_ONE_IDLE,			// ファイルの名前
-			&g_pD3DTexture[IDLE][ONE]);			// 読み込むメモリー
-
-
-		// 移動
-		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
-			TEXTURE_PLAYER_PERFECT_RUN,			// ファイルの名前
-			&g_pD3DTexture[RUN][PERFECT]);		// 読み込むメモリー
-
-		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
-			TEXTURE_PLAYER_THREE_RUN,			// ファイルの名前
-			&g_pD3DTexture[RUN][THREE]);		// 読み込むメモリー
-
-		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
-			TEXTURE_PLAYER_TWO_RUN,				// ファイルの名前
-			&g_pD3DTexture[RUN][TWO]);			// 読み込むメモリー
-
-		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
-			TEXTURE_PLAYER_ONE_RUN,				// ファイルの名前
-			&g_pD3DTexture[RUN][ONE]);			// 読み込むメモリー
-
-		// ジャンプ
-		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
-			TEXTURE_PLAYER_PERFECT_JUMP,		// ファイルの名前
-			&g_pD3DTexture[JUMP][PERFECT]);		// 読み込むメモリー
-
-		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
-			TEXTURE_PLAYER_THREE_JUMP,			// ファイルの名前
-			&g_pD3DTexture[JUMP][THREE]);		// 読み込むメモリー
-
-		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
-			TEXTURE_PLAYER_TWO_JUMP,			// ファイルの名前
-			&g_pD3DTexture[JUMP][TWO]);			// 読み込むメモリー
-
-		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
-			TEXTURE_PLAYER_ONE_JUMP,			// ファイルの名前
-			&g_pD3DTexture[JUMP][ONE]);			// 読み込むメモリー
-
-	}
+	ReadTexturePlayer();
 
 	g_player.invincible = false;									// 無敵状態ではない
 	g_player.pos = D3DXVECTOR3(/*i*200.0f + */200.0f, 300.0f, 0.0f);// 座標データを初期化
-	g_player.mapPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				// マップ座標データを初期化
-	g_player.scrollPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				// スクロール座標データを初期化
+	g_player.scrollPos = D3DXVECTOR3(200.0f, 300.0f, 0.0f);			// スクロール座標データを初期化
 	g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);					// 回転データを初期化
+
 	g_player.moveSpeed = PLAYER_MOVE_SPEED;
 	g_player.use = true;
 	g_player.scroll = false;
 	g_player.countMove = 0;
+	g_player.countScroll = 0;
+
 
 	// アニメパターン番号をランダムで初期化
 	g_player.animeCnt.PatternAnim = rand() % PLAYER_IDLE_TEXTURE_PATTERN_DIVIDE_X;	
 
 	g_player.textureSize = D3DXVECTOR2(PLAYER_TEXTURE_SIZE_X, PLAYER_TEXTURE_SIZE_Y);
-	g_player.coltextureSize = D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_X, PLAYER_TEXTURE_BB_SIZE_Y);
 	g_player.checkTopTexSize = PLAYER_TEXTURE_BB_SIZE_TOP_X;
 
 	g_player.state = IDLE;
@@ -180,6 +128,12 @@ void UninitPlayer(void)
 //=============================================================================
 void UpdatePlayer(void)
 {
+	if (!g_player.use)
+	{
+		SetScene(SCENE_RESULT);
+		return;
+	}
+
 	// アニメーションのパターンを更新------------------
 	g_player.animeCnt.CountAnim++;
 
@@ -192,8 +146,6 @@ void UpdatePlayer(void)
 		g_player.animeCnt.PatternAnim = (g_player.animeCnt.PatternAnim + 1) % g_player.animeCnt.AnimPatNum;
 	}
 
-	if (g_player.use)	// プレイヤーが使用されていたら
-	{
 		if (g_player.hp <= 0 || g_player.pos.y > SCREEN_HEIGHT + PLAYER_TEXTURE_SIZE_Y * 5)
 		{
 			g_player.use = false;
@@ -203,6 +155,7 @@ void UpdatePlayer(void)
 		g_player.scrollPos.x = 0.0f;	// 画面スクロール用の変数
 
 		Invincible();
+
 		if (g_player.jumpForce == 0)	// プレイヤーがジャンプしていないと立ち状態になる
 		{
 			g_player.state = IDLE;
@@ -227,6 +180,7 @@ void UpdatePlayer(void)
 			g_player.jumpForce++;		// ジャンプの切り替え、1以上でジャンプ状態になる
 			g_player.state = JUMP;		// テクスチャは「ジャンプ」
 		}
+
 		if (g_player.scroll)
 		{
 			MAP *mapchip = GetMapData();
@@ -234,7 +188,7 @@ void UpdatePlayer(void)
 			if(g_player.countMove != (SCREEN_WIDTH / 10))
 			{
 				g_player.pos.x -= 10.0f;
-				for (int j = 0; j < (SIZE_X * SIZE_Y); j++)
+				for (int j = 0; j < (SIZE_X * SIZE_Y * MAP_MAXDATA); j++)
 				{
 					mapchip->pos.x -= 10.0f;
 					mapchip++;
@@ -263,8 +217,69 @@ void UpdatePlayer(void)
 
 		SetVertexPlayer(g_player.vertexWk);
 		SetTexturePlayer(g_player.vertexWk, g_player.animeCnt.PatternAnim);
-	}
 }
+
+//=============================================================================
+// プレイヤーのテクスチャ読み込み
+//=============================================================================
+void ReadTexturePlayer(void)
+{
+	LPDIRECT3DDEVICE9	pDevice = GetDevice();
+
+	// アイドル状態
+	D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
+		TEXTURE_PLAYER_PERFECT_IDLE,		// ファイルの名前
+		&g_pD3DTexture[IDLE][PERFECT]);		// 読み込むメモリー
+
+	D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
+		TEXTURE_PLAYER_THREE_IDLE,			// ファイルの名前
+		&g_pD3DTexture[IDLE][THREE]);		// 読み込むメモリー
+
+	D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
+		TEXTURE_PLAYER_TWO_IDLE,			// ファイルの名前
+		&g_pD3DTexture[IDLE][TWO]);			// 読み込むメモリー
+
+	D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
+		TEXTURE_PLAYER_ONE_IDLE,			// ファイルの名前
+		&g_pD3DTexture[IDLE][ONE]);			// 読み込むメモリー
+
+
+	// 移動
+	D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
+		TEXTURE_PLAYER_PERFECT_RUN,			// ファイルの名前
+		&g_pD3DTexture[RUN][PERFECT]);		// 読み込むメモリー
+
+	D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
+		TEXTURE_PLAYER_THREE_RUN,			// ファイルの名前
+		&g_pD3DTexture[RUN][THREE]);		// 読み込むメモリー
+
+	D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
+		TEXTURE_PLAYER_TWO_RUN,				// ファイルの名前
+		&g_pD3DTexture[RUN][TWO]);			// 読み込むメモリー
+
+	D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
+		TEXTURE_PLAYER_ONE_RUN,				// ファイルの名前
+		&g_pD3DTexture[RUN][ONE]);			// 読み込むメモリー
+
+	// ジャンプ
+	D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
+		TEXTURE_PLAYER_PERFECT_JUMP,		// ファイルの名前
+		&g_pD3DTexture[JUMP][PERFECT]);		// 読み込むメモリー
+
+	D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
+		TEXTURE_PLAYER_THREE_JUMP,			// ファイルの名前
+		&g_pD3DTexture[JUMP][THREE]);		// 読み込むメモリー
+
+	D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
+		TEXTURE_PLAYER_TWO_JUMP,			// ファイルの名前
+		&g_pD3DTexture[JUMP][TWO]);			// 読み込むメモリー
+
+	D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
+		TEXTURE_PLAYER_ONE_JUMP,			// ファイルの名前
+		&g_pD3DTexture[JUMP][ONE]);			// 読み込むメモリー
+
+}
+
 
 //=============================================================================
 // プレイヤーの無敵状態の確認
@@ -292,16 +307,8 @@ void PlayerMoving(void)
 	if (GetInput(RIGHTMOVE))
 	{
 		g_player.pos.x += g_player.moveSpeed;
-		if (g_player.pos.x >= SCREEN_WIDTH / 2)	// プレイヤーが画面中央辺りに来たらステージ自体がスクロールする
-		{
-			//if (playerWk[0].pos_MAP.x < boss->initialpos.x - SCREEN_CENTER_X - MAPCHIP_TEXTURE_SIZE_X - 3.0f)
-			{
-				//g_player.scrollPos.x += g_player.moveSpeed;
-			}
-		}
 
 		g_player.direction = Right;					// 左移動
-		g_player.keyPressing = true;				// 
 		g_player.state = RUN;						// ランニングtrue
 
 	}
@@ -309,16 +316,8 @@ void PlayerMoving(void)
 	else if (GetInput(LEFTMOVE))
 	{
 		g_player.pos.x -= g_player.moveSpeed;
-		if (g_player.pos.x <= MAP_TEXTURE_SIZE_X * (SIZE_X / 2))	// プレイヤーが画面中央辺りに来たらステージ自体がスクロールする
-		{
-			//if (playerWk[0].pos_MAP.x < boss->initialpos.x - SCREEN_CENTER_X - MAPCHIP_TEXTURE_SIZE_X - 3.0f)
-			{
-				//g_player.scrollPos.x -= g_player.moveSpeed;
-			}
-		}
 
 		g_player.direction = Left;					// 左移動
-		g_player.keyPressing = true;				// 
 		g_player.state = RUN;						// ランニングtrue
 
 	}
@@ -330,67 +329,10 @@ void PlayerMoving(void)
 //=============================================================================
 void FallPlayer(void)
 {
-	MAP *mapchip = GetMapData();
-
 	g_player.pos.y += g_player.dropSpeed * 1.0f;	// 加速度的に下へ移動、重力加速度
 	g_player.dropSpeed++;
 
-	for (int i = 0; i < (SIZE_Y * SIZE_X); i++)
-	{
-		if ((g_player.jumpForce < 1) || g_player.dropSpeed >= PLAYER_ACCELE)	// ブロック横でジャンプするとブロック上辺に張り付くバグを抑制する処理
-		{
-			if (mapchip->type == 1)
-			{
-				if (CheckHitBB_MAP(g_player.pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_TOP_X, PLAYER_TEXTURE_SIZE_Y),
-					D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), g_player.moveSpeed) == TOP)	// ブロックの上に立っているとき
-				{
-					g_player.dropSpeed = 0;		// 重力加速度をリセット
-
-					// 上からブロックに突っ込むと、ブロックの上に戻す
-					// テクスチャサイズに合わせて高さの変更を行う
-					if (g_player.partsState <= TWO)
-					{
-						g_player.pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y -
-							(PLAYER_TEXTURE_SIZE_X / (MAXPARTS - g_player.partsState - (0.5f * g_player.partsState)
-								+ (5.0f * (TWO - g_player.partsState))));
-					}
-					else
-					{
-						g_player.pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y - PLAYER_TEXTURE_SIZE_X;
-					}
-					g_player.jumpForce = 0;		// ジャンプ回数をリセット
-					g_player.rot.z = 0;			// 回転ジャンプの回転リセット
-					break;
-				}
-			}
-
-			if (mapchip->type == 0)
-			{
-				if (CheckHitBB_MAP(g_player.pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_X, PLAYER_TEXTURE_SIZE_Y),
-					D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), g_player.moveSpeed) == TOP)	// ブロックの上に立っているとき
-				{
-					g_player.dropSpeed = 0;		// 重力加速度をリセット
-
-					// 上からブロックに突っ込むと、ブロックの上に戻す
-					// テクスチャサイズに合わせて高さの変更を行う
-					if (g_player.partsState <= TWO)
-					{
-						g_player.pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y - 
-							(PLAYER_TEXTURE_SIZE_X / (MAXPARTS - g_player.partsState - (0.5f * g_player.partsState) 
-								+(5.0f * (TWO - g_player.partsState))));
-					}
-					else
-					{
-						g_player.pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y -  PLAYER_TEXTURE_SIZE_X;
-					}
-					g_player.jumpForce = 0;		// ジャンプ回数をリセット
-					g_player.rot.z = 0;			// 回転ジャンプの回転リセット
-					break;
-				}
-			}
-		}
-		mapchip++;
-	}
+	FallCheckHitPlayer();
 }
 
 //=============================================================================
@@ -409,7 +351,6 @@ void JumpPlayer(void)
 
 	/* 着地したらジャンプを０にしてジャンプ状態を解除する。その処理はFallPlayer内にある */
 }
-
 
 //=============================================================================
 // プレイヤーの攻撃
@@ -600,44 +541,3 @@ PLAYER *GetPlayer(void)
 {
 	return(&g_player);
 }
-
-//=============================================================================
-// プレイヤーの横移動で画面外やブロックを貫通しないための処理
-//=============================================================================
-void Restriction(void)
-{
-	MAP *mapchip = GetMapData();
-	//int *scene = GetScene();
-
-	for (int j = 0; j < SIZE_X * SIZE_Y; j++)
-	{
-		if (mapchip->type != -1)
-		{
-			switch (CheckHitBB_MAP(g_player.pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_X, PLAYER_TEXTURE_SIZE_Y),
-				D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), g_player.moveSpeed))	// ブロックのどこに触れているか
-			{
-			case LEFT_MAPCHIP:
-				g_player.pos.x = mapchip->pos.x - MAP_TEXTURE_SIZE_X - PLAYER_TEXTURE_SIZE_X;	// 左からブロックに突っ込むとブロックの左に戻す
-				break;
-			case RIGHT_MAPCHIP:
-				g_player.pos.x = mapchip->pos.x + MAP_TEXTURE_SIZE_X + PLAYER_TEXTURE_SIZE_X;	// 右からブロックに突っ込むとブロックの右に戻す
-				break;
-			case UNDER:
-				g_player.pos.y = mapchip->pos.y + MAP_TEXTURE_SIZE_Y + PLAYER_TEXTURE_SIZE_Y;	// 下からブロックに突っ込むとブロックの下に戻す
-				break;
-			}
-		}
-		mapchip++;
-	}
-
-	if (g_player.pos.x <= MAP_TEXTURE_SIZE_X)	//画面左より左に行けないようにする
-	{
-		g_player.pos.x = MAP_TEXTURE_SIZE_X;
-	}
-
-	if (g_player.pos.x == SCREEN_WIDTH)	//画面中央より右に行けないようにする
-	{
-		g_player.scroll = true;
-	}
-}
-

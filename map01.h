@@ -1,10 +1,15 @@
 //=============================================================================
 //
-// マップファイル処理 [file.h]
+// マップファイル処理 [map01.h]
 // Author : kitade mayumi
 //
 //=============================================================================
+#pragma once
 
-HRESULT OpenFile(void);
+#include "main.h"
 
-int *GetFileData(void);
+// プロトタイプ宣言
+HRESULT InitMap(void);
+void UninitMap(void);
+void UpdateMap(void);
+void DrawMap(void);
