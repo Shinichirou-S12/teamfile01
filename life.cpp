@@ -38,6 +38,7 @@ LPDIRECT3DVERTEXBUFFER9 g_pD3DVtxBuffLife = NULL;		// 頂点バッファインターフェー
 D3DXVECTOR3				g_posLife;						// 位置
 D3DXVECTOR3				g_rotLife;						// 向き
 int						g_nLife;						// ライフ
+int						lifeBuff;
 
 CHANGE_LIFE				g_lifeStatus;					// ライフの増減状態
 
@@ -52,7 +53,7 @@ HRESULT InitLife(void)
 	g_rotLife = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
 	// ライフの初期化
-	g_nLife = MAX_LIFE;
+	g_nLife = lifeBuff = MAX_LIFE;
 
 	// ライフ状態の初期化
 	g_lifeStatus = NONE;
@@ -118,21 +119,25 @@ void UpdateLife(void)
 		posY =sinf(radious)*LIFE_SIZE_Y;
 	}
 
-	// 状態によって処理を分ける
-	if (g_lifeStatus == ADD)
+	for (int i = 0; i < lifeBuff-g_nLife; i++)
 	{
-		SetTextureLife(g_nLife - 1, posY, alpha);
-	}
-	else if (g_lifeStatus == MINUS)
-	{
-		SetTextureLife(g_nLife - 1, posY, 1.0f - alpha);
+		// 状態によって処理を分ける
+		if (g_lifeStatus == ADD)
+		{
+			SetTextureLife(g_nLife + i, posY, alpha);
+		}
+		else if (g_lifeStatus == MINUS)
+		{
+			SetTextureLife(g_nLife + i, posY, 1.0f - alpha);
+		}
+
 	}
 
 	if (count >= CHANGE_TIME)
 	{
-		if (g_lifeStatus == MINUS)g_nLife--;
+		if (g_lifeStatus == ADD)g_nLife = lifeBuff;
+		if (g_lifeStatus == MINUS)lifeBuff = g_nLife;
 		if (g_nLife < 0)g_nLife = 0;
-		if (g_nLife > MAX_LIFE)g_nLife = MAX_LIFE;
 
 		count = 0;
 		g_lifeStatus = NONE;
@@ -141,8 +146,20 @@ void UpdateLife(void)
 #ifdef _DEBUG
 	// DEBUG中、１を押すとlife+1する、２を押すとlife-1する
 	// また、playerとの連動はまだしていない
-	if (GetKeyboardTrigger(DIK_1))ChangeLife(1);
-	if (GetKeyboardTrigger(DIK_2))ChangeLife(-1);
+	if (GetKeyboardTrigger(DIK_1))ChangeLife(-1);
+	if (GetKeyboardTrigger(DIK_2))ChangeLife(1);
+
+	if (GetKeyboardTrigger(DIK_3)) 
+	{
+		ChangeLife(-1);
+		ChangeLife(-1);
+		ChangeLife(1);
+	}
+	if (GetKeyboardTrigger(DIK_4)) {
+		ChangeLife(1);
+		ChangeLife(1);
+		ChangeLife(-1);
+	}
 
 #endif
 }
@@ -164,7 +181,7 @@ void DrawLife(void)
 	pDevice->SetTexture(0, g_pD3DTextureLife[0]);
 
 	// ポリゴンの描画
-	for(int nCntPlace = 0; nCntPlace < g_nLife; nCntPlace++)
+	for(int nCntPlace = 0; nCntPlace < lifeBuff; nCntPlace++)
 	{
 		pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, (nCntPlace * 4), NUM_POLYGON);
 	}
@@ -298,25 +315,30 @@ void SetTextureLife(int nIdx, float y, float alpha)
 void ChangeLife(int nValue)
 {
 	// もし変化中なら変化しない
-	if (g_lifeStatus != NONE)return;
+	//if (g_lifeStatus != NONE)return;
 
 	// もしlifeが+されるなら
 	if (nValue > 0)
 	{
 		// +処理に入る
+		lifeBuff++;			// 画像表示の為先にlifeを+する
+		// lifeの最大値に達したら
+		if (lifeBuff > MAX_LIFE)
+		{
+			lifeBuff--;
+			g_lifeStatus = NONE;
+		}
+		if (g_lifeStatus == MINUS)lifeBuff= g_nLife+1;
 		g_lifeStatus = ADD;
-		g_nLife++;			// 画像表示の為先にlifeを+する
 	}
 	// もしlifeが-されるなら
-	else if (nValue < 0)g_lifeStatus = MINUS;
-
-	// lifeの最大値に達したら
-	if (g_nLife > MAX_LIFE)
+	else if (nValue < 0)
 	{
 		g_nLife--;
-		g_lifeStatus = NONE;
-		return;
+		if (g_lifeStatus == ADD)g_nLife= lifeBuff-1;
+		g_lifeStatus = MINUS;
 	}
+
 }
 
 CHANGE_LIFE *GetLifeState(void)
