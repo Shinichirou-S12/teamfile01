@@ -8,6 +8,7 @@
 #include "enemy.h"
 #include "playerTest.h"
 #include "map.h"
+#include "checkhit.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -20,6 +21,8 @@
 HRESULT MakeVertexEnemy( int no );
 void SetTextureEnemy( int no, int cntPattern );
 void SetVertexEnemy( int no );
+void SetEnemy(void);
+void DeathEnemy(void);
 
 //*****************************************************************************
 // グローバル変数
@@ -49,10 +52,12 @@ HRESULT InitEnemy(int type)
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
 		enemyWk[i].use = true;										// 使用
-		enemyWk[i].pos = D3DXVECTOR3(50+i*150.0f, 100.0f, 0.0f);	// 座標データを初期化
-		enemyWk[i].move= D3DXVECTOR3(2.0f, 0.0f, 0.0f);				// 移動量
+		enemyWk[i].hp = 2;											// 体力
+		enemyWk[i].damage = false;									// ダメージ判定
 
-		enemyWk[i].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				// 回転データを初期化
+		enemyWk[i].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				// 座標データを初期化
+		enemyWk[i].move = D3DXVECTOR3(2.0f, 0.0f, 0.0f);			// 移動量を初期化
+		enemyWk[i].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				// 回転量を初期化
 		enemyWk[i].PatternAnim = 0;									// アニメパターン番号をランダムで初期化
 		enemyWk[i].CountAnim = 0;									// アニメカウントを初期化
 		
@@ -64,6 +69,7 @@ HRESULT InitEnemy(int type)
 		MakeVertexEnemy(i);											// 頂点情報の作成
 	}
 
+	SetEnemy();
 
 	return S_OK;
 }
@@ -129,6 +135,9 @@ void UpdateEnemy(void)
 					enemyWk[i].move.x *= -1;			// 反対方向へ移動させる
 				}
 			}
+
+			CheckBullet();
+			DeathEnemy();
 
 			SetVertexEnemy(i);						// 移動後の座標で頂点を設定
 		}
@@ -243,21 +252,32 @@ void SetVertexEnemy( int i )
 //=============================================================================
 // エネミーの位置設定関数
 //=============================================================================
-void SetEnemy(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 rot)
+void SetEnemy(void)
 {
 	MAP *map = GetMapData();
 	ENEMY *enemy = GetEnemy();
 
-	for (int i = 0; i < MAP_MAXDATA * SIZE_X * SIZE_Y; i++, map++)
+	for (int p = 0; p < MAP_MAXDATA * SIZE_X * SIZE_Y; p++, map++)
 	{
 		if (map->type == GLASS15)
 		{
-			for (int j = 0; j < ENEMY_MAX; j++, enemy++)
-			{
-				enemy->pos = pos;
-				enemy->move = move;
-				enemy->rot = rot;
-			}
+			enemy->pos = map->pos;
+			enemy++;
+		}
+	}
+}
+
+//=============================================================================
+// エネミーの破棄設定
+//=============================================================================
+void DeathEnemy(void)
+{
+	ENEMY *enemy = GetEnemy();
+	for (int i = 0; i < ENEMY_MAX; i++, enemy++)
+	{
+		if (enemy->pos.x <= 0.0f )
+		{
+			enemy->use = false;
 		}
 	}
 }

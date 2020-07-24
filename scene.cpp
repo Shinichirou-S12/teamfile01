@@ -107,4 +107,3 @@ int GetScene(void)
 {
 	return g_scene;
 }
-

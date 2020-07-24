@@ -24,6 +24,8 @@
 HRESULT MakeVertexItem( int no );				// アイテムの頂点情報作成
 void SetTextureItem(int no, int cntPattern);	// アイテムの頂点座標の設定
 void SetVertexItem(int no);						// アイテムのテクスチャの設定
+void SetItem(float speed);
+void DeathItem(void);							// アイテムの破棄処理
 
 //*****************************************************************************
 // グローバル変数
@@ -63,13 +65,14 @@ HRESULT InitItem(int type)
 	{
 		item->use = false;									// 使用
 		item->delete_use = false;							// 未使用			
-		item->pos = D3DXVECTOR3(i*200.0f+200.0f, 200.0f, 0.0f);	// 座標データを初期化
 		item->rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			// 回転データを初期化
 		item->PatternAnim = 0;								// アニメパターン番号をランダムで初期化
 		item->CountAnim = 0;								// アニメカウントを初期化
 		item->Texturenum = rand() % 3;						//テクスチャー種類をランダムで初期化
 		
 		item->speed = 0;									// アイテムスピードの初期化
+
+		item->point = ITEM_POINT_HERB;
 
 		switch (item->Texturenum)							//テクスチャごとにポイントを初期化
 		{
@@ -100,6 +103,8 @@ HRESULT InitItem(int type)
 		MakeVertexItem(i);												// 頂点情報の作成
 	}
 
+	 SetItem(0.0f);
+
 	return S_OK;
 }
 
@@ -110,12 +115,12 @@ void UninitItem(void)
 {
 	ITEM *item = &itemWk[0];
 
-	//for (int i = 0; i < ITEM_MAX; i++)
+	for (int i = 0; i < ITEM_MAX; i++)
 	{
 		if (g_pD3DTextureItem != NULL)
 		{	// テクスチャの開放
-			g_pD3DTextureItem[item->Texturenum]->Release();
-			g_pD3DTextureItem[item->Texturenum] = NULL;
+			g_pD3DTextureItem[i]->Release(); // 問題がある項目
+			g_pD3DTextureItem[i] = NULL;
 		}
 	}
 }
@@ -199,6 +204,21 @@ void SetItem(D3DXVECTOR3 pos)
 			{
 				item->pos = pos;
 			}
+		}
+	}
+}
+
+//=============================================================================
+// アイテムの破棄設定
+//=============================================================================
+void DeathItem(void)
+{
+	ITEM *item = &itemWk[0];
+	for (int i = 0; i < ITEM_MAX; i++, item++)
+	{
+		if (item->pos.x <= 0.0f)
+		{
+			item->use = false;
 		}
 	}
 }
@@ -304,9 +324,10 @@ ITEM *GetItem(int no)
 //============================================================================
 // アイテムの設定
 //============================================================================
-ITEM *SetItem(D3DXVECTOR3 pos, float speed)
+void SetItem(float speed)
 {
 	ITEM *item = GetItem(0);
+	MAP *map = GetMapData();
 
 	for (int i = 0; i < ITEM_MAX; i++, item++)
 	{
@@ -321,12 +342,22 @@ ITEM *SetItem(D3DXVECTOR3 pos, float speed)
 			D3DXVECTOR2 temp = D3DXVECTOR2(TEXTURE_ITEM_SIZE_X, TEXTURE_ITEM_SIZE_Y);
 			item->Radius = D3DXVec2Length(&temp);				// アイテムの半径を初期化
 			item->rot.z = 0.0f;
-			item->pos = pos;
+			
 			item->speed = speed;
 			item->delete_use = false;
 			item->use = true;
-			return item;
 		}
 	}
-	return NULL;
+
+	ITEM *items = GetItem(0);
+
+	for (int j = 0; j < MAP_MAXDATA * SIZE_X * SIZE_Y; j++, map++)
+	{
+		if (map->type == BLOCK2)
+		{
+			items->pos = map->pos;
+			items++;
+		}
+	}
+
 }

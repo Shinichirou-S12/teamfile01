@@ -114,7 +114,8 @@ void UpdateBg(void)
 void DrawBg(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
-	
+	int scene = GetScene();
+
 	// 頂点フォーマットの設定
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
@@ -124,14 +125,17 @@ void DrawBg(void)
 	// ポリゴンの描画
 	pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, g_vertexWkTitle, sizeof(VERTEX_2D));
 
-	// 頂点フォーマットの設定
-	pDevice->SetFVF(FVF_VERTEX_2D);
+	if (scene != SCENE_GAME)
+	{
+		// 頂点フォーマットの設定
+		pDevice->SetFVF(FVF_VERTEX_2D);
 
-	// テクスチャの設定
-	pDevice->SetTexture(0, g_pD3DTextureTitleLogo);
+		// テクスチャの設定
+		pDevice->SetTexture(0, g_pD3DTextureTitleLogo);
 
-	// ポリゴンの描画
-	pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, g_vertexWkTitleLogo, sizeof(VERTEX_2D));
+		// ポリゴンの描画
+		pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, g_vertexWkTitleLogo, sizeof(VERTEX_2D));
+	}
 }
 
 /**************************************************************************//**

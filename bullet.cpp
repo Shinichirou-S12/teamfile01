@@ -9,6 +9,7 @@
 #include "main.h"
 #include "bullet.h"
 //#include "sound.h"
+#include "playerTest.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -58,7 +59,8 @@ HRESULT InitBullet(int type)
 		bullet->rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			// 回転データを初期化
 		bullet->PatternAnim = 0;								// アニメパターン番号をランダムで初期化
 		bullet->CountAnim = 0;									// アニメカウントを初期化
-		
+		bullet->speed = 5.0f;
+
 		bullet->Texture = g_pD3DTextureBullet;					// テクスチャ情報
 		MakeVertexBullet(i);									// 頂点情報の作成
 	}
@@ -91,7 +93,8 @@ void UninitBullet(void)
 void UpdateBullet(void)
 {
 	BULLET *bullet = bulletWk;				// バレットのポインターを初期化
-	
+	PLAYER *player = GetPlayer();
+
 	for (int i = 0; i < BULLET_MAX; i++, bullet++)
 	{
 		if (bullet->use == true)			// 使用している状態なら更新する
@@ -106,15 +109,15 @@ void UpdateBullet(void)
 			SetTextureBullet(i, bullet->PatternAnim);	// アニメーション後のテクスチャの設定
 
 			// バレットの移動処理
-			bullet->pos.x += BULLET_SPEED;
-			
+			bullet->pos.x += bullet->move.x;
+
 			// 画面外まで進んだ？
-			if(bullet->pos.x > TEXTURE_BULLET_SIZE_X + SCREEN_WIDTH)	// 自分の大きさを考慮して画面外か判定している
+			if (bullet->pos.x < 0.0f
+				|| bullet->pos.x >SCREEN_WIDTH)	// 自分の大きさを考慮して画面外か判定している
 			{
 				bullet->use = false;
-				bullet->pos.x = -100.0f;
 			}
-			
+
 			SetVertexBullet(i);							// 移動後の座標で頂点を設定
 		}
 	}
@@ -235,25 +238,38 @@ void SetVertexBullet( int no )
 //=============================================================================
 // 弾の発射設定
 //=============================================================================
-void SetBullet(D3DXVECTOR3 pos)
+void SetBullet(D3DXVECTOR3 pos, int type)
 {
 	BULLET *bullet = &bulletWk[0];			// バレットのポインターを初期化
 
 	// もし未使用の弾が無かったら発射しない( =これ以上撃てないって事 )
 	for (int i = 0; i < BULLET_MAX; i++, bullet++)
 	{
-		if (bullet->use == false)			// 未使用状態のバレットを見つける
+		if (bullet[i].use == false)
 		{
-			bullet->use = true;				// 使用状態へ変更する
-			bullet->pos = pos;				// 座標をセット
-			
-			//// 発射音再生
-			//PlaySound(g_pSE, E_DS8_FLAG_NONE);
+			bullet[i].use = true;
+			bullet[i].pos = pos;
 
-			return;							// 1発セットしたので終了する
+			// 弾の種類に応じて飛ばす方向を変えてみる処理
+			switch (type)
+			{
+			case Right:
+				bullet[i].move = D3DXVECTOR3(bullet[i].speed, 0.0f, 0.0f);			// 移動量を初期化
+				bullet[i].rot.z = 0.0f;												// 右
+				break;
+
+			case Left:
+				bullet[i].move = D3DXVECTOR3(-bullet[i].speed, 0.0f, 0.0f);			// 移動量を初期化
+				bullet[i].rot.z = -D3DX_PI;											// 左
+				break;
+			}
+			//PlaySound(SOUND_LABEL_SE_shot000);
+			return;
+
 		}
 	}
 }
+
 
 //=============================================================================
 // 弾の取得関数

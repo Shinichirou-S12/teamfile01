@@ -38,6 +38,9 @@ typedef struct
 	int				PatternAnim;				// アニメーションパターンナンバー
 	int				CountAnim;					// アニメーションカウント
 	
+	D3DXVECTOR3		move;						// 移動量
+	float			speed;						// 移動速度
+
 	LPDIRECT3DTEXTURE9	Texture;				// テクスチャ情報
 	VERTEX_2D		vertexWk[NUM_VERTEX];		// 頂点情報格納ワーク
 
@@ -80,9 +83,10 @@ void DrawBullet(void);
 	@brief		SetBlock
 	@brief		弾の発射設定
 	@param[in]	pos		弾の座標
+	@param[in]	type	弾の向き
 	@return		ptr		弾の先頭アドレス
 *//***************************************************************************/
-void SetBullet(D3DXVECTOR3 pos);
+void SetBullet(D3DXVECTOR3 pos, int type);
 
 /**************************************************************************//**
 	@brief		DrawBlock

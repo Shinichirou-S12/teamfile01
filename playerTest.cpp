@@ -13,6 +13,8 @@
 #include "bullet.h"
 #include "checkhit.h"
 #include "life.h"
+#include "enemy.h"
+#include "item.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -20,7 +22,7 @@
 #define PLAYER_HP	(4)
 #define PLAYER_TIME_SHOT	(CHANGE_TIME)
 #define MAX_DIFFUSE	(255)
-#define PLAYER_INVINCIVLE	(10)
+#define PLAYER_INVINCIVLE	(60 * 3)
 #define PLAYER_MOVE_SPEED	(2.0f)
 
 //*****************************************************************************
@@ -180,10 +182,23 @@ void UpdatePlayer(void)
 		if (g_player.scroll)
 		{
 			MAP *mapchip = GetMapData();
+			ENEMY *enemy = GetEnemy();
+			ITEM * item = GetItem(0);
 
 			if(g_player.countMove != (SCREEN_WIDTH / 10))
 			{
 				g_player.pos.x -= 10.0f;
+
+				for (int k = 0; k < ENEMY_MAX; k++, enemy++)
+				{
+					enemy->pos.x -= 10.0f;
+				}
+
+				for (int s = 0; s < ITEM_MAX; s++, item++)
+				{
+					item->pos.x -= 10.0f;
+				}
+
 				for (int j = 0; j < (SIZE_X * SIZE_Y * MAP_MAXDATA); j++)
 				{
 					mapchip->pos.x -= 10.0f;
@@ -207,7 +222,14 @@ void UpdatePlayer(void)
 		Restriction();
 		JumpPlayer();
 		FallPlayer();
-		AttackPlayer();
+
+		if (g_player.hp > 1)
+		{
+			AttackPlayer();
+		}
+
+		CheckHitItem();
+		CheckHitEnemy();
 
 		if (g_player.hp <= 0 || g_player.pos.y > SCREEN_HEIGHT + PLAYER_TEXTURE_SIZE_Y * 5)
 		{
@@ -365,11 +387,10 @@ void AttackPlayer(void)
 		if (g_player.countShot >= PLAYER_TIME_SHOT || g_player.jumpForce > 1)	// 連射用のカウントが規定値を超えているか、二段ジャンプ中なら弾発射
 		{
 			//SetBullet(pos, g_player.direction, g_player.jumpForce);		// 
-			SetBullet(g_player.pos);
+			SetBullet(g_player.pos, g_player.direction);
 			g_player.countShot = 0;	// 
 			g_player.hp--;
 			g_player.partsState--;
-			*life = MINUS;
 			ChangeLife(-1);
 			//PlaySound(SOUND_LABEL_SE_shot2);
 		}

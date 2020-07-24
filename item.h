@@ -11,15 +11,15 @@
 //*****************************************************************************
 #define	NUM_ITEM		(2)					// ポリゴン数
 
-#define TEXTURE_ITEM_SIZE_X	(100/2) // テクスチャサイズ
-#define TEXTURE_ITEM_SIZE_Y	(100/2) // 同上
+#define TEXTURE_ITEM_SIZE_X	(50/2) // テクスチャサイズ
+#define TEXTURE_ITEM_SIZE_Y	(50/2) // 同上
 
 #define TEXTURE_PATTERN_DIVIDE_X	(5)	// アニメパターンのテクスチャ内分割数（X)
 #define TEXTURE_PATTERN_DIVIDE_Y	(2)	// アニメパターンのテクスチャ内分割数（Y)
 #define ANIM_PATTERN_NUM			(TEXTURE_PATTERN_DIVIDE_X*TEXTURE_PATTERN_DIVIDE_Y)	// アニメーションパターン数
 #define TIME_ANIMATION				(4)	// アニメーションの切り替わるカウント
 
-#define ITEM_MAX					(5) // アイテムの最大数
+#define ITEM_MAX					(3) // アイテムの最大数
 #define ITEM_KIND_MAX				(3)	//アイテムの種類の最大数
 #define ITEM_POINT_ICE				(10) //氷のポイント
 #define ITEM_POINT_SALT_PEPPER		(10) //塩コショウのポイント

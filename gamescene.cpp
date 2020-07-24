@@ -14,6 +14,8 @@
 #include "timer.h"
 #include "enemy.h"
 #include "item.h"
+#include "bg.h"
+#include "effect.h"
 
 // マクロ定義
 
@@ -26,14 +28,20 @@ void InitGameScene(void)
 	// プレイヤーの初期化処理
 	InitPlayer();
 
-	// エネミーの初期化処理
-	InitEnemy(0);
-
 	// ファイルの読み込み
 	OpenFile();
 
 	// マップの初期化処理
 	InitMap();
+
+	// 背景の初期化処理
+	InitBg();
+
+	// アイテムの初期化処理
+	InitItem(0);
+
+	// エネミーの初期化処理
+	InitEnemy(0);
 
 	// ライフの初期化処理
 	InitLife();
@@ -43,11 +51,17 @@ void InitGameScene(void)
 
 	// タイマーの初期化処理
 	InitTimer();
+
+	// エフェクトの初期化処理
+	InitEffect(0);
 }
 
 // シーンの終了処理
 void UninitGameScene(void)
 {
+	// エフェクトの終了処理
+	UninitEffect();
+
 	// 弾の終了処理
 	UninitBullet();
 	
@@ -57,12 +71,17 @@ void UninitGameScene(void)
 	// エネミーの終了処理
 	UninitEnemy();
 
+	// 背景の終了処理
+	UninitBg();
+
 	// マップの終了処理
 	UninitMap();
 
 	// ライフの終了処理
 	UninitLife();
 
+	// アイテムの終了処理
+	UninitItem();
 	//// スコアの終了処理
 	//UninitScore();
 
@@ -76,14 +95,23 @@ void UpdateGameScene(void)
 	// マップの更新処理
 	UpdateMap();
 
+	// 背景の更新処理
+	UpdateBg();
+
 	// プレイヤーの更新処理
 	UpdatePlayer();
 
 	// エネミーの更新処理
 	UpdateEnemy();
 
+	// アイテムの更新処理
+	UpdateItem();
+
 	// 弾の更新処理
 	UpdateBullet();
+
+	// エフェクトの更新処理
+	UpdateEffect();
 
 	// ライフの更新処理
 	UpdateLife();
@@ -98,6 +126,9 @@ void UpdateGameScene(void)
 // シーンの描画処理
 void DrawGameScene(void)
 {
+	// 背景の描画処理
+	DrawBg();
+
 	// マップの描画処理
 	DrawMap();
 
@@ -110,12 +141,18 @@ void DrawGameScene(void)
 	// ライフの描画処理
 	DrawLife();
 
+	// アイテムの描画処理
+	DrawItem();
+
 	// エネミーの描画処理
 	DrawEnemy();
-	
+
 	// プレイヤーの描画処理
 	DrawPlayer();
 
 	// バレットの描画処理
 	DrawBullet();
+
+	// エフェクトの描画処理
+	DrawEffect();
 }
