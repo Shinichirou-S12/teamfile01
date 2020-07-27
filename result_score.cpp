@@ -28,7 +28,7 @@
 // プロトタイプ宣言
 //*****************************************************************************
 HRESULT MakeVertexResult_Score(LPDIRECT3DDEVICE9 pDevice);
-void SetTextureResult_Score(int idx, int number);
+void SetTextureResult_Score(int line,int idx, int number);
 
 //*****************************************************************************
 // グローバル変数宣言
@@ -39,7 +39,7 @@ LPDIRECT3DVERTEXBUFFER9 g_pD3DVtxBuffResult_Score[RESULT_SCORE_MAX] = {};		// 頂
 D3DXVECTOR3				g_posResult_Score;										// 位置
 D3DXVECTOR3				g_rotResult_Score;										// 向き
 
-LANKING_SCORE			g_result_score[RESULT_SCORE_MAX];						// スコア
+int						g_result_score[RESULT_SCORE_MAX];						// スコア
 
 //=============================================================================
 // 初期化処理
@@ -56,7 +56,8 @@ HRESULT InitResult_Score(int type)
 		for (int i = 0; i < RESULT_SCORE_MAX; i++)
 		{
 			// スコアの初期化
-			g_result_score[i].num = i * 100;
+			//g_result_score[i] = i * 100;
+			g_result_score[i] = data[i].r_score;
 
 			// 頂点情報の作成
 			MakeVertexResult_Score(pDevice);
@@ -118,8 +119,8 @@ void UpdateResult_Score(void)
 			int number;
 			int Patten = i*8 + nCntPlace;
 
-			number = (g_result_score[i].num % (int)(powf(10.0f, (float)(NUM_PLACE - nCntPlace)))) / (int)(powf(10.0f, (float)(NUM_PLACE - nCntPlace - 1)));
-			SetTextureResult_Score(nCntPlace, number);
+			number = (g_result_score[i] % (int)(powf(10.0f, (float)(NUM_PLACE - nCntPlace)))) / (int)(powf(10.0f, (float)(NUM_PLACE - nCntPlace - 1)));
+			SetTextureResult_Score(i,nCntPlace, number);
 		}
 	}
 }
@@ -190,10 +191,15 @@ HRESULT MakeVertexResult_Score(LPDIRECT3DDEVICE9 pDevice)
 					pVtx[3].rhw = 1.0f;
 
 				// 反射光の設定
-				pVtx[0].diffuse = D3DXCOLOR(0.0f, 0.1f*i, 0.0f, 1.0f);
+				/*pVtx[0].diffuse = D3DXCOLOR(0.0f, 0.1f*i, 0.0f, 1.0f);
 				pVtx[1].diffuse = D3DXCOLOR(0.0f, 0.1f*i, 0.0f, 1.0f);
 				pVtx[2].diffuse = D3DXCOLOR(0.0f, 0.1f*i, 0.0f, 1.0f);
-				pVtx[3].diffuse = D3DXCOLOR(0.0f, 0.1f*i, 0.0f, 1.0f);
+				pVtx[3].diffuse = D3DXCOLOR(0.0f, 0.1f*i, 0.0f, 1.0f)*/
+
+				pVtx[0].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				pVtx[1].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				pVtx[2].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				pVtx[3].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 
 				// テクスチャ座標の設定
 				pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -238,32 +244,31 @@ HRESULT MakeVertexResult_Score(LPDIRECT3DDEVICE9 pDevice)
 //=============================================================================
 // テクスチャ座標の設定
 //=============================================================================
-void SetTextureResult_Score(int idx, int number)
+void SetTextureResult_Score(int line,int idx, int number)
 {
-	for (int i = 0; i < RESULT_SCORE_MAX; i++)
-	{
-		VERTEX_2D *pVtx;
 
-		// 頂点データの範囲をロックし、頂点バッファへのポインタを取得
-		g_pD3DVtxBuffResult_Score[i]->Lock(0, 0, (void**)&pVtx, 0);
+	VERTEX_2D* pVtx;
 
-		pVtx += (idx * 4);
+	// 頂点データの範囲をロックし、頂点バッファへのポインタを取得
+	g_pD3DVtxBuffResult_Score[line]->Lock(0, 0, (void**)&pVtx, 0);
 
-		// 頂点座標の設定
-		pVtx[0].tex = D3DXVECTOR2(number * 0.1f, 0.0f);
-		pVtx[1].tex = D3DXVECTOR2(number * 0.1f + 0.1f, 0.0f);
-		pVtx[2].tex = D3DXVECTOR2(number * 0.1f, 1.0f);
-		pVtx[3].tex = D3DXVECTOR2(number * 0.1f + 0.1f, 1.0f);
+	pVtx += (idx * 4);
 
-		// 頂点データをアンロックする
-		g_pD3DVtxBuffResult_Score[i]->Unlock();
-	}
+	// 頂点座標の設定
+	pVtx[0].tex = D3DXVECTOR2(number * 0.1f, 0.0f);
+	pVtx[1].tex = D3DXVECTOR2(number * 0.1f + 0.1f, 0.0f);
+	pVtx[2].tex = D3DXVECTOR2(number * 0.1f, 1.0f);
+	pVtx[3].tex = D3DXVECTOR2(number * 0.1f + 0.1f, 1.0f);
+
+	// 頂点データをアンロックする
+	g_pD3DVtxBuffResult_Score[0]->Unlock();
+
 }
 
 //=============================================================================
 // スコアを取得
 //=============================================================================
-LANKING_SCORE *GetResult_Score(void)
+int *GetResult_Score(void)
 {
 	return &g_result_score[0];
 }

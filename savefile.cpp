@@ -114,20 +114,21 @@ void LoadData(void)
 		//if (g_data[i].r_score.bUse)
 		//{
 			// 結果がデータを超えていたら(おわり)
-			if (score > g_data[i].r_score.num)
+			if (score > g_data[i].r_score)
 			{
 				// データ配列を一つ下にずらす
 				for (int j = FILE_MAX - 1; j >= i; j--)
 				{
-					g_data[j + 1].r_score.num = g_data[j].r_score.num;
-					g_data[j].r_score.num = g_data[j + 1].r_score.num;
+					int buffScore= g_data[j + 1].r_score;
+					g_data[j + 1].r_score = g_data[j].r_score;
+					g_data[j].r_score = buffScore;
 				}
 
-				g_data[i].r_score.num = score;// 結果をデータに格納する
+				g_data[i].r_score = score;// 結果をデータに格納する
 				break;
 			}
 			// 結果とデータが等しい場合(終わり)
-			else if (g_data->score == g_data[i].r_score.num)
+			else if (score == g_data[i].r_score)
 			{
 				break;
 			}
