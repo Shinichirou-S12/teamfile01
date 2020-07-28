@@ -6,6 +6,7 @@
 // インクルードファイル
 #include "main.h"
 #include "bg.h"
+#include "savefile.h"
 
 // マクロ定義
 
@@ -15,6 +16,7 @@
 void InitTitleScene(void)
 {
 	InitBg();
+	SaveData();
 }
 
 // 終了処理

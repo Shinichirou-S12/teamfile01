@@ -6,6 +6,7 @@
 // インクルードファイル
 #include "main.h"
 #include "result.h"
+#include "savefile.h"
 #include "resultscene.h"
 #include "result_score.h"
 #include "score.h"
@@ -17,6 +18,9 @@ void InitResultScene(void)
 {
 	// ロゴと背景の初期化処理
 	InitResult(0);
+
+	//セーブデータからランキングを引っ張り出す
+	LoadData();
 
 	// スコア
 	InitResult_Score(0);
