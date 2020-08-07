@@ -16,6 +16,7 @@
 #include "item.h"
 #include "bg.h"
 #include "effect.h"
+#include "enemyBullet.h"
 
 // マクロ定義
 
@@ -24,6 +25,9 @@ void InitGameScene(void)
 {
 	// 弾の初期化処理
 	InitBullet(0);
+
+	// エネミー用の弾の初期化処理
+	InitEnemyBullet(0);
 
 	// プレイヤーの初期化処理
 	InitPlayer();
@@ -41,7 +45,7 @@ void InitGameScene(void)
 	InitItem(0);
 
 	// エネミーの初期化処理
-	InitEnemy(0);
+	InitEnemy();
 
 	// ライフの初期化処理
 	InitLife();
@@ -61,6 +65,9 @@ void UninitGameScene(void)
 {
 	// エフェクトの終了処理
 	UninitEffect();
+
+	// エネミー用の弾の終了処理
+	UninitEnemyBullet();
 
 	// 弾の終了処理
 	UninitBullet();
@@ -110,6 +117,9 @@ void UpdateGameScene(void)
 	// 弾の更新処理
 	UpdateBullet();
 
+	// エネミー用の弾の更新処理
+	UpdateEnemyBullet();
+
 	// エフェクトの更新処理
 	UpdateEffect();
 
@@ -152,6 +162,9 @@ void DrawGameScene(void)
 
 	// バレットの描画処理
 	DrawBullet();
+
+	// エネミー用の弾の描画処理
+	DrawEnemyBullet();
 
 	// エフェクトの描画処理
 	DrawEffect();

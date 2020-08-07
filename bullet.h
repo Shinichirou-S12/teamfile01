@@ -11,19 +11,20 @@
 //*****************************************************************************
 #define	NUM_BULLET				(2)			// ポリゴン数
 
-#define TEXTURE_GAME_BULLET		_T("data/TEXTURE/lightning_ball.png")	// 画像
+#define TEXTURE_GAME_BULLET		_T("data/TEXTURE/lightning_ball.png")			// 画像
+
 #define TEXTURE_BULLET_SIZE_X	(50)		// テクスチャサイズ
 #define TEXTURE_BULLET_SIZE_Y	(50)		// 同上
+
 
 #define TEXTURE_PATTERN_DIVIDE_X_BULLET	(5)	// アニメパターンのテクスチャ内分割数（X)
 #define TEXTURE_PATTERN_DIVIDE_Y_BULLET	(4)	// アニメパターンのテクスチャ内分割数（Y)
 #define ANIM_PATTERN_NUM_BULLET			(TEXTURE_PATTERN_DIVIDE_X_BULLET*TEXTURE_PATTERN_DIVIDE_Y_BULLET)	// アニメーションパターン数
 #define TIME_ANIMATION_BULLET			(4)	// アニメーションの切り替わるカウント
 
-#define BULLET_MAX						(3) // 弾の最大数
+#define BULLET_MAX						(6) // 弾の最大数
 
 #define BULLET_SPEED			(6.0f)		// 弾の移動スピード
-
 
 /**************************************************************************//**
 	@struct		BULLET
@@ -37,7 +38,7 @@ typedef struct
 	D3DXVECTOR3		rot;						// ポリゴンの回転量
 	int				PatternAnim;				// アニメーションパターンナンバー
 	int				CountAnim;					// アニメーションカウント
-	
+
 	D3DXVECTOR3		move;						// 移動量
 	float			speed;						// 移動速度
 
@@ -47,7 +48,7 @@ typedef struct
 } BULLET;
 
 /**************************************************************************//**
-	@brief		InitBlock
+	@brief		InitBullet
 	@brief		弾の初期化処理
 	@param[in]	type		テクスチャタイプ
 	@return			S_OK	処理の成功
@@ -56,7 +57,7 @@ typedef struct
 HRESULT InitBullet(int type);
 
 /**************************************************************************//**
-	@brief		UninitBlock
+	@brief		UninitBullet
 	@brief		弾の終了処理
 	@param		なし
 	@return		なし
@@ -64,7 +65,7 @@ HRESULT InitBullet(int type);
 void UninitBullet(void);
 
 /**************************************************************************//**
-	@brief		UpdateBlock
+	@brief		UpdateBullet
 	@brief		弾の更新処理
 	@param		なし
 	@return		なし
@@ -72,7 +73,7 @@ void UninitBullet(void);
 void UpdateBullet(void);
 
 /**************************************************************************//**
-	@brief		DrawBlock
+	@brief		DrawBullet
 	@brief		弾の描画処理
 	@param		なし
 	@return		なし
@@ -80,7 +81,7 @@ void UpdateBullet(void);
 void DrawBullet(void);
 
 /**************************************************************************//**
-	@brief		SetBlock
+	@brief		SetBullet
 	@brief		弾の発射設定
 	@param[in]	pos		弾の座標
 	@param[in]	type	弾の向き
@@ -89,7 +90,7 @@ void DrawBullet(void);
 void SetBullet(D3DXVECTOR3 pos, int type);
 
 /**************************************************************************//**
-	@brief		DrawBlock
+	@brief		GetBullet
 	@brief		弾のアドレス取得
 	@param[in]	no		弾の番号
 	@return		&blockWk[no] ブロック番号のアドレス

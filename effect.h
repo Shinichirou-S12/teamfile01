@@ -26,7 +26,7 @@
 #define	MAX_EXPLOSION					(128)		// ビルボード最大数
 #define EFFECT_NUM_PARTS				(10)		// エフェクトの最大パターン数
 #define EFFECT_NUM_EFFECTS				(5)			// エフェクトの1段の最大パターン数
-
+#define EFFECT_LIFE_TIME				(15)		// エフェクトの最大パターン数
 
 /**************************************************************************//**
 	@struct		PARTICLE

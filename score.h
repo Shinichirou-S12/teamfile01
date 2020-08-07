@@ -9,6 +9,9 @@
 
 #include "main.h"
 
+// マクロ定義
+#define SCORE_SNIPER_ENEMY	(100)
+
 // 構造体定義
 
 // scoreの増減に使う構造体

@@ -128,20 +128,13 @@ enum PLAYER_PARTS_STATE
 };
 
 
-enum PLAYER_DIRECTION			// PLAYERの方向
+enum DIRECTION			// PLAYERの方向
 {
 	Right,				// 右向き
 	Left,				// 左向き
 	Down,				// 下向き
 };
 
-enum PLAYER_STATE_ANIME
-{
-	IDLE,
-	RUN,
-	JUMP,
-	STATE_MAX,
-};
 
 //*****************************************************************************
 // プロトタイプ宣言

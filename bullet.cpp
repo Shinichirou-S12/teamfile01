@@ -25,7 +25,7 @@ void SetVertexBullet(int no);						// 弾のテクスチャの設定
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
-LPDIRECT3DTEXTURE9		g_pD3DTextureBullet = NULL;		// テクスチャへのポリゴン
+static LPDIRECT3DTEXTURE9		g_pD3DTextureBullet = NULL;		// テクスチャへのポリゴン
 
 BULLET					bulletWk[BULLET_MAX];			// 弾の構造体
 
@@ -236,7 +236,7 @@ void SetVertexBullet( int no )
 }
 
 //=============================================================================
-// 弾の発射設定
+// プレイヤーの弾の発射設定
 //=============================================================================
 void SetBullet(D3DXVECTOR3 pos, int type)
 {
@@ -247,20 +247,20 @@ void SetBullet(D3DXVECTOR3 pos, int type)
 	{
 		if (bullet[i].use == false)
 		{
-			bullet[i].use = true;
-			bullet[i].pos = pos;
+			bullet->use = true;
+			bullet->pos = pos;
 
 			// 弾の種類に応じて飛ばす方向を変えてみる処理
 			switch (type)
 			{
 			case Right:
-				bullet[i].move = D3DXVECTOR3(bullet[i].speed, 0.0f, 0.0f);			// 移動量を初期化
-				bullet[i].rot.z = 0.0f;												// 右
+				bullet->move = D3DXVECTOR3(bullet->speed, 0.0f, 0.0f);			// 移動量を初期化
+				bullet->rot.z = 0.0f;												// 右
 				break;
 
 			case Left:
-				bullet[i].move = D3DXVECTOR3(-bullet[i].speed, 0.0f, 0.0f);			// 移動量を初期化
-				bullet[i].rot.z = -D3DX_PI;											// 左
+				bullet->move = D3DXVECTOR3(-bullet->speed, 0.0f, 0.0f);			// 移動量を初期化
+				bullet->rot.z = -D3DX_PI;											// 左
 				break;
 			}
 			//PlaySound(SOUND_LABEL_SE_shot000);

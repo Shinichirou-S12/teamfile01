@@ -123,6 +123,8 @@ void DrawMap(void)
 			for (int j = 0; j < SIZE_X; j++)
 			{
 				if (mapBlock[k][i][j].use == true && mapBlock[k][i][j].type != BLOCK2 
+					&& mapBlock[k][i][j].type != BLOCK13
+					&& mapBlock[k][i][j].type != GLASS14
 					&& mapBlock[k][i][j].type != GLASS15)		// 使用している状態なら描画する
 				{
 					// テクスチャの設定

@@ -19,6 +19,7 @@
 #include "bullet.h"
 #include "controller.h"
 #include "effect.h"
+#include "enemyBullet.h"
 
 //=============================================================================
 // マップチップとの当たり判定
@@ -89,7 +90,7 @@ bool CheckHitBC(D3DXVECTOR3 pos1, D3DXVECTOR3 pos2, float size1, float size2)
 }
 
 //=============================================================================
-// プライヤーの落下処理の時の当たり判定
+// プレイヤーの落下処理の時の当たり判定
 //=============================================================================
 void FallCheckHitPlayer (void)
 {
@@ -155,6 +156,35 @@ void FallCheckHitPlayer (void)
 }
 
 //=============================================================================
+// エネミーの落下処理の時の当たり判定
+//=============================================================================
+void FallCheckHitEnemy(int i)
+{
+	MAP *mapchip = GetMapData();
+	ENEMY *enemy = GetEnemy();
+
+	enemy += i;
+	for (int j = 0; j < (SIZE_Y * SIZE_X * MAP_MAXDATA); j++, mapchip++)
+	{
+		if (mapchip->type == 1 
+			|| mapchip->type == 10 
+			|| mapchip->type == 0)
+		{
+			if (CheckHitBB_MAP(enemy->pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_TOP_X, PLAYER_TEXTURE_SIZE_Y),
+				D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), ENEMY_MOVE_SPEED) == TOP)	// ブロックの上に立っているとき
+			{
+				enemy->dropSpeed = 0;		// 重力加速度をリセット
+
+				// 上からブロックに突っ込むと、ブロックの上に戻す
+				enemy->pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y - PLAYER_TEXTURE_SIZE_X;
+				return;
+			}
+		}
+
+	}
+}
+
+//=============================================================================
 // プレイヤーの横移動で画面外やブロックを貫通しないための処理
 //=============================================================================
 void Restriction(void)
@@ -164,7 +194,8 @@ void Restriction(void)
 
 	for (int j = 0; j < SIZE_X * SIZE_Y * MAP_MAXDATA; j++, mapchip++)
 	{
-		if (mapchip->type != -1 && mapchip->type != 15 && mapchip->type != 2)
+		if (mapchip->type != -1 && mapchip->type != 15 && mapchip->type != 2
+			&& mapchip->type != 13 && mapchip->type != 14)
 		{
 			switch (CheckHitBB_MAP(player->pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_X, PLAYER_TEXTURE_SIZE_Y),
 				D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), player->moveSpeed))	// ブロックのどこに触れているか
@@ -195,6 +226,37 @@ void Restriction(void)
 }
 
 //=============================================================================
+// エネミーの横移動で画面外やブロックを貫通しないための処理
+//=============================================================================
+void RestrictionEnemy(int i)
+{
+	MAP *mapchip = GetMapData();
+	ENEMY *enemy = GetEnemy();
+
+	// 試験的に行う処理
+	enemy += i;
+	for (int j = 0; j < SIZE_X * SIZE_Y * MAP_MAXDATA; j++, mapchip++)
+	{
+		if (mapchip->type != -1 && mapchip->type != 15 && mapchip->type != 2)
+		{
+			switch (CheckHitBB_MAP(enemy->pos, mapchip->pos, D3DXVECTOR2(ENEMY_TEXTURE_SIZE_X, ENEMY_TEXTURE_SIZE_Y),
+				D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), ENEMY_MOVE_SPEED))	// ブロックのどこに触れているか
+			{
+			case LEFT_MAPCHIP:
+				enemy->pos.x = mapchip->pos.x - MAP_TEXTURE_SIZE_X - ENEMY_TEXTURE_SIZE_X;	// 左からブロックに突っ込むとブロックの左に戻す
+				break;
+			case RIGHT_MAPCHIP:
+				enemy->pos.x = mapchip->pos.x + MAP_TEXTURE_SIZE_X + ENEMY_TEXTURE_SIZE_X;	// 右からブロックに突っ込むとブロックの右に戻す
+				break;
+			case UNDER:
+				enemy->pos.y = mapchip->pos.y + MAP_TEXTURE_SIZE_Y + ENEMY_TEXTURE_SIZE_Y;	// 下からブロックに突っ込むとブロックの下に戻す
+				break;
+			}
+		}
+	}
+}
+
+//=============================================================================
 // アイテムとプレイヤーとの衝突判定
 //=============================================================================
 void CheckHitItem(void)
@@ -221,6 +283,7 @@ void CheckHitItem(void)
 				{
 					//体力回復処理
 					ChangeLife(1);
+					player->partsState++;
 				}
 
 				ChangeScore(item->point * 10);		// スコア加算
@@ -264,16 +327,16 @@ void CheckHitEnemy(void)
 			life--;
 			ChangeLife(-1);
 			// ライフの減少
-			ChangeScore(-100);
+			ChangeScore(-SCORE_SNIPER_ENEMY);
 			damage = false;
 		}
 	}
 }
 
 //=============================================================================
-// バレットとの衝突判定
+// エネミーとバレットとの衝突判定
 //=============================================================================
-void CheckBullet(void)
+void CheckEnemyBullet(void)
 {
 	ENEMY *enemy = GetEnemy();
 	CHANGE_LIFE *life = GetLifeState();
@@ -287,19 +350,44 @@ void CheckBullet(void)
 		{
 			if (enemy->use == false) continue;
 
-			if (CheckHitBB(enemy->pos, bullet->pos, 
-				D3DXVECTOR2(TEXTURE_BULLET_SIZE_X, TEXTURE_BULLET_SIZE_Y), 
+			if (CheckHitBB(enemy->pos, bullet->pos,
+				D3DXVECTOR2(TEXTURE_BULLET_SIZE_X, TEXTURE_BULLET_SIZE_Y),
 				D3DXVECTOR2(ENEMY_TEXTURE_SIZE_X, ENEMY_TEXTURE_SIZE_Y)))
 			{
- 				enemy->damage = true;
+				enemy->damage = true;
 				bullet[j].use = false;
-				ChangeScore(100);
+				ChangeScore(SCORE_SNIPER_ENEMY);
 				enemy->use = false;
-				SetEffect(enemy->pos.x, enemy->pos.y, 15);
+				SetEffect(enemy->pos.x, enemy->pos.y, EFFECT_LIFE_TIME);
 			}
 		}
 	}
+}
 
+//=============================================================================
+// プレイヤーとエネミーバレットとの衝突判定
+//=============================================================================
+void CheckPlayerBullet(void)
+{
+	PLAYER *player = GetPlayer();
+	CHANGE_LIFE *life = GetLifeState();
+	ENEMYBULLET *bullet = GetEnemyBullet(0);
 
+	for (int j = 0; j < BULLET_MAX; j++, bullet++)
+	{
+		if (bullet[j].use == false) continue;
+
+		if (player->use == false) continue;
+
+		if (CheckHitBB(player->pos, bullet->pos,
+			D3DXVECTOR2(TEXTURE_BULLET_SIZE_X, TEXTURE_BULLET_SIZE_Y),
+			D3DXVECTOR2(PLAYER_TEXTURE_SIZE_X, PLAYER_TEXTURE_SIZE_Y)))
+		{
+			//player->hp -= 1;
+			bullet[j].use = false;
+			ChangeScore(-SCORE_SNIPER_ENEMY);
+			SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME);
+		}
+	}
 }
 

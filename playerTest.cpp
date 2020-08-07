@@ -25,6 +25,14 @@
 #define PLAYER_INVINCIVLE	(60 * 3)
 #define PLAYER_MOVE_SPEED	(2.0f)
 
+enum PLAYER_STATE_ANIME
+{
+	IDLE,
+	RUN,
+	JUMP,
+	STATE_MAX,
+};
+
 //*****************************************************************************
 // プロトタイプ宣言
 //*****************************************************************************
@@ -230,6 +238,7 @@ void UpdatePlayer(void)
 
 		CheckHitItem();
 		CheckHitEnemy();
+		CheckPlayerBullet();
 
 		if (g_player.hp <= 0 || g_player.pos.y > SCREEN_HEIGHT + PLAYER_TEXTURE_SIZE_Y * 5)
 		{

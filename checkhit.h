@@ -62,12 +62,28 @@ bool CheckHitBC(D3DXVECTOR3 pos1, D3DXVECTOR3 pos2, float size1, float size2);
 void FallCheckHitPlayer(void);
 
 /**************************************************************************//**
+	@brief		FallCheckHitEnemy
+	@brief		エネミーの落下処理の時の当たり判定
+	@param[in]	i
+	@return		なし
+*//***************************************************************************/
+void FallCheckHitEnemy(int i);
+
+/**************************************************************************//**
 	@brief		Restriction
 	@brief		プレイヤーの横移動で画面外やブロックを貫通しないための処理
 	@param		なし
 	@return		なし
 *//***************************************************************************/
 void Restriction(void);
+
+/**************************************************************************//**
+	@brief		RestrictionEnemy
+	@brief		エネミーの横移動で画面外やブロックを貫通しないための処理
+	@param[in]	i
+	@return		なし
+*//***************************************************************************/
+void RestrictionEnemy(int i);
 
 /**************************************************************************//**
 	@brief		CheckHitItem
@@ -86,11 +102,18 @@ void CheckHitItem(void);
 void CheckHitEnemy(void);
 
 /**************************************************************************//**
-	@brief		CheckBullet
-	@brief		バレットとの衝突判定
+	@brief		CheckEnemyBullet
+	@brief		エネミーとバレットとの衝突判定
 	@param		なし
 	@return		なし
 *//***************************************************************************/
-void CheckBullet(void);
+void CheckEnemyBullet(void);
 
+/**************************************************************************//**
+	@brief		CheckPlayerBullet
+	@brief		プレイヤーとバレットとの衝突判定
+	@param		なし
+	@return		なし
+*//***************************************************************************/
+void CheckPlayerBullet(void);
 #endif
