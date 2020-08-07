@@ -20,6 +20,7 @@
 #include "controller.h"
 #include "effect.h"
 #include "enemyBullet.h"
+#include "wall.h"
 
 //=============================================================================
 // マップチップとの当たり判定
@@ -127,7 +128,7 @@ void FallCheckHitPlayer (void)
 				}
 			}
 
-			if (mapchip->type == 0)
+			if (mapchip->type == 0 || mapchip->type == 3)
 			{
 				if (CheckHitBB_MAP(player->pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_X, PLAYER_TEXTURE_SIZE_Y),
 					D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), player->moveSpeed) == TOP)	// ブロックの上に立っているとき
@@ -148,6 +149,11 @@ void FallCheckHitPlayer (void)
 					}
 					player->jumpForce = 0;		// ジャンプ回数をリセット
 					player->rot.z = 0;			// 回転ジャンプの回転リセット
+
+					if (mapchip->type == 3)
+					{
+						SlidePlayer();
+					}
 					break;
 				}
 			}
@@ -168,7 +174,8 @@ void FallCheckHitEnemy(int i)
 	{
 		if (mapchip->type == 1 
 			|| mapchip->type == 10 
-			|| mapchip->type == 0)
+			|| mapchip->type == 0
+			|| mapchip->type == 3)
 		{
 			if (CheckHitBB_MAP(enemy->pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_TOP_X, PLAYER_TEXTURE_SIZE_Y),
 				D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), ENEMY_MOVE_SPEED) == TOP)	// ブロックの上に立っているとき
@@ -283,7 +290,11 @@ void CheckHitItem(void)
 				{
 					//体力回復処理
 					ChangeLife(1);
+				}
+				if (player->partsState != PERFECT)
+				{
 					player->partsState++;
+					player->hp++;
 				}
 
 				ChangeScore(item->point * 10);		// スコア加算
@@ -387,6 +398,49 @@ void CheckPlayerBullet(void)
 			bullet[j].use = false;
 			ChangeScore(-SCORE_SNIPER_ENEMY);
 			SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME);
+		}
+	}
+}
+
+//=============================================================================
+// 壁との衝突判定
+//=============================================================================
+void CheckHitWall(void)
+{
+	PLAYER *player = GetPlayer();
+	WALL *wall = GetWall();
+	ENEMY *enemy = GetEnemy();
+	ITEM *item = GetItem(0);
+
+	if (player->use)
+	{
+		if (wall->pos.x >= player->pos.x)
+		{
+			SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME);
+			player->use = false;
+		}
+	}
+
+	for (int i = 0; i < ENEMY_MAX; i++, enemy++)
+	{
+		if (enemy->use == false) continue;
+
+		if (wall->pos.x >= enemy->pos.x)
+		{
+			enemy->damage = true;
+			enemy->use = false;
+			SetEffect(enemy->pos.x, enemy->pos.y, EFFECT_LIFE_TIME);
+		}
+	}
+
+	for (int i = 0; i < ITEM_MAX; i++, item++)
+	{
+		if (item->use == false) continue;
+
+		if (wall->pos.x >= item->pos.x)
+		{
+			item->use = false;
+			SetEffect(item->pos.x, item->pos.y, EFFECT_LIFE_TIME);
 		}
 	}
 }

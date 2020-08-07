@@ -103,6 +103,7 @@ void UpdateMap(void)
 						mapBlock[k][i][j].pos.y = SCREEN_HEIGHT + MAP_TEXTURE_SIZE_Y * 2;
 					}
 				}
+
 				SetVertexMapChip(i, j, k);
 			}
 		}
@@ -184,6 +185,7 @@ HRESULT MakeVertexMap(int x, int y, int mapData)
 		break;
 
 	case BLOCK1:
+	case BLOCK3:
 		// テクスチャ座標の設定
 		mapBlock[mapData][y][x].vertexWk[0].tex = D3DXVECTOR2(1.0f / MAP_TEXTURE_PATTERN_DIVIDE_X, 0.0f / MAP_TEXTURE_PATTERN_DIVIDE_Y);
 		mapBlock[mapData][y][x].vertexWk[1].tex = D3DXVECTOR2(2.0f / MAP_TEXTURE_PATTERN_DIVIDE_X, 0.0f / MAP_TEXTURE_PATTERN_DIVIDE_Y);

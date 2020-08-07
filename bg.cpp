@@ -1,4 +1,4 @@
-//! @file	title.cpp
+//! @file	bg.cpp
 //! @author	‚Ü‚æ
 //! @date	2020-06-19
 //! @brief	ƒ^ƒCƒgƒ‹‚ÌŽÀ‘•

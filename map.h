@@ -49,7 +49,7 @@ typedef struct
 	float			countPos;
 	D3DXVECTOR3		move;						// ポリゴンの移動量
 
-	bool			scroll;
+	bool			scroll;						// スクロールの判定
 	LPDIRECT3DTEXTURE9	Texture;				// テクスチャ情報
 	VERTEX_2D		vertexWk[NUM_VERTEX];		// 頂点情報格納ワーク
 }MAP;

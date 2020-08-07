@@ -105,7 +105,7 @@ typedef struct					// PLAYER構造体
 	float				dropSpeed;			// 落下速度（重力）
 	D3DXVECTOR2			textureSize;		// テクスチャサイズ
 
-
+	int					slideCnt;			// 滑った時のカウント
 	int					direction;			// PLAYERの方向
 	int					state;				// PLAYERの状態
 	int					partsState;			// PLAYERのパーツ状態
@@ -143,4 +143,5 @@ HRESULT InitPlayer(void);
 void UninitPlayer(void);
 void UpdatePlayer(void);
 void DrawPlayer(void);
+void SlidePlayer(void);
 PLAYER *GetPlayer(void);

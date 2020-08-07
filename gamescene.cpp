@@ -17,6 +17,7 @@
 #include "bg.h"
 #include "effect.h"
 #include "enemyBullet.h"
+#include "wall.h"
 
 // マクロ定義
 
@@ -46,6 +47,9 @@ void InitGameScene(void)
 
 	// エネミーの初期化処理
 	InitEnemy();
+
+	// 壁の初期化処理
+	InitWall();
 
 	// ライフの初期化処理
 	InitLife();
@@ -84,6 +88,9 @@ void UninitGameScene(void)
 	// マップの終了処理
 	UninitMap();
 
+	// 壁の終了処理
+	UninitWall();
+
 	// ライフの終了処理
 	UninitLife();
 
@@ -107,6 +114,9 @@ void UpdateGameScene(void)
 
 	// プレイヤーの更新処理
 	UpdatePlayer();
+
+	// 壁の更新処理
+	UpdateWall();
 
 	// エネミーの更新処理
 	UpdateEnemy();
@@ -141,6 +151,9 @@ void DrawGameScene(void)
 
 	// マップの描画処理
 	DrawMap();
+
+	// 壁の描画処理
+	DrawWall();
 
 	// スコアの描画処理
 	DrawScore();

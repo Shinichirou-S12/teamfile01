@@ -15,6 +15,7 @@
 #include "life.h"
 #include "enemy.h"
 #include "item.h"
+#include "wall.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -24,6 +25,7 @@
 #define MAX_DIFFUSE	(255)
 #define PLAYER_INVINCIVLE	(60 * 3)
 #define PLAYER_MOVE_SPEED	(2.0f)
+#define PLAYER_SLIDE_MAX	(MAP_TEXTURE_SIZE_X * 2)
 
 enum PLAYER_STATE_ANIME
 {
@@ -101,10 +103,11 @@ HRESULT InitPlayer(void)
 	g_player.radius = D3DXVec2Length(&temp);									// 半径を初期化
 	g_player.baseAngle = atan2f(PLAYER_TEXTURE_SIZE_Y, PLAYER_TEXTURE_SIZE_X);	// 角度を初期化
 
-	g_player.jumpForce = 0;										// ジャンプしていない
+	g_player.slideCnt = 0;	// 滑ったカウントの初期化
+	g_player.jumpForce = 0;	// ジャンプしていない
 	g_player.dropSpeed = 0;	// 重力加速度初期化
-	g_player.ofsPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);				// オフセット座標を初期化
-	g_player.direction = Right;										// プレイヤーは右向き
+	g_player.ofsPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	// オフセット座標を初期化
+	g_player.direction = Right;							// プレイヤーは右向き
 
 	MakeVertexPlayer();
 
@@ -192,10 +195,12 @@ void UpdatePlayer(void)
 			MAP *mapchip = GetMapData();
 			ENEMY *enemy = GetEnemy();
 			ITEM * item = GetItem(0);
+			WALL *wall = GetWall();
 
 			if(g_player.countMove != (SCREEN_WIDTH / 10))
 			{
 				g_player.pos.x -= 10.0f;
+				wall->pos.x -= 10.0f;
 
 				for (int k = 0; k < ENEMY_MAX; k++, enemy++)
 				{
@@ -355,6 +360,28 @@ void PlayerMoving(void)
 	}
 }
 
+//=============================================================================
+// プレイヤーの滑る処理
+//=============================================================================
+void SlidePlayer(void)
+{
+	if (g_player.slideCnt <= PLAYER_SLIDE_MAX)
+	{
+		if (g_player.direction == Right)
+		{
+			g_player.pos.x += (PLAYER_SLIDE_MAX - (g_player.slideCnt * 1.0f));
+		}
+		else
+		{
+			g_player.pos.x -= (PLAYER_SLIDE_MAX - (g_player.slideCnt * 1.0f));
+		}
+		g_player.slideCnt++;
+	}
+	else
+	{
+		g_player.slideCnt = 0;
+	}
+}
 
 //=============================================================================
 // プレイヤーの落下処理

@@ -19,7 +19,7 @@
 #define ANIM_PATTERN_NUM			(TEXTURE_PATTERN_DIVIDE_X*TEXTURE_PATTERN_DIVIDE_Y)	// アニメーションパターン数
 #define TIME_ANIMATION				(4)	// アニメーションの切り替わるカウント
 
-#define ITEM_MAX					(3) // アイテムの最大数
+#define ITEM_MAX					(15) // アイテムの最大数
 #define ITEM_KIND_MAX				(3)	//アイテムの種類の最大数
 #define ITEM_POINT_ICE				(10) //氷のポイント
 #define ITEM_POINT_SALT_PEPPER		(10) //塩コショウのポイント

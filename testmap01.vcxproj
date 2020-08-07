@@ -156,6 +156,7 @@
     <ClCompile Include="score.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="titlescene.cpp" />
+    <ClCompile Include="wall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bg.h" />
@@ -183,6 +184,7 @@
     <ClInclude Include="score.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="titlescene.h" />
+    <ClInclude Include="wall.h" />
     <ClInclude Include="workLog.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

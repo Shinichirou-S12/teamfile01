@@ -115,9 +115,9 @@ void UninitItem(void)
 {
 	ITEM *item = &itemWk[0];
 
-	for (int i = 0; i < ITEM_MAX; i++)
+	for (int i = 0; i < ITEM_KIND_MAX; i++)
 	{
-		if (g_pD3DTextureItem != NULL)
+		if (g_pD3DTextureItem[i] != NULL)
 		{	// テクスチャの開放
 			g_pD3DTextureItem[i]->Release(); // 問題がある項目
 			g_pD3DTextureItem[i] = NULL;

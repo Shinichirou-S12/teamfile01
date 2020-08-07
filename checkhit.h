@@ -116,4 +116,6 @@ void CheckEnemyBullet(void);
 	@return		‚È‚µ
 *//***************************************************************************/
 void CheckPlayerBullet(void);
+
+void CheckHitWall(void);
 #endif
