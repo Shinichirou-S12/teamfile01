@@ -118,4 +118,5 @@ void CheckEnemyBullet(void);
 void CheckPlayerBullet(void);
 
 void CheckHitWall(void);
+void CheckHitKiller(void);
 #endif

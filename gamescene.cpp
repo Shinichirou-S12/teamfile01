@@ -18,6 +18,7 @@
 #include "effect.h"
 #include "enemyBullet.h"
 #include "wall.h"
+#include "killer.h"
 
 // マクロ定義
 
@@ -62,11 +63,17 @@ void InitGameScene(void)
 
 	// エフェクトの初期化処理
 	InitEffect(0);
+
+	// キラーの初期化処理
+	InitKiller(0);
 }
 
 // シーンの終了処理
 void UninitGameScene(void)
 {
+	// キラーの終了処理
+	UninitKiller();
+
 	// エフェクトの終了処理
 	UninitEffect();
 
@@ -130,6 +137,9 @@ void UpdateGameScene(void)
 	// エネミー用の弾の更新処理
 	UpdateEnemyBullet();
 
+	// キラーの更新処理
+	UpdateKiller();
+
 	// エフェクトの更新処理
 	UpdateEffect();
 
@@ -151,6 +161,9 @@ void DrawGameScene(void)
 
 	// マップの描画処理
 	DrawMap();
+
+	// キラーの描画処理
+	DrawKiller();
 
 	// 壁の描画処理
 	DrawWall();

@@ -21,6 +21,7 @@
 #include "effect.h"
 #include "enemyBullet.h"
 #include "wall.h"
+#include "killer.h"
 
 //=============================================================================
 // マップチップとの当たり判定
@@ -202,7 +203,7 @@ void Restriction(void)
 	for (int j = 0; j < SIZE_X * SIZE_Y * MAP_MAXDATA; j++, mapchip++)
 	{
 		if (mapchip->type != -1 && mapchip->type != 15 && mapchip->type != 2
-			&& mapchip->type != 13 && mapchip->type != 14)
+			&& mapchip->type != 13 && mapchip->type != 14 && mapchip->type != 4 && mapchip->type != 5)
 		{
 			switch (CheckHitBB_MAP(player->pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_X, PLAYER_TEXTURE_SIZE_Y),
 				D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), player->moveSpeed))	// ブロックのどこに触れているか
@@ -244,7 +245,7 @@ void RestrictionEnemy(int i)
 	enemy += i;
 	for (int j = 0; j < SIZE_X * SIZE_Y * MAP_MAXDATA; j++, mapchip++)
 	{
-		if (mapchip->type != -1 && mapchip->type != 15 && mapchip->type != 2)
+		if (mapchip->type != -1 && mapchip->type != 15 && mapchip->type != 2 && mapchip->type != 4 && mapchip->type != 5)
 		{
 			switch (CheckHitBB_MAP(enemy->pos, mapchip->pos, D3DXVECTOR2(ENEMY_TEXTURE_SIZE_X, ENEMY_TEXTURE_SIZE_Y),
 				D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), ENEMY_MOVE_SPEED))	// ブロックのどこに触れているか
@@ -441,6 +442,54 @@ void CheckHitWall(void)
 		{
 			item->use = false;
 			SetEffect(item->pos.x, item->pos.y, EFFECT_LIFE_TIME);
+		}
+	}
+}
+
+
+//=============================================================================
+// キラーとプレイヤーとの衝突判定
+//=============================================================================
+void CheckHitKiller(void)
+{
+	PLAYER *player = GetPlayer();
+	KILLER *killer = GetKiller(0);
+	CHANGE_LIFE *life = GetLifeState();
+
+	bool damage = false;
+	if (player->use)
+	{
+		for (int i = 0; i < KILLER_MAX; i++, killer++)
+		{
+			if (killer->use == false)
+			{
+				continue;
+			}
+
+			// キラーとの衝突判定を行う
+			if (CheckHitBC(player->pos, killer->pos, PLAYER_TEXTURE_BB_SIZE_X, TEXTURE_KILLER_SIZE_X))
+			{
+				damage = true;
+				break;
+			}
+		}
+
+		if (damage)
+		{
+			if (player->invincible == false)
+			{
+				// プレイヤーのHPが減少する
+				player->hp--;
+				player->invincible = true;
+				life--;
+				ChangeLife(-1);
+				// ライフの減少
+				ChangeScore(-SCORE_SNIPER_ENEMY);
+			}
+			damage = false;
+			SetEffect(killer->pos.x, killer->pos.y, EFFECT_LIFE_TIME);
+			killer->use = false;
+			killer->dead = true;
 		}
 	}
 }

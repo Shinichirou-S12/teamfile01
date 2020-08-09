@@ -126,7 +126,10 @@ void DrawMap(void)
 				if (mapBlock[k][i][j].use == true && mapBlock[k][i][j].type != BLOCK2 
 					&& mapBlock[k][i][j].type != BLOCK13
 					&& mapBlock[k][i][j].type != GLASS14
-					&& mapBlock[k][i][j].type != GLASS15)		// 使用している状態なら描画する
+					&& mapBlock[k][i][j].type != GLASS15
+					&& mapBlock[k][i][j].type != BLOCK4
+					&& mapBlock[k][i][j].type != BLOCK5
+					)		// 使用している状態なら描画する
 				{
 					// テクスチャの設定
 					pDevice->SetTexture(0, mapBlock[k][i][j].Texture);

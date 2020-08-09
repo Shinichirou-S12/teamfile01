@@ -143,6 +143,7 @@
     <ClCompile Include="gamescene.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="item.cpp" />
+    <ClCompile Include="killer.cpp" />
     <ClCompile Include="life.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="map01.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="gamescene.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="item.h" />
+    <ClInclude Include="killer.h" />
     <ClInclude Include="life.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="map.h" />
