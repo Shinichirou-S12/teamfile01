@@ -11,11 +11,17 @@
 #include "scene.h"
 #include "controller.h"
 #include "input.h"
+#include "fade.h"
+#include "sound.h"
+#include "playerTest.h"
 
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
-#define	TEXTURE_BG		_T("data/TEXTURE/title01.png")			// 読み込むテクスチャファイル名
+#define	TEXTURE_BG_TITLE		_T("data/TEXTURE/title01.png")			// 読み込むテクスチャファイル名
+#define	TEXTURE_BG_GAME		_T("data/TEXTURE/title01.png")				// 読み込むテクスチャファイル名
+#define	TEXTURE_BG_BONUS		_T("data/TEXTURE/title01.png")			// 読み込むテクスチャファイル名
+
 #define	TEXTURE_TITLE_LOGO	_T("data/TEXTURE/titlelogo.png")	// 読み込むテクスチャファイル名
 
 //*****************************************************************************
@@ -37,18 +43,44 @@ static float			g_scrollspeed;					// テクスチャのスクロール速度
 //=============================================================================
 // 初期化処理
 //=============================================================================
-HRESULT InitBg(void)
+HRESULT InitBg(int type)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
 
-	// テクスチャの読み込み
-	D3DXCreateTextureFromFile(pDevice,						// デバイスへのポインタ
-								TEXTURE_BG,				// ファイルの名前
-								&g_pD3DTextureTitle);		// 読み込むメモリー
+	switch(type)
+	{
+	case TITLE_BG:
+		// テクスチャの読み込み
+		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
+			TEXTURE_BG_TITLE,							// ファイルの名前
+			&g_pD3DTextureTitle);				// 読み込むメモリー
 
-	D3DXCreateTextureFromFile(pDevice,						// デバイスへのポインタ
-								TEXTURE_TITLE_LOGO,			// ファイルの名前
-								&g_pD3DTextureTitleLogo);	// 読み込むメモリー
+		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
+			TEXTURE_TITLE_LOGO,					// ファイルの名前
+			&g_pD3DTextureTitleLogo);			// 読み込むメモリー
+		break;
+
+	case GAME_BG:
+		// テクスチャの読み込み
+		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
+			TEXTURE_BG_GAME,							// ファイルの名前
+			&g_pD3DTextureTitle);				// 読み込むメモリー
+		break;
+
+	case BONUS_BG:
+		// テクスチャの読み込み
+		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
+			TEXTURE_BG_BONUS,							// ファイルの名前
+			&g_pD3DTextureTitle);				// 読み込むメモリー
+		break;
+
+	case RESULT_BG:
+		// テクスチャの読み込み
+		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
+			TEXTURE_BG_BONUS,							// ファイルの名前
+			&g_pD3DTextureTitle);				// 読み込むメモリー
+		break;
+	}
 
 	// 頂点情報の作成
 	MakeVertexBg();
@@ -80,13 +112,18 @@ void UninitBg(void)
 //=============================================================================
 void UpdateBg(void)
 {
+	PLAYER *player = GetPlayer();
 	int scene = GetScene();
 	g_scrollspeed+=0.002f;
 	SetTextureBg();
 
-	if (GetInput(STARTBUTTON))
+	if (GetInput(STARTBUTTON)&& scene == SCENE_TITLE)
 	{
-		SetScene(SCENE_GAME);
+		SetFade(FADE_OUT, SCENE_GAME, SOUND_LABEL_BGM_sample000);
+		player->warpUse = false;
+		player->scrollPos = D3DXVECTOR3(/*i*200.0f + */200.0f, 300.0f, 0.0f);// 座標データを初期化
+		player->partsState = PERFECT;
+		player->hp = PLAYER_HP;									// HPの初期化
 	}
 	else
 	{
@@ -125,7 +162,7 @@ void DrawBg(void)
 	// ポリゴンの描画
 	pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, g_vertexWkTitle, sizeof(VERTEX_2D));
 
-	if (scene != SCENE_GAME)
+	if (scene == SCENE_TITLE)
 	{
 		// 頂点フォーマットの設定
 		pDevice->SetFVF(FVF_VERTEX_2D);

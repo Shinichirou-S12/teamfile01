@@ -19,12 +19,15 @@
 #include "enemyBullet.h"
 #include "wall.h"
 #include "killer.h"
+#include "sound.h"
 
 // マクロ定義
 
 // シーンの初期化処理
 void InitGameScene(void)
 {
+	PLAYER *player = GetPlayer();
+
 	// 弾の初期化処理
 	InitBullet(0);
 
@@ -41,7 +44,7 @@ void InitGameScene(void)
 	InitMap();
 
 	// 背景の初期化処理
-	InitBg();
+	InitBg(GAME_BG);
 
 	// アイテムの初期化処理
 	InitItem(0);
@@ -52,25 +55,33 @@ void InitGameScene(void)
 	// 壁の初期化処理
 	InitWall();
 
-	// ライフの初期化処理
-	InitLife();
+	if (!player->warpUse)
+	{
+		// ライフの初期化処理
+		InitLife();
 
-	// スコアの初期化処理
-	InitScore();
+		// スコアの初期化処理
+		InitScore();
 
-	// タイマーの初期化処理
-	InitTimer();
+		// タイマーの初期化処理
+		InitTimer();
+	}
 
 	// エフェクトの初期化処理
 	InitEffect(0);
 
 	// キラーの初期化処理
 	InitKiller(0);
+
+	// サウンドの開始
+	PlaySound(SOUND_LABEL_BGM_sample001);
 }
 
 // シーンの終了処理
 void UninitGameScene(void)
 {
+	PLAYER *player = GetPlayer();
+
 	// キラーの終了処理
 	UninitKiller();
 
@@ -98,16 +109,24 @@ void UninitGameScene(void)
 	// 壁の終了処理
 	UninitWall();
 
-	// ライフの終了処理
-	UninitLife();
-
 	// アイテムの終了処理
 	UninitItem();
-	//// スコアの終了処理
-	//UninitScore();
 
-	// タイマーの終了処理
-	UninitTimer();
+	if (!player->warpUse)
+	{
+		// ライフの終了処理
+		UninitLife();
+
+		//// スコアの終了処理
+		//UninitScore();
+
+		// タイマーの終了処理
+		UninitTimer();
+	}
+
+	// サウンドの終了処理
+	StopSound(SOUND_LABEL_BGM_sample001);
+
 }
 
 // シーンの更新処理
@@ -118,6 +137,9 @@ void UpdateGameScene(void)
 
 	// 背景の更新処理
 	UpdateBg();
+
+	// キラーの更新処理
+	UpdateKiller();
 
 	// プレイヤーの更新処理
 	UpdatePlayer();
@@ -136,9 +158,6 @@ void UpdateGameScene(void)
 
 	// エネミー用の弾の更新処理
 	UpdateEnemyBullet();
-
-	// キラーの更新処理
-	UpdateKiller();
 
 	// エフェクトの更新処理
 	UpdateEffect();

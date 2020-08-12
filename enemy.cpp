@@ -11,7 +11,6 @@
 #include "checkhit.h"
 #include "enemyBullet.h"
 #include <math.h>
-
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
@@ -165,6 +164,11 @@ void UninitEnemy(void)
 			}
 		}
 	}
+
+	for (int i = 0; i < ENEMY_MAX; i++)
+	{
+		enemyWk[i].use = false;
+	}
 }
 
 //=============================================================================
@@ -172,8 +176,11 @@ void UninitEnemy(void)
 //=============================================================================
 void UpdateEnemy(void)
 {
+	PLAYER *player = GetPlayer();
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
+		D3DXVECTOR3 vec = player->pos - enemyWk[i].pos;
+		fabsf(vec.x);
 		if (enemyWk[i].use == true)
 		{
 			// アニメーション
@@ -185,10 +192,13 @@ void UpdateEnemy(void)
 				enemyWk[i].PatternAnim = (enemyWk[i].PatternAnim + 1) % ENEMY_ANIM_PATTERN_NUM;
 			}
 
-			// それぞれのタイプ別ごとのエネミーの更新処理
-			UpdateSniperEnemy(i);
-			UpdateTrackerEnemy(i);
-			UpdateGuardianEnemy(i);
+			if (vec.x <= SCREEN_WIDTH && enemyWk[i].pos.x <= SCREEN_WIDTH)
+			{
+				// それぞれのタイプ別ごとのエネミーの更新処理
+				UpdateSniperEnemy(i);
+				UpdateTrackerEnemy(i);
+				UpdateGuardianEnemy(i);
+			}
 
 			AttackEnemy(i);
 
@@ -448,6 +458,7 @@ void SetEnemy(void)
 {
 	MAP *map = GetMapData();
 	int i = 0;
+
 	for (int p = 0; p < MAP_MAXDATA * SIZE_X * SIZE_Y; p++, map++)
 	{
 		switch(map->type)

@@ -18,14 +18,23 @@
 #define	TITLELOGO_SIZE_X	(480)							// タイトルロゴの幅
 #define	TITLELOGO_SIZE_Y	(300)							// タイトルロゴの高さ
 
+enum BG_TEXTURE_TYPE
+{
+	TITLE_BG,
+	GAME_BG,
+	BONUS_BG,
+	RESULT_BG,
+	MAX_TEXTURE_TYPE
+};
+
 /**************************************************************************//**
 	@brief		InitBg
 	@brief		タイトルの初期化処理
-	@param		なし
+	@param[in]	type
 	@return			S_OK	処理の成功
 					E-FAIL	処理の失敗
 *//***************************************************************************/
-HRESULT InitBg(void);
+HRESULT InitBg(int type);
 
 /**************************************************************************//**
 	@brief		UninitBg

@@ -10,6 +10,7 @@
 #include "resultscene.h"
 #include "result_score.h"
 #include "score.h"
+#include "sound.h"
 
 // マクロ定義
 
@@ -24,6 +25,9 @@ void InitResultScene(void)
 
 	// スコア
 	InitResult_Score(0);
+
+	// サウンドの開始
+	PlaySound(SOUND_LABEL_BGM_sample002);
 }
 
 // 終了処理
@@ -35,6 +39,10 @@ void UninitResultScene(void)
 	UninitResult_Score();
 
 	UninitScore();
+
+	// サウンドの終了処理
+	StopSound(SOUND_LABEL_BGM_sample002);
+
 }
 
 // 更新処理

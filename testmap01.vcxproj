@@ -133,12 +133,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="bg.cpp" />
+    <ClCompile Include="bonusscene.cpp" />
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="checkhit.cpp" />
     <ClCompile Include="controller.cpp" />
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="enemyBullet.cpp" />
+    <ClCompile Include="fade.cpp" />
     <ClCompile Include="file.cpp" />
     <ClCompile Include="gamescene.cpp" />
     <ClCompile Include="input.cpp" />
@@ -155,18 +157,21 @@
     <ClCompile Include="savefile.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="score.cpp" />
+    <ClCompile Include="sound.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="titlescene.cpp" />
     <ClCompile Include="wall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bg.h" />
+    <ClInclude Include="bonusscene.h" />
     <ClInclude Include="bullet.h" />
     <ClInclude Include="checkhit.h" />
     <ClInclude Include="controller.h" />
     <ClInclude Include="effect.h" />
     <ClInclude Include="enemy.h" />
     <ClInclude Include="enemyBullet.h" />
+    <ClInclude Include="fade.h" />
     <ClInclude Include="file.h" />
     <ClInclude Include="gamescene.h" />
     <ClInclude Include="input.h" />
@@ -184,6 +189,7 @@
     <ClInclude Include="savefile.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="score.h" />
+    <ClInclude Include="sound.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="titlescene.h" />
     <ClInclude Include="wall.h" />

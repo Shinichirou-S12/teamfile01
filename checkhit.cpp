@@ -22,7 +22,6 @@
 #include "enemyBullet.h"
 #include "wall.h"
 #include "killer.h"
-
 //=============================================================================
 // マップチップとの当たり判定
 //=============================================================================
@@ -173,18 +172,15 @@ void FallCheckHitEnemy(int i)
 	enemy += i;
 	for (int j = 0; j < (SIZE_Y * SIZE_X * MAP_MAXDATA); j++, mapchip++)
 	{
-		if (mapchip->type == 1 
-			|| mapchip->type == 10 
-			|| mapchip->type == 0
-			|| mapchip->type == 3)
+		if (mapchip->type == BLOCK0 || mapchip->type == BLOCK1 || mapchip->type == BLOCK3 || mapchip->type == BLOCK10)
 		{
-			if (CheckHitBB_MAP(enemy->pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_TOP_X, PLAYER_TEXTURE_SIZE_Y),
+			if (CheckHitBB_MAP(enemy->pos, mapchip->pos, D3DXVECTOR2(ENEMY_TEXTURE_SIZE_X, ENEMY_TEXTURE_SIZE_Y),
 				D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), ENEMY_MOVE_SPEED) == TOP)	// ブロックの上に立っているとき
 			{
 				enemy->dropSpeed = 0;		// 重力加速度をリセット
 
 				// 上からブロックに突っ込むと、ブロックの上に戻す
-				enemy->pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y - PLAYER_TEXTURE_SIZE_X;
+				enemy->pos.y = mapchip->pos.y - MAP_TEXTURE_SIZE_Y - ENEMY_TEXTURE_SIZE_X;
 				return;
 			}
 		}
@@ -202,8 +198,8 @@ void Restriction(void)
 
 	for (int j = 0; j < SIZE_X * SIZE_Y * MAP_MAXDATA; j++, mapchip++)
 	{
-		if (mapchip->type != -1 && mapchip->type != 15 && mapchip->type != 2
-			&& mapchip->type != 13 && mapchip->type != 14 && mapchip->type != 4 && mapchip->type != 5)
+		if (mapchip->type != -1 &&
+			(mapchip->type == BLOCK0 || mapchip->type == BLOCK1 || mapchip->type == BLOCK3 || mapchip->type == BLOCK10))
 		{
 			switch (CheckHitBB_MAP(player->pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_X, PLAYER_TEXTURE_SIZE_Y),
 				D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), player->moveSpeed))	// ブロックのどこに触れているか
@@ -226,7 +222,7 @@ void Restriction(void)
 		player->pos.x = MAP_TEXTURE_SIZE_X;
 	}
 
-	if (player->pos.x == SCREEN_WIDTH)	//画面中央より右に行けないようにする
+	if (player->pos.x >= SCREEN_WIDTH)	//画面中央より右に行けないようにする
 	{
 		player->scroll = true;
 		player->countScroll++;
@@ -240,12 +236,14 @@ void RestrictionEnemy(int i)
 {
 	MAP *mapchip = GetMapData();
 	ENEMY *enemy = GetEnemy();
+	PLAYER *player = GetPlayer();
 
 	// 試験的に行う処理
 	enemy += i;
 	for (int j = 0; j < SIZE_X * SIZE_Y * MAP_MAXDATA; j++, mapchip++)
 	{
-		if (mapchip->type != -1 && mapchip->type != 15 && mapchip->type != 2 && mapchip->type != 4 && mapchip->type != 5)
+		if (mapchip->type != -1 && 
+			(mapchip->type == BLOCK0 || mapchip->type == BLOCK1 || mapchip->type == BLOCK3 || mapchip->type == BLOCK10))
 		{
 			switch (CheckHitBB_MAP(enemy->pos, mapchip->pos, D3DXVECTOR2(ENEMY_TEXTURE_SIZE_X, ENEMY_TEXTURE_SIZE_Y),
 				D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), ENEMY_MOVE_SPEED))	// ブロックのどこに触れているか
@@ -260,6 +258,18 @@ void RestrictionEnemy(int i)
 				enemy->pos.y = mapchip->pos.y + MAP_TEXTURE_SIZE_Y + ENEMY_TEXTURE_SIZE_Y;	// 下からブロックに突っ込むとブロックの下に戻す
 				break;
 			}
+		}
+	}
+
+	D3DXVECTOR3 vec;
+	D3DXVec3Subtract(&vec, &player->pos, &enemy->pos);
+	fabs(vec.x);
+
+	if (player->scroll)	// 画面右に行けないようにする
+	{
+		if (vec.x <= (float)(SCREEN_WIDTH / 8) && vec.x >= 0.0f)
+		{
+			enemy->use = false;
 		}
 	}
 }
@@ -295,6 +305,10 @@ void CheckHitItem(void)
 				if (player->partsState != PERFECT)
 				{
 					player->partsState++;
+				}
+
+				if (player->hp != PLAYER_HP)
+				{
 					player->hp++;
 				}
 
@@ -493,4 +507,31 @@ void CheckHitKiller(void)
 		}
 	}
 }
+
+//=============================================================================
+// ワープゲートとプレイヤーとの衝突判定
+//=============================================================================
+bool CheckHitWarp(void)
+{
+	PLAYER *player = GetPlayer();
+	MAP * map = GetMapData();
+
+	if (player->use)
+	{
+		for (int i = 0; i < SIZE_X * SIZE_Y * MAP_MAXDATA; i++, map++)
+		{
+			if (map->type == BLOCK6)
+			{
+				// ワープエリアとの衝突判定を行う
+				if (CheckHitBC(player->pos, map->pos, PLAYER_TEXTURE_BB_SIZE_X, SIZE_X))
+				{
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+
 

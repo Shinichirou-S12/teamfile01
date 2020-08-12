@@ -14,11 +14,15 @@
 #include "player.h"
 #include "input.h"
 #include "playerTest.h"
+#include "scene.h"
+#include "fade.h"
+#include "sound.h"
 
 /*******************************************************************************
 * マクロ定義
 *******************************************************************************/
-#define MAP_TEXTURE                 _T("data/TEXTURE/maptip.jpg")    // マップチップ画像
+#define MAP_TEXTURE                 _T("data/TEXTURE/maptip.jpg")		// マップチップ画像
+#define GATE_TEXTURE                 _T("data/TEXTURE/gate01.png")		// ワープゲート画像
 
 /*******************************************************************************
 * 構造体定義
@@ -35,6 +39,8 @@ void SetVertexMapChip(int y, int x, int mapData);
 * グローバル変数
 *******************************************************************************/
 static LPDIRECT3DTEXTURE9		g_pD3DTextureMap = NULL;		// テクスチャへのポリゴン
+static LPDIRECT3DTEXTURE9		g_pD3DTextureWarpGate = NULL;	// ワープゲートのテクスチャへのポリゴン
+
 MAP mapBlock[MAP_MAXDATA][SIZE_Y][SIZE_X];
 
 
@@ -42,26 +48,40 @@ MAP mapBlock[MAP_MAXDATA][SIZE_Y][SIZE_X];
 HRESULT InitMap(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetDevice();
-
+	int scene = GetScene();
 	int *data = GetFileData();
+	int *data2 = GetBonusFileData();
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,						// デバイスのポインタ
 		MAP_TEXTURE,										// ファイルの名前
-		&g_pD3DTextureMap);	// 読み込むメモリのポインタ
+		&g_pD3DTextureMap);									// 読み込むメモリのポインタ
+
+	// テクスチャの読み込み
+	D3DXCreateTextureFromFile(pDevice,						// デバイスのポインタ
+		GATE_TEXTURE,										// ファイルの名前
+		&g_pD3DTextureWarpGate);							// 読み込むメモリのポインタ
 
 	for (int k = 0; k < MAP_MAXDATA; k++)
 	{
 		for (int i = 0; i < SIZE_Y; i++)
 		{
-			for (int j = 0; j < SIZE_X; j++, *data++)
+			for (int j = 0; j < SIZE_X; j++)
 			{
 				mapBlock[k][i][j].use = true;
 				mapBlock[k][i][j].Texture = g_pD3DTextureMap;
 				mapBlock[k][i][j].pos = D3DXVECTOR3((k * (SCREEN_WIDTH * 2)) + MAP_TEXTURE_SIZE_X + (j * MAP_TEXTURE_SIZE_X * 2),
 					MAP_TEXTURE_SIZE_Y + (i * MAP_TEXTURE_SIZE_Y * 2), 0.0f);
-
-				mapBlock[k][i][j].type = *data;
+				if (scene == SCENE_GAME)
+				{
+					mapBlock[k][i][j].type = *data;
+					*data++;
+				}
+				else if(scene == SCENE_BONUS)
+				{
+					mapBlock[k][i][j].type = *data2;
+					*data2++;
+				}
 				mapBlock[k][i][j].move = D3DXVECTOR3(0.0f, 2.0f, 0.0f);	// 移動量
 				MakeVertexMap(j, i, k);
 			}
@@ -69,7 +89,6 @@ HRESULT InitMap(void)
 	}
 	return S_OK;
 }
-
 
 // 終了処理
 void UninitMap(void)
@@ -80,13 +99,20 @@ void UninitMap(void)
 		g_pD3DTextureMap->Release();
 		g_pD3DTextureMap = NULL;
 	}
+	if (g_pD3DTextureWarpGate != NULL)
+	{
+		// テクスチャの開放
+		g_pD3DTextureWarpGate->Release();
+		g_pD3DTextureWarpGate = NULL;
+	}
+
 }
 
 // 更新処理
 void UpdateMap(void)
 {
 	PLAYER *player = GetPlayer();
-
+	int scene = GetScene();
 	for (int k = 0; k < MAP_MAXDATA; k++)
 	{
 		for (int i = 0; i < SIZE_Y; i++)
@@ -123,13 +149,10 @@ void DrawMap(void)
 		{
 			for (int j = 0; j < SIZE_X; j++)
 			{
-				if (mapBlock[k][i][j].use == true && mapBlock[k][i][j].type != BLOCK2 
-					&& mapBlock[k][i][j].type != BLOCK13
-					&& mapBlock[k][i][j].type != GLASS14
-					&& mapBlock[k][i][j].type != GLASS15
-					&& mapBlock[k][i][j].type != BLOCK4
-					&& mapBlock[k][i][j].type != BLOCK5
-					)		// 使用している状態なら描画する
+				if (mapBlock[k][i][j].use == true && (mapBlock[k][i][j].type == BLOCK0
+					|| mapBlock[k][i][j].type == BLOCK1
+					|| mapBlock[k][i][j].type == BLOCK3
+					|| mapBlock[k][i][j].type == BLOCK10))		// 使用している状態なら描画する
 				{
 					// テクスチャの設定
 					pDevice->SetTexture(0, mapBlock[k][i][j].Texture);
@@ -137,6 +160,14 @@ void DrawMap(void)
 					// ポリゴンの描画
 					pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, mapBlock[k][i][j].vertexWk, sizeof(VERTEX_2D));
 
+				}
+				else if (mapBlock[k][i][j].type == BLOCK6)
+				{
+					// テクスチャの設定
+					pDevice->SetTexture(0, g_pD3DTextureWarpGate);
+
+					// ポリゴンの描画
+					pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, mapBlock[k][i][j].vertexWk, sizeof(VERTEX_2D));
 				}
 			}
 		}
@@ -194,6 +225,13 @@ HRESULT MakeVertexMap(int x, int y, int mapData)
 		mapBlock[mapData][y][x].vertexWk[1].tex = D3DXVECTOR2(2.0f / MAP_TEXTURE_PATTERN_DIVIDE_X, 0.0f / MAP_TEXTURE_PATTERN_DIVIDE_Y);
 		mapBlock[mapData][y][x].vertexWk[2].tex = D3DXVECTOR2(1.0f / MAP_TEXTURE_PATTERN_DIVIDE_X, 1.0f / MAP_TEXTURE_PATTERN_DIVIDE_Y);
 		mapBlock[mapData][y][x].vertexWk[3].tex = D3DXVECTOR2(2.0f / MAP_TEXTURE_PATTERN_DIVIDE_X, 1.0f / MAP_TEXTURE_PATTERN_DIVIDE_Y);
+		break;
+
+	case BLOCK6:
+		mapBlock[mapData][y][x].vertexWk[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+		mapBlock[mapData][y][x].vertexWk[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+		mapBlock[mapData][y][x].vertexWk[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+		mapBlock[mapData][y][x].vertexWk[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 		break;
 
 	case BLOCK10:

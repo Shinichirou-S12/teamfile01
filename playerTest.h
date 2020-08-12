@@ -13,6 +13,8 @@
 #define	PLAYER_TEXTURE_BB_SIZE_X					(64.0f/4.0f)		// PLAYERのサイズ(X方向)
 #define	PLAYER_TEXTURE_BB_SIZE_Y					(64.0f/4.0f)		// PLAYERのサイズ(Y方向)
 
+#define PLAYER_HP	(4)
+
 #define	PLAYER_TEXTURE_SIZE_X						(64.0f/2.0f)		// PLAYERのサイズ(X方向)
 #define	PLAYER_TEXTURE_SIZE_Y						(64.0f/2.0f)		// PLAYERのサイズ(Y方向)
 // Jump係数-----------------------------------
@@ -94,7 +96,8 @@ typedef struct					// PLAYER構造体
 	bool				moveble;			// 移動可能
 	bool				invincible;			// 無敵状態
 	bool				use;				// 使用状態かどうか
-	bool				scroll;
+	bool				scroll;				// スクロールしているかどうか
+	bool				warpUse;			// ワープゲートを使用しているかどうか
 
 	int					countScroll;
 	int					countMove;

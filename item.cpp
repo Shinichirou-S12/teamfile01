@@ -123,6 +123,10 @@ void UninitItem(void)
 			g_pD3DTextureItem[i] = NULL;
 		}
 	}
+	for (int i = 0; i < ITEM_MAX; i++, item++)
+	{
+		item->use = false;
+	}
 }
 
 //=============================================================================
@@ -345,7 +349,6 @@ void SetItem(float speed)
 			
 			item->speed = speed;
 			item->delete_use = false;
-			item->use = true;
 		}
 	}
 
@@ -355,6 +358,7 @@ void SetItem(float speed)
 	{
 		if (map->type == BLOCK2)
 		{
+			items->use = true;
 			items->pos = map->pos;
 			items++;
 		}

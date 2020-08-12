@@ -10,6 +10,8 @@
 #include "savefile.h"
 #include "controller.h"
 #include "scene.h"
+#include "fade.h"
+#include "sound.h"
 
 //*****************************************************************************
 // É}ÉNÉçíËã`
@@ -107,7 +109,7 @@ void UpdateResult_Score(void)
 {
 	if (GetInput(STARTBUTTON))
 	{
-		SetScene(SCENE_TITLE);
+		SetFade(FADE_OUT, SCENE_TITLE, SOUND_LABEL_BGM_sample002);
 		return;
 	}
 

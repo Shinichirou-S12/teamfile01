@@ -11,7 +11,7 @@
 #include "playerTest.h"
 #include "map.h"
 #include "checkhit.h"
-
+#include "scene.h"
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
@@ -104,10 +104,16 @@ HRESULT InitKiller(int type)
 //=============================================================================
 void UninitKiller(void)
 {
+	KILLER *killer = g_killer;				// キラーのポインターを初期化
+
 	if (g_pD3DTextureKiller != NULL)
 	{	// テクスチャの開放
 		g_pD3DTextureKiller->Release();
 		g_pD3DTextureKiller = NULL;
+	}
+	for (int i = 0; i < KILLER_MAX; i++, killer++)
+	{
+		killer->use = false;
 	}
 }
 
@@ -117,6 +123,7 @@ void UninitKiller(void)
 void UpdateKiller(void)
 {
 	KILLER *killer = g_killer;				// キラーのポインターを初期化
+	int scene = GetScene();
 
 	for (int i = 0; i < KILLER_MAX; i++, killer++)
 	{
@@ -140,29 +147,34 @@ void UpdateKiller(void)
 
 			// 画面外まで進んだ？
 			if (killer->pos.x < 0.0f
-				|| killer->pos.x >SCREEN_WIDTH
+				|| killer->pos.x >=SCREEN_WIDTH
 				|| killer->pos.y <0.0f
-				|| killer->pos.y >SCREEN_HEIGHT)	// 自分の大きさを考慮して画面外か判定している
+				|| killer->pos.y >=SCREEN_HEIGHT)	// 自分の大きさを考慮して画面外か判定している
 			{
 				killer->use = false;
 			}
+			else
+			{
+				if (scene == SCENE_GAME)
+				{
+					if (!killer->use && killer->dead)
+					{
+						// 再ポップまでのカウント
+						killer->popCnt++;
+					}
 
+					// 再ポップまでのカウント条件を満たしたらもう一度セット
+					if (killer->popCnt == POP_COUNT_KILLER)
+					{
+						SetKiller();
+					}
+				}
+			}
 			SetTextureKiller(i, killer->PatternAnim, killer->direction);	// アニメーション後のテクスチャの設定
 
 			SetVertexKiller(i);							// 移動後の座標で頂点を設定
 		}
 
-		else if (!killer->use && killer->dead)
-		{
-			// 再ポップまでのカウント
-			killer->popCnt++;
-		}
-
-		// 再ポップまでのカウント条件を満たしたらもう一度セット
-		if (killer->popCnt == POP_COUNT_KILLER)
-		{
-			SetKiller();
-		}
 	}
 	CheckHitKiller();
 }

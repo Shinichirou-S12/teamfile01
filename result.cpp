@@ -9,8 +9,8 @@
 #include "result.h"
 #include "controller.h"
 #include "input.h"
-//#include "fade.h"
-//#include "sound.h"
+#include "fade.h"
+#include "sound.h"
 
 //*****************************************************************************
 // プロトタイプ宣言
@@ -74,25 +74,25 @@ void UninitResult(void)
 //=============================================================================
 void UpdateResult(void)
 {
-	if (GetKeyboardTrigger(DIK_RETURN))
-	{
-		SetScene(SCENE_TITLE);
+	//if (GetKeyboardTrigger(DIK_RETURN))
+	//{
+	//	SetScene(SCENE_TITLE);
+	//}
+
+	if(GetKeyboardTrigger(DIK_RETURN))
+	{// Enter押したら、ステージを切り替える
+		SetFade(FADE_OUT, SCENE_TITLE, SOUND_LABEL_BGM_sample002);
+		
 	}
+	else if (IsButtonTriggered(0, BUTTON_B))
+	{
+		SetFade(FADE_OUT, SCENE_TITLE, SOUND_LABEL_BGM_sample002);
+	}
+
 	else
 	{
 		return;
 	}
-	//if(GetKeyboardTrigger(DIK_RETURN))
-	//{// Enter押したら、ステージを切り替える
-	//	InitGame();				// ゲームの再初期化処理
-	//	SetFade(FADE_OUT, SCENE_TITLE, SOUND_LABEL_BGM_sample000);
-	//	
-	//}
-	//else if (IsButtonTriggered(0, BUTTON_B))
-	//{
-	//	InitGame();				// ゲームの再初期化処理
-	//	SetFade(FADE_OUT, SCENE_TITLE, SOUND_LABEL_BGM_sample000);
-	//}
 
 }
 

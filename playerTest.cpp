@@ -16,11 +16,13 @@
 #include "enemy.h"
 #include "item.h"
 #include "wall.h"
+#include "fade.h"
+#include "sound.h"
+#include "enemyBullet.h"
 
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
-#define PLAYER_HP	(4)
 #define PLAYER_TIME_SHOT	(CHANGE_TIME)
 #define MAX_DIFFUSE	(255)
 #define PLAYER_INVINCIVLE	(60 * 3)
@@ -66,10 +68,22 @@ static PLAYER					g_player;		// プレイヤー構造体
 HRESULT InitPlayer(void)
 {
 	ReadTexturePlayer();
+	int scene = GetScene();
 
 	g_player.invincible = false;									// 無敵状態ではない
-	g_player.pos = D3DXVECTOR3(/*i*200.0f + */200.0f, 300.0f, 0.0f);// 座標データを初期化
-	g_player.scrollPos = D3DXVECTOR3(200.0f, 300.0f, 0.0f);			// スクロール座標データを初期化
+
+	if (scene == SCENE_GAME)
+	{
+		g_player.pos = g_player.scrollPos;							// 座標データを初期化
+		//g_player.ofsPos = g_player.pos;
+	}
+	else if(scene == SCENE_BONUS)
+	{
+		g_player.scrollPos = g_player.pos;							// 元の座標データを保持
+		//g_player.pos = g_player.ofsPos;							// 座標データを初期化
+		g_player.pos = g_player.scrollPos;							// 元の座標データを返す
+	}
+
 	g_player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);					// 回転データを初期化
 
 	g_player.moveSpeed = PLAYER_MOVE_SPEED;
@@ -78,7 +92,6 @@ HRESULT InitPlayer(void)
 	g_player.countMove = 0;
 	g_player.countScroll = 0;
 
-
 	// アニメパターン番号をランダムで初期化
 	g_player.animeCnt.PatternAnim = rand() % PLAYER_IDLE_TEXTURE_PATTERN_DIVIDE_X;	
 
@@ -86,7 +99,6 @@ HRESULT InitPlayer(void)
 	g_player.checkTopTexSize = PLAYER_TEXTURE_BB_SIZE_TOP_X;
 
 	g_player.state = IDLE;
-	g_player.partsState = PERFECT;
 	g_player.Texture = g_pD3DTexture[g_player.state][g_player.partsState];
 
 	g_player.animeCnt.PatDivX = PLAYER_IDLE_TEXTURE_PATTERN_DIVIDE_X;	// テクスチャの内分割数Xを初期化
@@ -98,7 +110,6 @@ HRESULT InitPlayer(void)
 	g_player.animeCnt.CountAnim = 0;								// アニメカウントを初期化
 	g_player.countShot = PLAYER_TIME_SHOT;							// 最初の一発はすぐ撃てるように
 	g_player.countInvincible = 0;									// 無敵カウントを初期化
-	g_player.hp = PLAYER_HP;										// HPの初期化
 	D3DXVECTOR2 temp = D3DXVECTOR2(PLAYER_TEXTURE_SIZE_X, PLAYER_TEXTURE_SIZE_Y);
 	g_player.radius = D3DXVec2Length(&temp);									// 半径を初期化
 	g_player.baseAngle = atan2f(PLAYER_TEXTURE_SIZE_Y, PLAYER_TEXTURE_SIZE_X);	// 角度を初期化
@@ -141,9 +152,24 @@ void UninitPlayer(void)
 //=============================================================================
 void UpdatePlayer(void)
 {
+	int scene = GetScene();
 	if (!g_player.use)
 	{
-		SetScene(SCENE_RESULT);
+		SetFade(FADE_OUT, SCENE_RESULT, SOUND_LABEL_BGM_sample001);
+		return;
+	}
+	
+	if (g_player.warpUse && GetInput(STARTBUTTON))
+	{
+		if (scene == SCENE_GAME)
+		{
+			SetFade(FADE_OUT, SCENE_BONUS, SOUND_LABEL_BGM_sample001);
+			g_player.warpUse = false;
+		}
+		else
+		{
+			SetFade(FADE_OUT, SCENE_GAME, SOUND_LABEL_BGM_sample002);
+		}
 		return;
 	}
 
@@ -160,100 +186,110 @@ void UpdatePlayer(void)
 	}
 
 
-		g_player.countShot++;			// 連射のカウント用
-		g_player.scrollPos.x = 0.0f;	// 画面スクロール用の変数
+	g_player.countShot++;			// 連射のカウント用
 
-		Invincible();
+	Invincible();
 
-		if (g_player.jumpForce == 0)	// プレイヤーがジャンプしていないと立ち状態になる
+	if (g_player.jumpForce == 0)	// プレイヤーがジャンプしていないと立ち状態になる
+	{
+		g_player.state = IDLE;
+	}
+
+	// キー入力で移動 
+	if (GetInput(JUMPMOVE))	// ジャンプ関係
+	{
+		if (g_player.dropSpeed > 1 && g_player.jumpForce <= 1)	//「地上からジャンプしてからの一回だけ空中ジャンプ」と「足場から自由落下からの一回だけ空中ジャンプ」をするための判定
 		{
-			g_player.state = IDLE;
+			g_player.dropSpeed = 0;	//重力加速度を0にすることで、再びプレイヤーが上昇をはじめる
+			g_player.jumpForce++;	// すぐ下のjump++と合わせてjumpが2以上になるので、どのようなタイミングでも「空中ジャンプ後はジャンプできない」
+									// SE再生
+			//PlaySound(SOUND_LABEL_SE_jump2);
+			//playerWk[1].use = true;
+		}
+		else
+		{
+			//PlaySound(SOUND_LABEL_SE_jump);
 		}
 
-		// キー入力で移動 
-		if (GetInput(JUMPMOVE))	// ジャンプ関係
+		g_player.jumpForce++;		// ジャンプの切り替え、1以上でジャンプ状態になる
+		g_player.state = JUMP;		// テクスチャは「ジャンプ」
+	}
+
+	// 画面の端に行ったらスクロール処理を開始する
+	if (g_player.scroll)
+	{
+		MAP *mapchip = GetMapData();
+		ENEMY *enemy = GetEnemy();
+		ITEM * item = GetItem(0);
+		WALL *wall = GetWall();
+		ENEMYBULLET *enemBullet = GetEnemyBullet(0);
+
+		if(g_player.countMove != (SCREEN_WIDTH / 10))
 		{
-			if (g_player.dropSpeed > 1 && g_player.jumpForce <= 1)	//「地上からジャンプしてからの一回だけ空中ジャンプ」と「足場から自由落下からの一回だけ空中ジャンプ」をするための判定
+			g_player.pos.x -= 10.0f;
+			if (scene == SCENE_GAME)
 			{
-				g_player.dropSpeed = 0;	//重力加速度を0にすることで、再びプレイヤーが上昇をはじめる
-				g_player.jumpForce++;	// すぐ下のjump++と合わせてjumpが2以上になるので、どのようなタイミングでも「空中ジャンプ後はジャンプできない」
-										// SE再生
-				//PlaySound(SOUND_LABEL_SE_jump2);
-				//playerWk[1].use = true;
-			}
-			else
-			{
-				//PlaySound(SOUND_LABEL_SE_jump);
-			}
-
-			g_player.jumpForce++;		// ジャンプの切り替え、1以上でジャンプ状態になる
-			g_player.state = JUMP;		// テクスチャは「ジャンプ」
-		}
-
-		if (g_player.scroll)
-		{
-			MAP *mapchip = GetMapData();
-			ENEMY *enemy = GetEnemy();
-			ITEM * item = GetItem(0);
-			WALL *wall = GetWall();
-
-			if(g_player.countMove != (SCREEN_WIDTH / 10))
-			{
-				g_player.pos.x -= 10.0f;
 				wall->pos.x -= 10.0f;
-
 				for (int k = 0; k < ENEMY_MAX; k++, enemy++)
 				{
 					enemy->pos.x -= 10.0f;
 				}
-
-				for (int s = 0; s < ITEM_MAX; s++, item++)
-				{
-					item->pos.x -= 10.0f;
-				}
-
-				for (int j = 0; j < (SIZE_X * SIZE_Y * MAP_MAXDATA); j++)
-				{
-					mapchip->pos.x -= 10.0f;
-					mapchip++;
-				}
 			}
-			g_player.countMove++;
 
-			if (g_player.countMove == (SCREEN_WIDTH / 10))
+			for (int a = 0; a < BULLET_MAX; a++, enemBullet++)
 			{
-				g_player.scroll = false;
-				g_player.countMove = 0;
+				enemBullet->use = false;
 			}
 
+			for (int s = 0; s < ITEM_MAX; s++, item++)
+			{
+				item->pos.x -= 10.0f;
+			}
+
+			for (int j = 0; j < (SIZE_X * SIZE_Y * MAP_MAXDATA); j++)
+			{
+				mapchip->pos.x -= 10.0f;
+				mapchip++;
+			}
 		}
+		g_player.countMove++;
 
-		PlayerMoving();
-
-		//g_player.mapPos += g_player.scrollPos;	// どれだけスクロールしたかを保持、イベントに使用
-
-		Restriction();
-		JumpPlayer();
-		FallPlayer();
-
-		if (g_player.hp > 1)
+		if (g_player.countMove == (SCREEN_WIDTH / 10))
 		{
-			AttackPlayer();
+			g_player.scroll = false;
+			g_player.countMove = 0;
 		}
 
-		CheckHitItem();
-		CheckHitEnemy();
-		CheckPlayerBullet();
+	}
 
-		if (g_player.hp <= 0 || g_player.pos.y > SCREEN_HEIGHT + PLAYER_TEXTURE_SIZE_Y * 5)
-		{
-			g_player.use = false;
-		}
+	PlayerMoving();
 
-		animPlayerState(&g_player.state, &g_player.partsState);
+	//g_player.mapPos += g_player.scrollPos;	// どれだけスクロールしたかを保持、イベントに使用
 
-		SetVertexPlayer(g_player.vertexWk);
-		SetTexturePlayer(g_player.vertexWk, g_player.animeCnt.PatternAnim);
+	Restriction();
+	JumpPlayer();
+	FallPlayer();
+
+	if (g_player.hp > 1)
+	{
+		AttackPlayer();
+	}
+
+	CheckHitItem();
+	CheckHitEnemy();
+	CheckPlayerBullet();
+
+	g_player.warpUse = CheckHitWarp();
+
+	if (g_player.hp <= 0 || g_player.pos.y > SCREEN_HEIGHT + PLAYER_TEXTURE_SIZE_Y * 5)
+	{
+		g_player.use = false;
+	}
+
+	animPlayerState(&g_player.state, &g_player.partsState);
+
+	SetVertexPlayer(g_player.vertexWk);
+	SetTexturePlayer(g_player.vertexWk, g_player.animeCnt.PatternAnim);
 }
 
 //=============================================================================
@@ -571,7 +607,7 @@ void SetTexturePlayer(VERTEX_2D *Vtx, int cntPattern)
 //=============================================================================
 void SetVertexPlayer(VERTEX_2D *Vtx)
 {
-	D3DXVECTOR3 pos = g_player.pos + g_player.ofsPos;
+	//D3DXVECTOR3 pos = g_player.pos + g_player.ofsPos;
 
 	// 頂点座標の設定
 

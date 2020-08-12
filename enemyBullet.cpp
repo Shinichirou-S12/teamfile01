@@ -8,7 +8,7 @@
 //*****************************************************************************
 #include "main.h"
 #include "bullet.h"
-//#include "sound.h"
+#include "sound.h"
 #include "playerTest.h"
 #include "enemy.h"
 #include "enemyBullet.h"
@@ -31,7 +31,7 @@ LPDIRECT3DTEXTURE9			g_pD3DTextureEnemyBullet = NULL;		// テクスチャへのポリゴン
 
 ENEMYBULLET					g_enemyBullet[BULLET_MAX];			// 弾の構造体
 
-//LPDIRECTSOUNDBUFFER8	g_pSE;							// SE用バッファ
+//LPDIRECTSOUNDBUFFER8		g_pSE;							// SE用バッファ
 
 //=============================================================================
 // 初期化処理
@@ -76,12 +76,18 @@ HRESULT InitEnemyBullet(int type)
 //=============================================================================
 void UninitEnemyBullet(void)
 {
+	ENEMYBULLET *bullet = g_enemyBullet;				// バレットのポインターを初期化
+
 	if (g_pD3DTextureEnemyBullet != NULL)
 	{	// テクスチャの開放
 		g_pD3DTextureEnemyBullet->Release();
 		g_pD3DTextureEnemyBullet = NULL;
 	}
 
+	for (int i = 0; i < BULLET_MAX; i++, bullet++)
+	{
+		bullet->use = false;
+	}
 	//if (g_pSE != NULL)
 	//{	// テクスチャの開放
 	//	g_pSE->Release();

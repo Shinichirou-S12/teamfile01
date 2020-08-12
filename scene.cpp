@@ -9,6 +9,8 @@
 #include "titlescene.h"
 #include "gamescene.h"
 #include "resultscene.h"
+#include "bonusscene.h"
+#include "fade.h"
 
 // マクロ定義
 #define SCENE_START	(SCENE_TITLE)
@@ -27,12 +29,16 @@ void InitScene(void)
 	case SCENE_GAME:
 		InitGameScene();
 		break;
+	case SCENE_BONUS:
+		InitBonusScene();
+		break;
 	case SCENE_RESULT:
 		InitResultScene();
 		break;
 	default:
 		break;
 	}
+	InitFade();
 }
 
 // 終了処理
@@ -46,12 +52,16 @@ void UninitScene(void)
 	case SCENE_GAME:
 		UninitGameScene();
 		break;
+	case SCENE_BONUS:
+		UninitBonusScene();
+		break;
 	case SCENE_RESULT:
 		UninitResultScene();
 		break;
 	default:
 		break;
 	}
+	UninitFade();
 }
 
 // 更新処理
@@ -65,12 +75,16 @@ void UpdateScene(void)
 	case SCENE_GAME:
 		UpdateGameScene();
 		break;
+	case SCENE_BONUS:
+		UpdateBonusScene();
+		break;
 	case SCENE_RESULT:
 		UpdateResultScene();
 		break;
 	default:
 		break;
 	}
+	UpdateFade();
 }
 
 // 描画処理
@@ -84,12 +98,16 @@ void DrawScene(void)
 	case SCENE_GAME:
 		DrawGameScene();
 		break;
+	case SCENE_BONUS:
+		DrawBonusScene();
+		break;
 	case SCENE_RESULT:
 		DrawResultScene();
 		break;
 	default:
 		break;
 	}
+	DrawFade();
 }
 
 // シーン切り替え
