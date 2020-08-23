@@ -1,10 +1,19 @@
 //! @file	item.h
-//! @author	まよ
+//! @author	kitade mayumi
 //! @date	2020-06-19
 //! @brief	アイテムの定義
 
 #ifndef _ITEM_H_
 #define _ITEM_H_
+
+enum KIND_FRUIT
+{
+	WATERMELON,
+	APPLE,
+	GRAPE,
+	STAR,
+	MAX_KIND
+};
 
 //*****************************************************************************
 // マクロ定義
@@ -17,13 +26,14 @@
 #define TEXTURE_PATTERN_DIVIDE_X	(5)	// アニメパターンのテクスチャ内分割数（X)
 #define TEXTURE_PATTERN_DIVIDE_Y	(2)	// アニメパターンのテクスチャ内分割数（Y)
 #define ANIM_PATTERN_NUM			(TEXTURE_PATTERN_DIVIDE_X*TEXTURE_PATTERN_DIVIDE_Y)	// アニメーションパターン数
-#define TIME_ANIMATION				(4)	// アニメーションの切り替わるカウント
+#define TIME_ANIMATION				(MAX_KIND)	// アニメーションの切り替わるカウント
 
 #define ITEM_MAX					(15) // アイテムの最大数
-#define ITEM_KIND_MAX				(3)	//アイテムの種類の最大数
+#define ITEM_KIND_MAX				(4)	//アイテムの種類の最大数
 #define ITEM_POINT_ICE				(10) //氷のポイント
 #define ITEM_POINT_SALT_PEPPER		(10) //塩コショウのポイント
 #define ITEM_POINT_HERB				(20) //ハーブのポイント
+
 
 /**************************************************************************//**
 	@struct		ITEM
@@ -39,6 +49,7 @@ typedef struct
 	D3DXVECTOR3		rot;						// ポリゴンの回転量
 	int				PatternAnim;				// アニメーションパターンナンバー
 	int				CountAnim;					// アニメーションカウント
+	int				type;						// アイテムの種類
 
 	LPDIRECT3DTEXTURE9	Texture;				// テクスチャ情報
 	VERTEX_2D		vertexWk[NUM_VERTEX];		// 頂点情報格納ワーク
@@ -99,6 +110,6 @@ ITEM *GetItem(int no);
 	@param[in]	speed	アイテムの移動スピード
 	@return		item	アイテムの先頭アドレス
 *//***************************************************************************/
-ITEM *SetItem(D3DXVECTOR3 pos, float speed);
+//ITEM *SetItem(D3DXVECTOR3 pos, float speed);
 
 #endif

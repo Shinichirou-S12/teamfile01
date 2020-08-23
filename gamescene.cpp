@@ -20,6 +20,7 @@
 #include "wall.h"
 #include "killer.h"
 #include "sound.h"
+#include "spear.h"
 
 // マクロ定義
 
@@ -67,6 +68,9 @@ void InitGameScene(void)
 		InitTimer();
 	}
 
+	// 針の初期化処理
+	InitSpear(0);
+
 	// エフェクトの初期化処理
 	InitEffect(0);
 
@@ -87,6 +91,9 @@ void UninitGameScene(void)
 
 	// エフェクトの終了処理
 	UninitEffect();
+
+	// 針の終了処理
+	UninitSpear();
 
 	// エネミー用の弾の終了処理
 	UninitEnemyBullet();
@@ -147,6 +154,9 @@ void UpdateGameScene(void)
 	// 壁の更新処理
 	UpdateWall();
 
+	// 針の更新処理
+	UpdateSpear();
+
 	// エネミーの更新処理
 	UpdateEnemy();
 
@@ -177,6 +187,9 @@ void DrawGameScene(void)
 {
 	// 背景の描画処理
 	DrawBg();
+
+	// 針の描画処理
+	DrawSpear();
 
 	// マップの描画処理
 	DrawMap();

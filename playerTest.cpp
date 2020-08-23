@@ -19,13 +19,17 @@
 #include "fade.h"
 #include "sound.h"
 #include "enemyBullet.h"
+#include "spear.h"
 
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
 #define PLAYER_TIME_SHOT	(CHANGE_TIME)
 #define MAX_DIFFUSE	(255)
+#define PLAYER_STAR_INVINCIVLE	(60 * 5)
 #define PLAYER_INVINCIVLE	(60 * 3)
+#define PLAYER_DOWNSTATE	(60 * 5)
+
 #define PLAYER_MOVE_SPEED	(2.0f)
 #define PLAYER_SLIDE_MAX	(MAP_TEXTURE_SIZE_X * 2)
 
@@ -47,7 +51,9 @@ void SetTexturePlayer(VERTEX_2D *Vtx, int cntPattern);
 void SetVertexPlayer(VERTEX_2D *Vtx);
 void animPlayerState(int * animState, int * partsState);
 
+bool DownSpeed(void);
 void Invincible(void);
+void StarInvincible(void);
 void FallPlayer(void);
 void JumpPlayer(void);
 void AttackPlayer(void);
@@ -89,6 +95,8 @@ HRESULT InitPlayer(void)
 	g_player.moveSpeed = PLAYER_MOVE_SPEED;
 	g_player.use = true;
 	g_player.scroll = false;
+	g_player.bogUse = false;
+	g_player.superInvincible = false;
 	g_player.countMove = 0;
 	g_player.countScroll = 0;
 
@@ -110,6 +118,8 @@ HRESULT InitPlayer(void)
 	g_player.animeCnt.CountAnim = 0;								// アニメカウントを初期化
 	g_player.countShot = PLAYER_TIME_SHOT;							// 最初の一発はすぐ撃てるように
 	g_player.countInvincible = 0;									// 無敵カウントを初期化
+	g_player.countSuperInvincible = 0;								// スター無敵カウントを初期化
+
 	D3DXVECTOR2 temp = D3DXVECTOR2(PLAYER_TEXTURE_SIZE_X, PLAYER_TEXTURE_SIZE_Y);
 	g_player.radius = D3DXVec2Length(&temp);									// 半径を初期化
 	g_player.baseAngle = atan2f(PLAYER_TEXTURE_SIZE_Y, PLAYER_TEXTURE_SIZE_X);	// 角度を初期化
@@ -117,6 +127,8 @@ HRESULT InitPlayer(void)
 	g_player.slideCnt = 0;	// 滑ったカウントの初期化
 	g_player.jumpForce = 0;	// ジャンプしていない
 	g_player.dropSpeed = 0;	// 重力加速度初期化
+	g_player.countBog = 0;	// 泥状態の初期化
+
 	g_player.ofsPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);	// オフセット座標を初期化
 	g_player.direction = Right;							// プレイヤーは右向き
 
@@ -189,6 +201,7 @@ void UpdatePlayer(void)
 	g_player.countShot++;			// 連射のカウント用
 
 	Invincible();
+	StarInvincible();
 
 	if (g_player.jumpForce == 0)	// プレイヤーがジャンプしていないと立ち状態になる
 	{
@@ -222,6 +235,7 @@ void UpdatePlayer(void)
 		ENEMY *enemy = GetEnemy();
 		ITEM * item = GetItem(0);
 		WALL *wall = GetWall();
+		SPEAR *spear = GetSpear(0);
 		ENEMYBULLET *enemBullet = GetEnemyBullet(0);
 
 		if(g_player.countMove != (SCREEN_WIDTH / 10))
@@ -234,6 +248,10 @@ void UpdatePlayer(void)
 				{
 					enemy->pos.x -= 10.0f;
 				}
+			}
+			for (int i = 0; i < SPEAR_MAX; i++, spear++)
+			{
+				spear->pos.x -= 10.0f;
 			}
 
 			for (int a = 0; a < BULLET_MAX; a++, enemBullet++)
@@ -353,6 +371,44 @@ void ReadTexturePlayer(void)
 
 }
 
+//=============================================================================
+// プレイヤーのステータスダウン状態
+//=============================================================================
+bool DownSpeed(void)
+{
+	if (g_player.bogUse == true)
+	{
+		g_player.countBog++;
+
+		if (g_player.countBog >= PLAYER_DOWNSTATE)
+		{
+			g_player.bogUse = false;
+			g_player.countBog = 0;
+		}
+		if (!g_player.superInvincible)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+//=============================================================================
+// プレイヤーのスターの無敵状態の確認
+//=============================================================================
+void StarInvincible(void)
+{
+	if (g_player.superInvincible == true)
+	{
+		g_player.countSuperInvincible++;
+
+		if (g_player.countSuperInvincible >= PLAYER_STAR_INVINCIVLE)
+		{
+			g_player.superInvincible = false;
+			g_player.countSuperInvincible = 0;
+		}
+	}
+}
 
 //=============================================================================
 // プレイヤーの無敵状態の確認
@@ -379,7 +435,14 @@ void PlayerMoving(void)
 	// 右移動----------------------------------------
 	if (GetInput(RIGHTMOVE))
 	{
-		g_player.pos.x += g_player.moveSpeed;
+		if (DownSpeed())
+		{
+			g_player.pos.x += g_player.moveSpeed / 2.0f;
+		}
+		else
+		{
+			g_player.pos.x += g_player.moveSpeed;
+		}
 
 		g_player.direction = Right;					// 左移動
 		g_player.state = RUN;						// ランニングtrue
@@ -388,8 +451,14 @@ void PlayerMoving(void)
 	// 左移動-----------------------------------------
 	else if (GetInput(LEFTMOVE))
 	{
-		g_player.pos.x -= g_player.moveSpeed;
-
+		if (DownSpeed())
+		{
+			g_player.pos.x -= g_player.moveSpeed / 2.0f;
+		}
+		else
+		{
+			g_player.pos.x -= g_player.moveSpeed;
+		}
 		g_player.direction = Left;					// 左移動
 		g_player.state = RUN;						// ランニングtrue
 
@@ -437,7 +506,14 @@ void JumpPlayer(void)
 {
 	if (g_player.jumpForce >= 1)	//ジャンプしたら等速で上昇。落下速度が加速度的に増加するので時間経過で落下する
 	{
-		g_player.pos.y -= PLAYER_ACCELE;
+		if (DownSpeed())
+		{
+			g_player.pos.y -= PLAYER_ACCELE / 2;
+		}
+		else
+		{
+			g_player.pos.y -= PLAYER_ACCELE;
+		}
 		g_player.state = JUMP;		// テクスチャは「ジャンプ」
 
 		g_player.textureSize = D3DXVECTOR2(PLAYER_TEXTURE_SIZE_X, PLAYER_TEXTURE_SIZE_Y);

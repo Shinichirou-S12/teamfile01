@@ -102,7 +102,7 @@ void FallCheckHitPlayer (void)
 	{
 		if ((player->jumpForce < 1) || player->dropSpeed >= PLAYER_ACCELE)	// ブロック横でジャンプするとブロック上辺に張り付くバグを抑制する処理
 		{
-			if (mapchip->type == 1 || mapchip->type == 10)
+			if (mapchip->use &&(mapchip->type == BLOCK1 || mapchip->type == BLOCK10 || mapchip->type == BLOCK12))
 			{
 				if (CheckHitBB_MAP(player->pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_TOP_X, PLAYER_TEXTURE_SIZE_Y),
 					D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), player->moveSpeed) == TOP)	// ブロックの上に立っているとき
@@ -128,7 +128,7 @@ void FallCheckHitPlayer (void)
 				}
 			}
 
-			if (mapchip->type == 0 || mapchip->type == 3)
+			if (mapchip->type == BLOCK0 || mapchip->type == BLOCK3 || mapchip->type == BLOCK16)
 			{
 				if (CheckHitBB_MAP(player->pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_X, PLAYER_TEXTURE_SIZE_Y),
 					D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), player->moveSpeed) == TOP)	// ブロックの上に立っているとき
@@ -150,9 +150,13 @@ void FallCheckHitPlayer (void)
 					player->jumpForce = 0;		// ジャンプ回数をリセット
 					player->rot.z = 0;			// 回転ジャンプの回転リセット
 
-					if (mapchip->type == 3)
+					if (mapchip->type == BLOCK3)
 					{
 						SlidePlayer();
+					}
+					if (mapchip->type == BLOCK16)
+					{
+						player->bogUse = true;
 					}
 					break;
 				}
@@ -172,7 +176,10 @@ void FallCheckHitEnemy(int i)
 	enemy += i;
 	for (int j = 0; j < (SIZE_Y * SIZE_X * MAP_MAXDATA); j++, mapchip++)
 	{
-		if (mapchip->type == BLOCK0 || mapchip->type == BLOCK1 || mapchip->type == BLOCK3 || mapchip->type == BLOCK10)
+		if (mapchip->use && 
+			(mapchip->type == BLOCK0 || mapchip->type == BLOCK1 
+				|| mapchip->type == BLOCK3 || mapchip->type == BLOCK10
+				|| mapchip->type == BLOCK12 || mapchip->type == BLOCK16))
 		{
 			if (CheckHitBB_MAP(enemy->pos, mapchip->pos, D3DXVECTOR2(ENEMY_TEXTURE_SIZE_X, ENEMY_TEXTURE_SIZE_Y),
 				D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), ENEMY_MOVE_SPEED) == TOP)	// ブロックの上に立っているとき
@@ -198,8 +205,10 @@ void Restriction(void)
 
 	for (int j = 0; j < SIZE_X * SIZE_Y * MAP_MAXDATA; j++, mapchip++)
 	{
-		if (mapchip->type != -1 &&
-			(mapchip->type == BLOCK0 || mapchip->type == BLOCK1 || mapchip->type == BLOCK3 || mapchip->type == BLOCK10))
+		if (mapchip->type != -1 && mapchip->use &&
+			(mapchip->type == BLOCK0 || mapchip->type == BLOCK1 
+			|| mapchip->type == BLOCK3 || mapchip->type == BLOCK10
+			|| mapchip->type == BLOCK12 || mapchip->type == BLOCK16))
 		{
 			switch (CheckHitBB_MAP(player->pos, mapchip->pos, D3DXVECTOR2(PLAYER_TEXTURE_BB_SIZE_X, PLAYER_TEXTURE_SIZE_Y),
 				D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), player->moveSpeed))	// ブロックのどこに触れているか
@@ -238,12 +247,13 @@ void RestrictionEnemy(int i)
 	ENEMY *enemy = GetEnemy();
 	PLAYER *player = GetPlayer();
 
-	// 試験的に行う処理
 	enemy += i;
 	for (int j = 0; j < SIZE_X * SIZE_Y * MAP_MAXDATA; j++, mapchip++)
 	{
-		if (mapchip->type != -1 && 
-			(mapchip->type == BLOCK0 || mapchip->type == BLOCK1 || mapchip->type == BLOCK3 || mapchip->type == BLOCK10))
+		if (mapchip->type != -1 && mapchip->use &&
+			(mapchip->type == BLOCK0 || mapchip->type == BLOCK1
+			|| mapchip->type == BLOCK3 || mapchip->type == BLOCK10
+			|| mapchip->type == BLOCK12 || mapchip->type == BLOCK16))
 		{
 			switch (CheckHitBB_MAP(enemy->pos, mapchip->pos, D3DXVECTOR2(ENEMY_TEXTURE_SIZE_X, ENEMY_TEXTURE_SIZE_Y),
 				D3DXVECTOR2(MAP_TEXTURE_SIZE_X, MAP_TEXTURE_SIZE_Y), ENEMY_MOVE_SPEED))	// ブロックのどこに触れているか
@@ -311,7 +321,11 @@ void CheckHitItem(void)
 				{
 					player->hp++;
 				}
-
+				if (item->type == STAR)
+				{
+					player->superInvincible = true;
+					item->use = false;
+				}
 				ChangeScore(item->point * 10);		// スコア加算
 			}
 		}
@@ -347,14 +361,17 @@ void CheckHitEnemy(void)
 
 		if (damage && player->invincible == false)
 		{
-			// プレイヤーのHPが減少する
-			player->hp--;
-			player->invincible = true;
-			life--;
-			ChangeLife(-1);
-			// ライフの減少
-			ChangeScore(-SCORE_SNIPER_ENEMY);
-			damage = false;
+			if (!player->superInvincible)
+			{
+				player->invincible = true;
+				// プレイヤーのHPが減少する
+				player->hp--;
+				life--;
+				ChangeLife(-1);
+				// ライフの減少
+				ChangeScore(-SCORE_SNIPER_ENEMY);
+				damage = false;
+			}
 		}
 	}
 }

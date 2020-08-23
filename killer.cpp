@@ -16,7 +16,7 @@
 // マクロ定義
 //*****************************************************************************
 #define TEXTURE_GAME_KILLER		_T("data/TEXTURE/EnemyChara/killer01.png")			// 画像
-#define POP_COUNT_KILLER	(60 * 4)
+#define POP_COUNT_KILLER	(60)
 
 // キラーのタイプの列挙型
 enum KILLER_TYPE
@@ -125,6 +125,8 @@ void UpdateKiller(void)
 	KILLER *killer = g_killer;				// キラーのポインターを初期化
 	int scene = GetScene();
 
+	CheckHitKiller();
+
 	for (int i = 0; i < KILLER_MAX; i++, killer++)
 	{
 		if (killer->use == true)			// 使用している状態なら更新する
@@ -153,30 +155,30 @@ void UpdateKiller(void)
 			{
 				killer->use = false;
 			}
-			else
-			{
-				if (scene == SCENE_GAME)
-				{
-					if (!killer->use && killer->dead)
-					{
-						// 再ポップまでのカウント
-						killer->popCnt++;
-					}
 
-					// 再ポップまでのカウント条件を満たしたらもう一度セット
-					if (killer->popCnt == POP_COUNT_KILLER)
-					{
-						SetKiller();
-					}
+		}
+		else if (!killer->use)
+		{
+			if (scene == SCENE_GAME)
+			{
+				if (killer->dead)
+				{
+					// 再ポップまでのカウント
+					killer->popCnt++;
+				}
+
+				// 再ポップまでのカウント条件を満たしたらもう一度セット
+				if (killer->popCnt == POP_COUNT_KILLER)
+				{
+					SetKiller();
 				}
 			}
-			SetTextureKiller(i, killer->PatternAnim, killer->direction);	// アニメーション後のテクスチャの設定
 
-			SetVertexKiller(i);							// 移動後の座標で頂点を設定
 		}
+		SetTextureKiller(i, killer->PatternAnim, killer->direction);	// アニメーション後のテクスチャの設定
 
+		SetVertexKiller(i);							// 移動後の座標で頂点を設定
 	}
-	CheckHitKiller();
 }
 
 //=============================================================================

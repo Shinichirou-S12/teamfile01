@@ -17,6 +17,7 @@
 #define TEXTURE_GAME_ITEM_WATERMELON	_T("data/TEXTURE/Item/watermelon.png")	// スイカの画像
 #define TEXTURE_GAME_ITEM_APPLE			_T("data/TEXTURE/Item/apple.png")		// リンゴの画像
 #define	TEXTURE_GAME_ITEM_GRAPE			_T("data/TEXTURE/Item/grape.png")		// ブドウの画像
+#define	TEXTURE_GAME_ITEM_STAR			_T("data/TEXTURE/Item/star02.png")		// スターの画像
 
 //*****************************************************************************
 // プロトタイプ宣言
@@ -48,16 +49,21 @@ HRESULT InitItem(int type)
 	{
 		// テクスチャの読み込み
 		D3DXCreateTextureFromFile(pDevice,		// デバイスのポインタ
-			TEXTURE_GAME_ITEM_WATERMELON,				// ファイルの名前
-			&g_pD3DTextureItem[0]);				// 読み込むメモリのポインタ
+			TEXTURE_GAME_ITEM_WATERMELON,		// ファイルの名前
+			&g_pD3DTextureItem[WATERMELON]);	// 読み込むメモリのポインタ
 		
 		D3DXCreateTextureFromFile(pDevice,		// デバイスのポインタ
-			TEXTURE_GAME_ITEM_APPLE,				// ファイルの名前
-			&g_pD3DTextureItem[1]);				// 読み込むメモリのポインタ
+			TEXTURE_GAME_ITEM_APPLE,			// ファイルの名前
+			&g_pD3DTextureItem[APPLE]);			// 読み込むメモリのポインタ
 
 		D3DXCreateTextureFromFile(pDevice,		// デバイスのポインタ
-			TEXTURE_GAME_ITEM_GRAPE,				// ファイルの名前
-			&g_pD3DTextureItem[2]);				// 読み込むメモリのポインタ
+			TEXTURE_GAME_ITEM_GRAPE,			// ファイルの名前
+			&g_pD3DTextureItem[GRAPE]);			// 読み込むメモリのポインタ
+
+		D3DXCreateTextureFromFile(pDevice,		// デバイスのポインタ
+			TEXTURE_GAME_ITEM_STAR,				// ファイルの名前
+			&g_pD3DTextureItem[STAR]);			// 読み込むメモリのポインタ
+
 	}
 
 	// アイテムの初期化処理
@@ -68,38 +74,19 @@ HRESULT InitItem(int type)
 		item->rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			// 回転データを初期化
 		item->PatternAnim = 0;								// アニメパターン番号をランダムで初期化
 		item->CountAnim = 0;								// アニメカウントを初期化
-		item->Texturenum = rand() % 3;						//テクスチャー種類をランダムで初期化
-		
+		item->Texturenum = rand() % 3;						// テクスチャー種類をランダムで初期化
 		item->speed = 0;									// アイテムスピードの初期化
-
+		item->type = 0;										// アイテムの種類
 		item->point = ITEM_POINT_HERB;
-
-		switch (item->Texturenum)							//テクスチャごとにポイントを初期化
-		{
-			case 0: 
-			{
-				item->point = ITEM_POINT_SALT_PEPPER;
-				break;
-			}
-			case 1: 
-			{
-				item->point = ITEM_POINT_HERB;
-				break;
-			}
-			case 2:
-			{
-				item->grape_use = true;
-				item->point = ITEM_POINT_ICE;
-				break;
-			}
-		}					
 		
 		D3DXVECTOR2 temp = D3DXVECTOR2(TEXTURE_ITEM_SIZE_X, TEXTURE_ITEM_SIZE_Y);
 		item->Radius = D3DXVec2Length(&temp);				// アイテムの半径を初期化
 		item->BaseAngle = atan2f(TEXTURE_ITEM_SIZE_Y, TEXTURE_ITEM_SIZE_X);	// アイテムの角度を初期化
 
-
-		item->Texture = g_pD3DTextureItem[item->Texturenum];			// テクスチャ情報
+		if (item->Texturenum != STAR)
+		{
+			item->Texture = g_pD3DTextureItem[item->Texturenum];		// テクスチャ情報
+		}
 		MakeVertexItem(i);												// 頂点情報の作成
 	}
 
@@ -188,7 +175,6 @@ void DrawItem(void)
 			// ポリゴンの描画
 			pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_ITEM, item->vertexWk, sizeof(VERTEX_2D));
 		}
-
 	}
 }
 
@@ -254,16 +240,21 @@ HRESULT MakeVertexItem(int no)
 	item->vertexWk[2].diffuse = D3DCOLOR_RGBA(255, 255, 255, 255);
 	item->vertexWk[3].diffuse = D3DCOLOR_RGBA(255, 255, 255, 255);
 
-	// テクスチャ座標の設定
-	item->vertexWk[0].tex = D3DXVECTOR2( 0.0f, 0.0f );
-	item->vertexWk[1].tex = D3DXVECTOR2( 1.0f/TEXTURE_PATTERN_DIVIDE_X, 0.0f );
-	item->vertexWk[2].tex = D3DXVECTOR2( 0.0f, 1.0f/TEXTURE_PATTERN_DIVIDE_Y );
-	item->vertexWk[3].tex = D3DXVECTOR2( 1.0f/TEXTURE_PATTERN_DIVIDE_X, 1.0f/TEXTURE_PATTERN_DIVIDE_Y );
-
-	//item->vertexWk[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-	//item->vertexWk[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-	//item->vertexWk[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-	//item->vertexWk[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+	if (item->type != STAR)
+	{
+		// テクスチャ座標の設定
+		item->vertexWk[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+		item->vertexWk[1].tex = D3DXVECTOR2(1.0f / TEXTURE_PATTERN_DIVIDE_X, 0.0f);
+		item->vertexWk[2].tex = D3DXVECTOR2(0.0f, 1.0f / TEXTURE_PATTERN_DIVIDE_Y);
+		item->vertexWk[3].tex = D3DXVECTOR2(1.0f / TEXTURE_PATTERN_DIVIDE_X, 1.0f / TEXTURE_PATTERN_DIVIDE_Y);
+	}
+	else
+	{
+		item->vertexWk[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+		item->vertexWk[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+		item->vertexWk[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+		item->vertexWk[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+	}
 
 	return S_OK;
 }
@@ -360,6 +351,14 @@ void SetItem(float speed)
 		{
 			items->use = true;
 			items->pos = map->pos;
+			items++;
+		}
+		if (map->type == ITEM17)
+		{
+			items->use = true;
+			items->pos = map->pos;
+			items->type = STAR;
+			items->Texture = g_pD3DTextureItem[STAR];
 			items++;
 		}
 	}

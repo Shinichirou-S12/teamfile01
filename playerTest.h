@@ -95,14 +95,20 @@ typedef struct					// PLAYER構造体
 
 	bool				moveble;			// 移動可能
 	bool				invincible;			// 無敵状態
+	bool				superInvincible;	// スーパースターの無敵状態
+
 	bool				use;				// 使用状態かどうか
 	bool				scroll;				// スクロールしているかどうか
 	bool				warpUse;			// ワープゲートを使用しているかどうか
+	bool				bogUse;				// 泥沼床にいるかどうか
+
+	int					countSuperInvincible;	// スーパースターの無敵状態のカウント
 
 	int					countScroll;
 	int					countMove;
 	int					countShot;			// 撃つまでのカウント
 	int					countInvincible;	// 無敵状態のカウント
+	int					countBog;			// 泥沼状態のカウント
 	int					hp;					// 体力
 	int					jumpForce;			// ジャンプ力
 	float				dropSpeed;			// 落下速度（重力）

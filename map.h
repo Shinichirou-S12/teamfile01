@@ -20,6 +20,8 @@
 #define MAP_TEXTURE_PATTERN_DIVIDE_X	(2)			// アニメパターンのテクスチャ内分割数（X)
 #define MAP_TEXTURE_PATTERN_DIVIDE_Y	(2)			// アニメパターンのテクスチャ内分割数（Y)
 
+#define MAP_TEXTURE_PATTERN_BOG_DIVIDE_X	(4)			// 泥床のテクスチャ内分割数（X)
+#define MAP_TEXTURE_PATTERN_BOG_DIVIDE_Y	(4)			// 泥床のテクスチャ内分割数（Y)
 enum BLOCKTYPE
 {
 	BLOCK0,
@@ -38,6 +40,8 @@ enum BLOCKTYPE
 	BLOCK13,
 	GLASS14,
 	GLASS15,
+	BLOCK16,
+	ITEM17,
 	MAXTYPE
 };
 
@@ -47,6 +51,7 @@ typedef struct
 	D3DXVECTOR3		pos;						// ポリゴンの移動量
 	D3DXVECTOR3		rot;						// ポリゴンの回転量
 	int				type;
+	int				popCnt;						// 次にポップするまでのカウント
 	float			countPos;
 	D3DXVECTOR3		move;						// ポリゴンの移動量
 
