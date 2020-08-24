@@ -5,12 +5,12 @@
 
 // インクルードファイル
 #include "main.h"
-#include "result.h"
 #include "savefile.h"
 #include "resultscene.h"
 #include "result_score.h"
 #include "score.h"
 #include "sound.h"
+#include "bg.h"
 
 // マクロ定義
 
@@ -18,7 +18,7 @@
 void InitResultScene(void)
 {
 	// ロゴと背景の初期化処理
-	InitResult(0);
+	InitBg(RESULT_BG);
 
 	//セーブデータからランキングを引っ張り出す
 	LoadData();
@@ -34,7 +34,7 @@ void InitResultScene(void)
 void UninitResultScene(void)
 {
 	// ロゴと背景の終了処理
-	UninitResult();
+	UninitBg();
 
 	UninitResult_Score();
 
@@ -49,7 +49,7 @@ void UninitResultScene(void)
 void UpdateResultScene(void)
 {
 	// ロゴと背景の更新処理
-	UpdateResult();
+	UpdateBg();
 
 	// リザルトスコアの更新処理
 	UpdateResult_Score();
@@ -59,7 +59,7 @@ void UpdateResultScene(void)
 void DrawResultScene(void)
 {
 	// ロゴと背景の描画処理
-	DrawResult();
+	DrawBg();
 
 	// リザルトスコアの描画処理
 	DrawResult_Score();

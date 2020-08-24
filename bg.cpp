@@ -18,12 +18,12 @@
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
-#define	TEXTURE_BG_TITLE		_T("data/TEXTURE/title01.png")			// 読み込むテクスチャファイル名
-#define	TEXTURE_BG_GAME		_T("data/TEXTURE/title01.png")				// 読み込むテクスチャファイル名
-#define	TEXTURE_BG_BONUS		_T("data/TEXTURE/title01.png")			// 読み込むテクスチャファイル名
+#define	TEXTURE_BG_TITLE		_T("data/TEXTURE/background/title01.png")		// 読み込むテクスチャファイル名
+#define	TEXTURE_BG_GAME		_T("data/TEXTURE/background/bg01.png")				// 読み込むテクスチャファイル名
+#define	TEXTURE_BG_BONUS		_T("data/TEXTURE/background/bg03.png")			// 読み込むテクスチャファイル名
 
-#define	TEXTURE_TITLE_LOGO	_T("data/TEXTURE/titlelogo.png")	// 読み込むテクスチャファイル名
-
+#define	TEXTURE_TITLE_LOGO	_T("data/TEXTURE/titlelogo.png")					// 読み込むテクスチャファイル名
+#define	TEXTURE_RESULT_LOGO	_T("data/TEXTURE/ResultTexture/result_logo.png")	// 読み込むテクスチャファイル名
 //*****************************************************************************
 // プロトタイプ宣言
 //*****************************************************************************
@@ -33,8 +33,8 @@ void SetTextureBg(void);		// タイトルのテクスチャの設定
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
-LPDIRECT3DTEXTURE9		g_pD3DTextureTitle = NULL;		// テクスチャへのポインタ
-LPDIRECT3DTEXTURE9		g_pD3DTextureTitleLogo = NULL;	// テクスチャへのポインタ
+LPDIRECT3DTEXTURE9		g_pD3DTextureBG = NULL;		// テクスチャへのポインタ
+LPDIRECT3DTEXTURE9		g_pD3DTextureBGLogo = NULL;	// テクスチャへのポインタ
 
 VERTEX_2D				g_vertexWkTitle[NUM_VERTEX];	// 頂点情報格納ワーク
 VERTEX_2D				g_vertexWkTitleLogo[NUM_VERTEX];// 頂点情報格納ワーク
@@ -53,32 +53,36 @@ HRESULT InitBg(int type)
 		// テクスチャの読み込み
 		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
 			TEXTURE_BG_TITLE,							// ファイルの名前
-			&g_pD3DTextureTitle);				// 読み込むメモリー
+			&g_pD3DTextureBG);				// 読み込むメモリー
 
 		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
 			TEXTURE_TITLE_LOGO,					// ファイルの名前
-			&g_pD3DTextureTitleLogo);			// 読み込むメモリー
+			&g_pD3DTextureBGLogo);			// 読み込むメモリー
 		break;
 
 	case GAME_BG:
 		// テクスチャの読み込み
 		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
 			TEXTURE_BG_GAME,							// ファイルの名前
-			&g_pD3DTextureTitle);				// 読み込むメモリー
+			&g_pD3DTextureBG);				// 読み込むメモリー
 		break;
 
 	case BONUS_BG:
 		// テクスチャの読み込み
 		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
-			TEXTURE_BG_BONUS,							// ファイルの名前
-			&g_pD3DTextureTitle);				// 読み込むメモリー
+			TEXTURE_BG_BONUS,					// ファイルの名前
+			&g_pD3DTextureBG);				// 読み込むメモリー
 		break;
 
 	case RESULT_BG:
 		// テクスチャの読み込み
 		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
-			TEXTURE_BG_BONUS,							// ファイルの名前
-			&g_pD3DTextureTitle);				// 読み込むメモリー
+			TEXTURE_BG_BONUS,					// ファイルの名前
+			&g_pD3DTextureBG);				// 読み込むメモリー
+
+		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
+			TEXTURE_RESULT_LOGO,				// ファイルの名前
+			&g_pD3DTextureBGLogo);				// 読み込むメモリー
 		break;
 	}
 
@@ -94,16 +98,16 @@ HRESULT InitBg(int type)
 //=============================================================================
 void UninitBg(void)
 {
-	if(g_pD3DTextureTitle != NULL)
+	if(g_pD3DTextureBG != NULL)
 	{// テクスチャの開放
-		g_pD3DTextureTitle->Release();
-		g_pD3DTextureTitle = NULL;
+		g_pD3DTextureBG->Release();
+		g_pD3DTextureBG = NULL;
 	}
 
-	if(g_pD3DTextureTitleLogo != NULL)
+	if(g_pD3DTextureBGLogo != NULL)
 	{// テクスチャの開放
-		g_pD3DTextureTitleLogo->Release();
-		g_pD3DTextureTitleLogo = NULL;
+		g_pD3DTextureBGLogo->Release();
+		g_pD3DTextureBGLogo = NULL;
 	}
 }
 
@@ -114,7 +118,23 @@ void UpdateBg(void)
 {
 	PLAYER *player = GetPlayer();
 	int scene = GetScene();
-	g_scrollspeed+=0.002f;
+
+	if (scene != SCENE_GAME)
+	{
+		g_scrollspeed += 0.002f;
+	}
+	else
+	{
+		if (player->direction == Right && (GetInput(RIGHTMOVE)))
+		{
+			g_scrollspeed += player->moveSpeed / 1000.0f;
+		}
+		else if(player->direction == Left && (GetInput(LEFTMOVE)))
+		{
+			g_scrollspeed -= player->moveSpeed / 1000.0f;
+		}
+	}
+
 	SetTextureBg();
 
 	if (GetInput(STARTBUTTON)&& scene == SCENE_TITLE)
@@ -125,10 +145,24 @@ void UpdateBg(void)
 		player->partsState = PERFECT;
 		player->hp = PLAYER_HP;									// HPの初期化
 	}
+	if (scene == SCENE_RESULT)
+	{
+		if (GetKeyboardTrigger(DIK_RETURN))
+		{// Enter押したら、ステージを切り替える
+			SetFade(FADE_OUT, SCENE_TITLE, SOUND_LABEL_BGM_sample002);
+
+		}
+		else if (IsButtonTriggered(0, BUTTON_B))
+		{
+			SetFade(FADE_OUT, SCENE_TITLE, SOUND_LABEL_BGM_sample002);
+		}
+	}
+
 	else
 	{
 		return;
 	}
+
 	//if(GetKeyboardTrigger(DIK_RETURN))
 	//{// Enter押したら、ステージを切り替える
 	//	SetStage(STAGE_GAME);
@@ -157,18 +191,19 @@ void DrawBg(void)
 	pDevice->SetFVF(FVF_VERTEX_2D);
 
 	// テクスチャの設定
-	pDevice->SetTexture(0, g_pD3DTextureTitle);
+	pDevice->SetTexture(0, g_pD3DTextureBG);
 
 	// ポリゴンの描画
 	pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, g_vertexWkTitle, sizeof(VERTEX_2D));
 
-	if (scene == SCENE_TITLE)
+	if (scene == SCENE_TITLE 
+		|| scene == SCENE_RESULT)
 	{
 		// 頂点フォーマットの設定
 		pDevice->SetFVF(FVF_VERTEX_2D);
 
 		// テクスチャの設定
-		pDevice->SetTexture(0, g_pD3DTextureTitleLogo);
+		pDevice->SetTexture(0, g_pD3DTextureBGLogo);
 
 		// ポリゴンの描画
 		pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, g_vertexWkTitleLogo, sizeof(VERTEX_2D));
@@ -184,7 +219,7 @@ void DrawBg(void)
 *//***************************************************************************/
 HRESULT MakeVertexBg(void)
 {
-	
+	int scene = GetScene();
 	// 頂点座標の設定
 	g_vertexWkTitle[0].vtx = D3DXVECTOR3(TITLE_POS_X, TITLE_POS_Y, 0.0f);
 	g_vertexWkTitle[1].vtx = D3DXVECTOR3(TITLE_POS_X + TITLE_SIZE_X, TITLE_POS_Y, 0.0f);
@@ -209,11 +244,23 @@ HRESULT MakeVertexBg(void)
 	g_vertexWkTitle[2].tex = D3DXVECTOR2(0.0f, 1.0f);
 	g_vertexWkTitle[3].tex = D3DXVECTOR2(1.0f, 1.0f);
 
-	// 頂点座標の設定
-	g_vertexWkTitleLogo[0].vtx = D3DXVECTOR3(TITLELOGO_POS_X, TITLELOGO_POS_Y, 0.0f);
-	g_vertexWkTitleLogo[1].vtx = D3DXVECTOR3(TITLELOGO_POS_X + TITLELOGO_SIZE_X, TITLELOGO_POS_Y, 0.0f);
-	g_vertexWkTitleLogo[2].vtx = D3DXVECTOR3(TITLELOGO_POS_X, TITLELOGO_POS_Y + TITLELOGO_SIZE_Y, 0.0f);
-	g_vertexWkTitleLogo[3].vtx = D3DXVECTOR3(TITLELOGO_POS_X + TITLELOGO_SIZE_X, TITLELOGO_POS_Y + TITLELOGO_SIZE_Y, 0.0f);
+	if (scene == SCENE_TITLE)
+	{
+		// 頂点座標の設定
+		g_vertexWkTitleLogo[0].vtx = D3DXVECTOR3(TITLELOGO_POS_X, TITLELOGO_POS_Y, 0.0f);
+		g_vertexWkTitleLogo[1].vtx = D3DXVECTOR3(TITLELOGO_POS_X + TITLELOGO_SIZE_X, TITLELOGO_POS_Y, 0.0f);
+		g_vertexWkTitleLogo[2].vtx = D3DXVECTOR3(TITLELOGO_POS_X, TITLELOGO_POS_Y + TITLELOGO_SIZE_Y, 0.0f);
+		g_vertexWkTitleLogo[3].vtx = D3DXVECTOR3(TITLELOGO_POS_X + TITLELOGO_SIZE_X, TITLELOGO_POS_Y + TITLELOGO_SIZE_Y, 0.0f);
+	}
+
+	if (scene == SCENE_RESULT)
+	{
+		// 頂点座標の設定
+		g_vertexWkTitleLogo[0].vtx = D3DXVECTOR3(RESULTLOGO_POS_X, RESULTLOGO_POS_Y, 0.0f);
+		g_vertexWkTitleLogo[1].vtx = D3DXVECTOR3(RESULTLOGO_POS_X + RESULTLOGO_SIZE_X, RESULTLOGO_POS_Y, 0.0f);
+		g_vertexWkTitleLogo[2].vtx = D3DXVECTOR3(RESULTLOGO_POS_X, RESULTLOGO_POS_Y + RESULTLOGO_SIZE_Y, 0.0f);
+		g_vertexWkTitleLogo[3].vtx = D3DXVECTOR3(RESULTLOGO_POS_X + RESULTLOGO_SIZE_X, RESULTLOGO_POS_Y + RESULTLOGO_SIZE_Y, 0.0f);
+	}
 
 	// テクスチャのパースペクティブコレクト用
 	g_vertexWkTitleLogo[0].rhw =

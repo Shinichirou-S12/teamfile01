@@ -159,6 +159,7 @@
     <ClCompile Include="score.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="spear.cpp" />
+    <ClCompile Include="substitute.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="titlescene.cpp" />
     <ClCompile Include="wall.cpp" />
@@ -192,6 +193,7 @@
     <ClInclude Include="score.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="spear.h" />
+    <ClInclude Include="substitute.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="titlescene.h" />
     <ClInclude Include="wall.h" />

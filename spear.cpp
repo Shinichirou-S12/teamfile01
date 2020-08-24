@@ -154,6 +154,7 @@ void MoveSpear(int no)
 {
 	SPEAR *spear = &g_spear[no];		// 針のポインターを初期化
 
+	// 針の向いているベクトルの方向に対して、移動する
 	if (!spear->downUse && !spear->popUse)
 	{
 		spear->move += spear->vec * spear->speed;
@@ -205,6 +206,8 @@ void MovingDirectionSpear(int no, D3DXVECTOR3 *vec)
 {
 	SPEAR *spear = &g_spear[no];		// 針のポインターを初期化
 	D3DXVECTOR3 vec2;
+
+	// 針の向いている方向にあわせてベクトルの向きを合わせる
 	switch (spear->direction)
 	{
 	case UP:

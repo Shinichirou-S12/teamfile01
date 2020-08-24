@@ -29,6 +29,7 @@
 #define PLAYER_STAR_INVINCIVLE	(60 * 5)
 #define PLAYER_INVINCIVLE	(60 * 3)
 #define PLAYER_DOWNSTATE	(60 * 5)
+#define PLAYER_MAP_MOVE_SPEED	(10.0f)
 
 #define PLAYER_MOVE_SPEED	(2.0f)
 #define PLAYER_SLIDE_MAX	(MAP_TEXTURE_SIZE_X * 2)
@@ -238,20 +239,20 @@ void UpdatePlayer(void)
 		SPEAR *spear = GetSpear(0);
 		ENEMYBULLET *enemBullet = GetEnemyBullet(0);
 
-		if(g_player.countMove != (SCREEN_WIDTH / 10))
+		if(g_player.countMove != (SCREEN_WIDTH / (int)PLAYER_MAP_MOVE_SPEED))
 		{
-			g_player.pos.x -= 10.0f;
+			g_player.pos.x -= PLAYER_MAP_MOVE_SPEED;
 			if (scene == SCENE_GAME)
 			{
-				wall->pos.x -= 10.0f;
+				wall->pos.x -= PLAYER_MAP_MOVE_SPEED;
 				for (int k = 0; k < ENEMY_MAX; k++, enemy++)
 				{
-					enemy->pos.x -= 10.0f;
+					enemy->pos.x -= PLAYER_MAP_MOVE_SPEED;
 				}
 			}
 			for (int i = 0; i < SPEAR_MAX; i++, spear++)
 			{
-				spear->pos.x -= 10.0f;
+				spear->pos.x -= PLAYER_MAP_MOVE_SPEED;
 			}
 
 			for (int a = 0; a < BULLET_MAX; a++, enemBullet++)
@@ -261,18 +262,18 @@ void UpdatePlayer(void)
 
 			for (int s = 0; s < ITEM_MAX; s++, item++)
 			{
-				item->pos.x -= 10.0f;
+				item->pos.x -= PLAYER_MAP_MOVE_SPEED;
 			}
 
 			for (int j = 0; j < (SIZE_X * SIZE_Y * MAP_MAXDATA); j++)
 			{
-				mapchip->pos.x -= 10.0f;
+				mapchip->pos.x -= PLAYER_MAP_MOVE_SPEED;
 				mapchip++;
 			}
 		}
 		g_player.countMove++;
 
-		if (g_player.countMove == (SCREEN_WIDTH / 10))
+		if (g_player.countMove == (SCREEN_WIDTH / (int)PLAYER_MAP_MOVE_SPEED))
 		{
 			g_player.scroll = false;
 			g_player.countMove = 0;

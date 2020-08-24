@@ -18,6 +18,12 @@
 #define	TITLELOGO_SIZE_X	(480)							// タイトルロゴの幅
 #define	TITLELOGO_SIZE_Y	(300)							// タイトルロゴの高さ
 
+
+#define	RESULTLOGO_POS_X		(160)						// タイトルロゴの表示位置
+#define	RESULTLOGO_POS_Y		(200)						// タイトルロゴの表示位置
+#define	RESULTLOGO_SIZE_X		(480)						// タイトルロゴの幅
+#define	RESULTLOGO_SIZE_Y		(80)						// タイトルロゴの高さ
+
 enum BG_TEXTURE_TYPE
 {
 	TITLE_BG,
