@@ -11,6 +11,8 @@
 #define ENEMY_MOVE_SPEED	(1.2f)
 
 #define ENEMY_TEXTURE_SIZE_X	(50/2)		// テクスチャサイズ
+#define ENEMY_TEXTURE_BB_SIZE_X	(50/2.5)	// テクスチャサイズ
+
 #define ENEMY_TEXTURE_SIZE_Y	(50/2)		// 同上
 
 // SNIPER型アニメーションテクスチャ

@@ -61,7 +61,7 @@ HRESULT InitEnemyBullet(int type)
 		bullet->rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			// 回転データを初期化
 		bullet->PatternAnim = 0;								// アニメパターン番号をランダムで初期化
 		bullet->CountAnim = 0;									// アニメカウントを初期化
-		bullet->speed = 2.0f;
+		bullet->speed = 3.0f;
 
 		bullet->Texture = g_pD3DTextureEnemyBullet;					// テクスチャ情報
 		MakeVertexEnemyBullet(i);									// 頂点情報の作成
@@ -257,23 +257,20 @@ void SetEnemyBullet(D3DXVECTOR3 enemyPos, D3DXVECTOR3 playerPos, int enemyType, 
 
 	for (int j = 0; j < ENEMY_MAX; j++)
 	{
-		if (enemyType == SNIPER)
+		// もし未使用の弾が無かったら発射しない( =これ以上撃てないって事 )
+		for (int i = 0; i < BULLET_MAX; i++, bullet++)
 		{
-			// もし未使用の弾が無かったら発射しない( =これ以上撃てないって事 )
-			for (int i = 0; i < BULLET_MAX; i++, bullet++)
-			{
-				D3DXVec3Subtract(&vec, &playerPos, &enemyPos);		// エネミーからプレイヤーに向けてのベクトルをvecに格納
-				D3DXVec3Normalize(&vec, &vec);						// vecを正規化
+			D3DXVec3Subtract(&vec, &playerPos, &enemyPos);		// エネミーからプレイヤーに向けてのベクトルをvecに格納
+			D3DXVec3Normalize(&vec, &vec);						// vecを正規化
 
- 				if (bullet->use == false)
-				{
-					bullet->use = true;
-					bullet->pos = enemyPos;
-					D3DXVec3Scale(&vec, &vec, bullet->speed);	// 速度をあらかじめ早くする場合はスピードを足しておく。コメント可
-					*countShot = 0;								// エネミーのカウントタイマーを初期化
-					bullet->vec = vec;							// vecの値をバレットのベクトルに格納
-					return;
-				}
+ 			if (bullet->use == false)
+			{
+				bullet->use = true;
+				bullet->pos = enemyPos;
+				D3DXVec3Scale(&vec, &vec, bullet->speed);	// 速度をあらかじめ早くする場合はスピードを足しておく。コメント可
+				*countShot = 0;								// エネミーのカウントタイマーを初期化
+				bullet->vec = vec;							// vecの値をバレットのベクトルに格納
+				return;
 			}
 		}
 	}

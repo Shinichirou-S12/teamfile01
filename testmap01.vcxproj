@@ -134,6 +134,7 @@
   <ItemGroup>
     <ClCompile Include="bg.cpp" />
     <ClCompile Include="bonusscene.cpp" />
+    <ClCompile Include="boss.cpp" />
     <ClCompile Include="bullet.cpp" />
     <ClCompile Include="checkhit.cpp" />
     <ClCompile Include="controller.cpp" />
@@ -151,7 +152,6 @@
     <ClCompile Include="map01.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="playerTest.cpp" />
-    <ClCompile Include="result.cpp" />
     <ClCompile Include="resultscene.cpp" />
     <ClCompile Include="result_score.cpp" />
     <ClCompile Include="savefile.cpp" />
@@ -167,6 +167,7 @@
   <ItemGroup>
     <ClInclude Include="bg.h" />
     <ClInclude Include="bonusscene.h" />
+    <ClInclude Include="boss.h" />
     <ClInclude Include="bullet.h" />
     <ClInclude Include="checkhit.h" />
     <ClInclude Include="controller.h" />
@@ -185,7 +186,6 @@
     <ClInclude Include="map01.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="playerTest.h" />
-    <ClInclude Include="result.h" />
     <ClInclude Include="resultscene.h" />
     <ClInclude Include="result_score.h" />
     <ClInclude Include="savefile.h" />

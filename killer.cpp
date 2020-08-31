@@ -16,7 +16,7 @@
 // マクロ定義
 //*****************************************************************************
 #define TEXTURE_GAME_KILLER		_T("data/TEXTURE/EnemyChara/killer01.png")			// 画像
-#define POP_COUNT_KILLER	(60)
+#define POP_COUNT_KILLER	(60 * 3)
 
 // キラーのタイプの列挙型
 enum KILLER_TYPE

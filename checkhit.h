@@ -64,6 +64,14 @@ bool CheckHitBC(D3DXVECTOR3 pos1, D3DXVECTOR3 pos2, float size1, float size2);
 void FallCheckHitPlayer(void);
 
 /**************************************************************************//**
+	@brief		FallCheckHitSubstitute
+	@brief		身代わりアイテムの落下処理の時の当たり判定
+	@param		なし
+	@return		なし
+*//***************************************************************************/
+void FallCheckHitSubstitute(void);
+
+/**************************************************************************//**
 	@brief		FallCheckHitEnemy
 	@brief		エネミーの落下処理の時の当たり判定
 	@param[in]	i
@@ -86,6 +94,13 @@ void Restriction(void);
 	@return		なし
 *//***************************************************************************/
 void RestrictionEnemy(int i);
+
+/**************************************************************************//**
+	@brief		RestrictionSubstitute
+	@brief		身代わりアイテムの横移動で画面外やブロックを貫通しないための処理
+	@return		なし
+*//***************************************************************************/
+void RestrictionSubstitute(void);
 
 /**************************************************************************//**
 	@brief		CheckHitItem
@@ -143,4 +158,16 @@ void CheckHitKiller(void);
 				false	ワープゲートと衝突していない
 *//***************************************************************************/
 bool CheckHitWarp(void);
+
+/**************************************************************************//**
+	@brief		CheckSpear
+	@brief		プレイヤーと針との衝突判定
+	@param		なし
+	@return		なし
+*//***************************************************************************/
+void CheckSpear(void);
+
+void CheckHitPlayerSubstitute(void);
+void CheckHitEnemySubstitute(void);
+
 #endif

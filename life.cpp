@@ -32,7 +32,7 @@ void SetTextureLife(int nIdx,float y,float alpha);
 //*****************************************************************************
 // グローバル変数宣言
 //*****************************************************************************
-LPDIRECT3DTEXTURE9		g_pD3DTextureLife[2] = {};		// テクスチャへのポインタ
+LPDIRECT3DTEXTURE9		g_pD3DTextureLife[2] = { NULL };		// テクスチャへのポインタ
 LPDIRECT3DVERTEXBUFFER9 g_pD3DVtxBuffLife = NULL;		// 頂点バッファインターフェースへのポインタ
 
 D3DXVECTOR3				g_posLife;						// 位置

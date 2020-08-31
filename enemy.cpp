@@ -55,7 +55,6 @@ void UpdateGuardianEnemy(int i);
 static LPDIRECT3DTEXTURE9		g_pD3DTextureEnemy[ENEMYTYPEMAX][STATE_MAX] = { NULL };		// テクスチャへのポリゴン
 
 static ENEMY					enemyWk[ENEMY_MAX];				// エネミー構造体
-
 //=============================================================================
 // 初期化処理
 //=============================================================================
@@ -63,7 +62,6 @@ HRESULT InitEnemy(void)
 {
 	// エネミーのテクスチャの読み込み
 	ReadEnemyTexture();
-
 	// エネミーの初期化処理
 	for (int i = 0; i < ENEMY_MAX; i++)
 	{
@@ -224,10 +222,27 @@ void UpdateSniperEnemy(int i)
 	if (enemyWk[i].type == SNIPER)					// 使用している状態なら更新する
 	{
 		enemyWk[i].countShot++;
-		
-		// 回転処理
+
 		D3DXVECTOR3 pos = GetPlayer()->pos - enemyWk[i].pos;
-		enemyWk[i].rot.z = atan2f(pos.y, pos.x) - D3DX_PI / 2;
+		// 方向処理
+		if (pos.x >= 0)
+		{
+			enemyWk[i].direction = Right;
+		}
+		else
+		{
+			enemyWk[i].direction = Left;
+		}
+
+		// 回転処理
+		if (enemyWk[i].direction == Right)
+		{
+			enemyWk[i].rot.z = atan2f(pos.y, pos.x);
+		}
+		else
+		{
+			enemyWk[i].rot.z = atan2f(pos.y, pos.x) - D3DX_PI;
+		}
 
 		// 移動処理
 		float rot = atan2f(pos.y, pos.x);
@@ -403,30 +418,19 @@ void SetTextureEnemy( int i, int cntPattern )
 	float sizeX = 1.0f / ENEMY_TEXTURE_PATTERN_DIVIDE_X;
 	float sizeY = 1.0f / ENEMY_TEXTURE_PATTERN_DIVIDE_Y;
 	
-	if (enemyWk[i].type != SNIPER)
-	{
-		if (enemyWk[i].direction == Left)
-		{
-			enemyWk[i].vertexWk[0].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY);
-			enemyWk[i].vertexWk[1].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY);
-			enemyWk[i].vertexWk[2].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY + sizeY);
-			enemyWk[i].vertexWk[3].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY + sizeY);
-		}
-		else
-		{
-			enemyWk[i].vertexWk[1].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY);
-			enemyWk[i].vertexWk[0].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY);
-			enemyWk[i].vertexWk[3].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY + sizeY);
-			enemyWk[i].vertexWk[2].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY + sizeY);
-		}
-	}
-
-	else
+	if (enemyWk[i].direction == Left)
 	{
 		enemyWk[i].vertexWk[0].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY);
 		enemyWk[i].vertexWk[1].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY);
 		enemyWk[i].vertexWk[2].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY + sizeY);
 		enemyWk[i].vertexWk[3].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY + sizeY);
+	}
+	else
+	{
+		enemyWk[i].vertexWk[1].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY);
+		enemyWk[i].vertexWk[0].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY);
+		enemyWk[i].vertexWk[3].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY + sizeY);
+		enemyWk[i].vertexWk[2].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY + sizeY);
 	}
 }
 

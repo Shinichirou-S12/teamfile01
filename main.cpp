@@ -378,12 +378,12 @@ LPDIRECT3DDEVICE9 GetDevice(void)
 //=============================================================================
 
 #include <stdio.h>
-
+#include "substitute.h"
 void DrawFPS(void)
 {
 	TCHAR str[256];
 	PLAYER *player = GetPlayer();
-	
+	SUBSTITUTE *substitute = GetSubstitute();
 	{	// テキスト描画
 		RECT rect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 		wsprintf( str, _T("FPS:%d\n"), g_nCountFPS );
@@ -393,12 +393,18 @@ void DrawFPS(void)
 	{	// テキスト描画
 		RECT rect = { 0, 32, SCREEN_WIDTH, SCREEN_HEIGHT };
 		char temp[256];
-		sprintf(temp, "X:%f Y:%f %d\n", player->pos.x, player->pos.y, player->hp);
+		sprintf(temp, "X:%f Y:%f %d %d\n", player->pos.x, player->pos.y, player->hp, player->countScroll);
 		wsprintf( str, _T("%s\n"), temp );
 		g_pD3DXFont->DrawText( NULL, str, -1, &rect, DT_LEFT, D3DCOLOR_ARGB( 0xff, 0xff, 0xff, 0xff ) );
 	}
 
-
+	{	// テキスト描画
+		RECT rect = { 0, 64, SCREEN_WIDTH, SCREEN_HEIGHT };
+		char temp[256];
+		sprintf(temp, "X:%f Y:%f\n", substitute->pos.x, substitute->pos.y);
+		wsprintf(str, _T("%s\n"), temp);
+		g_pD3DXFont->DrawText(NULL, str, -1, &rect, DT_LEFT, D3DCOLOR_ARGB(0xff, 0xff, 0xff, 0xff));
+	}
 
 
 }

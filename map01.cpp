@@ -125,6 +125,19 @@ void UninitMap(void)
 		g_pD3DTextureWarpGate = NULL;
 	}
 
+	if (g_pD3DTextureTransparentBlock != NULL)
+	{
+		// テクスチャの開放
+		g_pD3DTextureTransparentBlock->Release();
+		g_pD3DTextureTransparentBlock = NULL;
+	}
+	if (g_pD3DTextureBogBlock != NULL)
+	{
+		// テクスチャの開放
+		g_pD3DTextureBogBlock->Release();
+		g_pD3DTextureBogBlock = NULL;
+	}
+
 }
 
 // 更新処理

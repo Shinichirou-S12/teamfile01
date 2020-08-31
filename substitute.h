@@ -1,147 +1,122 @@
 //=============================================================================
 //
-// [substitute.h]
+// 身代わりアイテムの処理 [subtitute.h]
+// Author : kitade mayumi
+//
+//=============================================================================
+
+//=============================================================================
+//
+// [substitute.cpp]
 // Author : kitade mayumi
 //! @date	2020-08-24
-//! @brief	身代わりアイテムの定義
+//! @brief	身代わりアイテムの実装
 //=============================================================================
+
 #pragma once
-// マクロ定義
-#define	NUM_SUBSTITUTE		(2)									// ポリゴン数
 
-#define TEXTURE_GAME_SUBSTITUTE	_T("data/TEXTURE/egg.png")		// 画像
-#define TEXTURE_SUBSTITUTE_SIZE_X		(48/2)					// テクスチャサイズ
-#define TEXTURE_SUBSTITUTE_SIZE_Y		(48/2)					// 同上
+// テクスチャサイズ
+#define	SUBSTITUTE_TEXTURE_SIZE_X						(32.0f)		// SUBSTITUTEのサイズ(X方向)
+#define	SUBSTITUTE_TEXTURE_SIZE_Y						(32.0f)		// SUBSTITUTEのサイズ(Y方向)
 
-#define TEXTURE_SUBSTITUTE_PATTERN_X	(5)						// アニメパターンのテクスチャ内分割数（X)
-#define TEXTURE_SUBSTITUTE_PATTERN_Y	(3)						// アニメパターンのテクスチャ内分割数（Y)
-//
-//#define TIME_ANIMATION				(5)					// アニメーションの切り替わるカウント
-//
-//#define MOVE_ANIM_PATTERN			(4)
-//
-//#define MOVE_TYPE_TRAVERSE			(0)					// バレットテキスチャーのY軸0番
-//
-//#define MOVE_SPEED					(5.0f)				// 移動速度
+#define	SUBSTITUTE_TEXTURE_BB_SIZE_TOP_X				(SUBSTITUTE_TEXTURE_SIZE_X / 2.5f)		// SUBSTITUTEのサイズ(X方向)
+#define	SUBSTITUTE_TEXTURE_BB_SIZE_X					(SUBSTITUTE_TEXTURE_SIZE_X / 2.0f)		// SUBSTITUTEのサイズ(X方向)
+#define	SUBSTITUTE_TEXTURE_BB_SIZE_Y					(SUBSTITUTE_TEXTURE_SIZE_Y / 2.0f)		// SUBSTITUTEのサイズ(Y方向)
 
-#define SUBSTITUTE_JUMP_VAL				(6.0f)					// バレットのジャンプ時の高さ補正値
-#define SUBSTITUTE_JUMP_SUM				(0.2f)					// バレットのジャンプ時の高さ値の補正値
-#define SUBSTITUTE_DOWN_SUM				(0.18f)
+#define SUBSTITUTE_HP	(4)
 
-#define SUBSTITUTE_HITANIM_VAL			(5.0f)					// バレットのジャンプ時の高さ補正値
-#define SUBSTITUTE_HITANIM_SUM			(0.3f)					// バレットのジャンプ時の高さ値の補正値
-//#define SUBSTITUTE_HITDOWN_SUM				(0.18f)
+// Jump係数-----------------------------------
+#define SUBSTITUTE_JUMP_HIGH							(25)				// ジャンプの高さ
+#define SUBSTITUTE_ACCELE								(16.0f)				// 加速度
 
+// Move速度-----------------------------------
+//#define SUBSTITUTE_MOVE_SPEED							(8.0f)				// 移動量
+#define	SUBSTITUTE_ROTATE								(D3DX_PI * 0.02f)	// 回転量
 
-#define SUBSTITUTE_INTERVAL_MINIMUM		(48.0f)
-#define SUBSTITUTE_INTERVAL_MAXIMUM		(64.0f)
-#define SUBSTITUTE_INTERVAL_BETWEEN		(36.0f)
+// Idleアニメーション----------------------
+#define	TEXTURE_SUBSTITUTE_IDLE					"data/TEXTURE/substitute/substitute_idle.png"	// 読み込むテクスチャファイル名
 
-#define SUBSTITUTE_INITPOS_X			(PLAYER_INITPOS_X - SUBSTITUTE_INTERVAL_MINIMUM)
-#define SUBSTITUTE_INITPOS_Y			(410.0f)				// バレットのY軸の初期値
+#define SUBSTITUTE_IDLE_TEXTURE_PATTERN_DIVIDE_X		(4)										// アニメパターンのテクスチャ内分割数（X)
+#define SUBSTITUTE_IDLE_TEXTURE_PATTERN_DIVIDE_Y		(1)										// アニメパターンのテクスチャ内分割数（Y)
+#define SUBSTITUTE_IDLE_ANIM_PATTERN_NUM				(SUBSTITUTE_IDLE_TEXTURE_PATTERN_DIVIDE_X*SUBSTITUTE_IDLE_TEXTURE_PATTERN_DIVIDE_Y)	// アニメーションパターン数
+#define SUBSTITUTE_IDLE_TIME_ANIMATION					(20)									// アニメーションの切り替わるカウント
 
-#define SUBSTITUTE_DISCHARGE_SPEED		(11.0f)					// バレットの発射速度
+// Runningアニメーション----------------------
+#define	TEXTURE_SUBSTITUTE_RUN					"data/TEXTURE/substitute/substitute_run.png"	// 読み込むテクスチャファイル名
 
-#define SUBSTITUTE_LIMIT_POS_X_MIN		(-100.0f)				// バレット発射時の左限界値
-#define SUBSTITUTE_LIMIT_POS_X_MAX		(SCREEN_WIDTH + TEXTURE_SUBSTITUTE_SIZE_X)	// ベレット発射時の右限界値
+#define SUBSTITUTE_RUN_TEXTURE_PATTERN_DIVIDE_X			(6)										// アニメパターンのテクスチャ内分割数（X)
+#define SUBSTITUTE_RUN_TEXTURE_PATTERN_DIVIDE_Y			(1)										// アニメパターンのテクスチャ内分割数（Y)
+#define SUBSTITUTE_RUN_ANIM_PATTERN_NUM					(SUBSTITUTE_RUN_TEXTURE_PATTERN_DIVIDE_X*SUBSTITUTE_RUN_TEXTURE_PATTERN_DIVIDE_Y)	// アニメーションパターン数
+#define SUBSTITUTE_RUN_TIME_ANIMATION					(8)										// アニメーションの切り替わるカウント
 
+// Jumpアニメーション-----------------------------------
+#define	TEXTURE_SUBSTITUTE_JUMP					"data/TEXTURE/substitute/substitute_jump.png"	// 読み込むテクスチャファイル名
 
-#define SUBSTITUTE_POSX_MIN				(3.0f)					// バレット座標の左限界値
+#define SUBSTITUTE_JUMP_TEXTURE_PATTERN_DIVIDE_X		(2)										// アニメパターンのテクスチャ内分割数（X)
+#define SUBSTITUTE_JUMP_TEXTURE_PATTERN_DIVIDE_Y		(1)										// アニメパターンのテクスチャ内分割数（Y)
+#define SUBSTITUTE_JUMP_ANIM_PATTERN_NUM				(SUBSTITUTE_JUMP_TEXTURE_PATTERN_DIVIDE_X*SUBSTITUTE_JUMP_TEXTURE_PATTERN_DIVIDE_Y)	// アニメーションパターン数
+#define SUBSTITUTE_JUMP_TIME_ANIMATION					(8)										// アニメーションの切り替わるカウント
 
-#define DROP_WAVE_VAL				(5)						// ドロップ時の頂点座標の揺れ範囲
-
-typedef enum
-{// バレットのテキスチャーX軸の番号
-	SUBSTITUTE_ANIM_WAIT,
-	SUBSTITUTE_ANIM_WALK_A,
-	SUBSTITUTE_ANIM_WALK_B,
-	SUBSTITUTE_ANIM_WALK_C,
-	SUBSTITUTE_ANIM_DMG,
-}SUBSTITUTE_ANIM_NUM;
-
-typedef enum
-{// バレットの各アクションのラベル
-	SUBSTITUTE_ACT_MOVE,
-	SUBSTITUTE_ACT_JUMP,
-	SUBSTITUTE_ACT_DISCHARGE,
-	SUBSTITUTE_ACT_HIT,
-	SUBSTITUTE_ACT_WAIT,
-	SUBSTITUTE_ACT_DROP
-}SUBSTITUTE_ACTION;
-
-typedef enum
-{// バレット番号
-	SUBSTITUTE_PATTERN_DROP,
-	SUBSTITUTE_PATTERN_USE,
-	SUBSTITUTE_PATTERN_BORN
-}SUBSTITUTE_ANIM_TYPE;
-
-typedef enum
-{// バレット番号
-	SUBSTITUTE_1ST,
-	SUBSTITUTE_2ND,
-	//SUBSTITUTE_3RD,
-	SUBSTITUTE_MAX //= 10
-}SUBSTITUTE_NUM;
-
-typedef enum
+typedef struct							// SUBSTITUTEアニメーション用属性構造体
 {
-	SUBSTITUTE_OPTIMAL_DISTANCE,
-	SUBSTITUTE_TOO_NEAR,
-	SUBSTITUTE_TOO_FAR,
-	SUBSTITUTE_DISUSE
-}SUBSTITUTE_DISTANCE;
+	int		PatDivX;					// アニメパターンのテクスチャ内分割数（X)
+	int		PatDivY;					// アニメパターンのテクスチャ内分割数（Y)
+	int		AnimPatNum;					// アニメーションパターン数
+	int		TimeAnim;					// アニメーションの切り替わるカウント
+	int		PatternAnim;				// アニメーションパターンナンバー
+	int		CountAnim;					// アニメーションカウント
+}SUBSTITUTE_ANIMCNT;
 
-
-
-//*****************************************************************************
-// 構造体宣言
-//*****************************************************************************
-
-typedef struct	// バレット構造体
+typedef struct
 {
-	bool				use;					// true:使用		false:未使用
-	bool				useJump;				// true:ジャンプ中	false:ジャンプ未使用
-	bool				useDischarge;			// true:発射中		flase:未発射
-	bool				useHitAnim;				// true:着弾後		false:着弾前
+	int		PatDivX;					// アニメパターンのテクスチャ内分割数（X)
+	int		PatDivY;					// アニメパターンのテクスチャ内分割数（Y)
+	int		AnimPatNum;					// アニメーションパターン数
+	int		TimeAnim;					// アニメーションの切り替わるカウント
+}SUBSTITUTE_ANIM_DATE;
 
-	int					patternAnim;			// アニメーションパターンナンバー
-	int					countAnim;				// アニメーションカウント
-	int					state;					// バレットの向き状態
-	int					animType;				// バレットテキスチャーのｙ軸の値
 
-	D3DXVECTOR3			pos;					// ポリゴンの移動量
-	D3DXVECTOR3			rot;					// ポリゴンの回転量
+typedef struct					// SUBSTITUTE構造体
+{
+	D3DXVECTOR3			pos;				// 位置
+	D3DXVECTOR3			scrollPos;			// カメラ用の位置
+	D3DXVECTOR3			rot;				// ポリゴンの向き(回転)
+	D3DXVECTOR3			scl;				// ポリゴンの大きさ(スケール)
+	D3DXVECTOR3			ofsPos;				// オフセット座標
 
-	float				turn;					// バレットの向き
-	float				dirDischarge;			// 発射の向き +1.0fで右方向、-1.0ｆで左方向
+	float				moveSpeed;			// 移動量
+	float				radius;				// 半径
+	float				baseAngle;			// 角度
+	float				lenght;				// 距離
 
-	float				yTemp;					// ジャンプ時のｙ値を臨時保存
-	float				yPrev;					// ジャンプ時の前回のｙ値を保存
+	bool				moveble;			// 移動可能
+	bool				use;				// 使用状態かどうか
+	bool				releaseUse;			// 離れているかどうか
+	bool				sticking;			// 一度くっついたかどうか
+	bool				attackUse;			// 攻撃しているかどうか
 
-	float				radius;					// バレットの半径
-	float				baseAngle;				// バレットの角度
+	int					moveCount;			// 移動カウント
+	int					countReleaseTime;	// プレイヤーから離れている時間
+	int					jumpForce;			// ジャンプ力
+	float				dropSpeed;			// 落下速度（重力）
+	D3DXVECTOR2			textureSize;		// テクスチャサイズ
 
-	LPDIRECT3DTEXTURE9	Texture;				// テクスチャ情報
-	VERTEX_2D			vertexWk[NUM_VERTEX];	// 頂点情報格納ワーク
+	int					direction;			// SUBSTITUTEの方向
+	int					state;				// SUBSTITUTEの状態
 
-} SUBSTITUTE;
+	SUBSTITUTE_ANIMCNT	animeCnt;			// SUBSTITUTEアニメーション用属性構造体
+	LPDIRECT3DTEXTURE9	Texture;			// テクスチャ情報
 
+	VERTEX_2D		vertexWk[NUM_VERTEX];	// 頂点情報格納ワーク
+
+}SUBSTITUTE;
 
 //*****************************************************************************
 // プロトタイプ宣言
 //*****************************************************************************
-HRESULT InitSubstitute(int type);
-void	UninitSubstitute(void);
-void	UpdateSubstitute(void);
-void	DrawSubstitute(void);
-SUBSTITUTE	*GetSubstitute(int no);
-
-void	SetMoveSubstitute(float val, float dir);
-void	SetSubstituteDischarge(float direction);
-void	SetHitSubstitute(int no);
-void	UpdateJumpSubstitute(void);
-void	SetJumpSubstitute(void);
-
-
-
+HRESULT InitSubstitute(void);
+void UninitSubstitute(void);
+void UpdateSubstitute(void);
+void DrawSubstitute(void);
+SUBSTITUTE *GetSubstitute(void);
+void SetPosSubstitute(void);

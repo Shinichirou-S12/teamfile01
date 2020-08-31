@@ -21,6 +21,8 @@
 #include "killer.h"
 #include "sound.h"
 #include "spear.h"
+#include "substitute.h"
+#include "boss.h"
 
 // マクロ定義
 
@@ -47,11 +49,17 @@ void InitGameScene(void)
 	// 背景の初期化処理
 	InitBg(GAME_BG);
 
+	// ボスの初期化処理
+	InitBoss();
+
 	// アイテムの初期化処理
 	InitItem(0);
 
 	// エネミーの初期化処理
 	InitEnemy();
+
+	// 身代わりアイテムの初期化処理
+	InitSubstitute();
 
 	// 壁の初期化処理
 	InitWall();
@@ -104,6 +112,9 @@ void UninitGameScene(void)
 	// プレイヤーの終了処理
 	UninitPlayer();
 
+	// 身代わりアイテムの終了処理
+	UninitSubstitute();
+
 	// エネミーの終了処理
 	UninitEnemy();
 
@@ -118,6 +129,9 @@ void UninitGameScene(void)
 
 	// アイテムの終了処理
 	UninitItem();
+
+	// ボスの終了処理
+	UninitBoss();
 
 	if (!player->warpUse)
 	{
@@ -151,6 +165,9 @@ void UpdateGameScene(void)
 	// プレイヤーの更新処理
 	UpdatePlayer();
 
+	// 身代わりアイテムの更新処理
+	UpdateSubstitute();
+
 	// 壁の更新処理
 	UpdateWall();
 
@@ -159,6 +176,9 @@ void UpdateGameScene(void)
 
 	// エネミーの更新処理
 	UpdateEnemy();
+
+	// ボスの更新処理
+	UpdateBoss();
 
 	// アイテムの更新処理
 	UpdateItem();
@@ -214,6 +234,12 @@ void DrawGameScene(void)
 
 	// エネミーの描画処理
 	DrawEnemy();
+
+	// ボスの描画処理
+	DrawBoss();
+
+	// 身代わりアイテム描画処理
+	DrawSubstitute();
 
 	// プレイヤーの描画処理
 	DrawPlayer();

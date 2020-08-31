@@ -20,7 +20,8 @@ const char *const fileName[MAP_MAXDATA]=
 {
 	"data/DATA2/maptest01.csv",
 	"data/DATA2/maptest02.csv",
-	"data/DATA2/maptest03.csv"
+	"data/DATA2/maptest03.csv",
+	"data/DATA2/maptest04.csv"
 };
 
 // CSVのボーナスマップファイルリスト
@@ -28,7 +29,8 @@ const char *const fileBonusName[MAP_BONUS_MAXDATA] =
 {
 	"data/DATA2/mapbonustest01.csv",
 	"data/DATA2/mapbonustest03.csv",
-	"data/DATA2/mapbonustest02.csv"
+	"data/DATA2/mapbonustest02.csv",
+	"data/DATA2/mapbonustest04.csv"
 };
 
 FILE *fp[MAP_MAXDATA];

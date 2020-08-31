@@ -20,6 +20,8 @@
 #include "sound.h"
 #include "enemyBullet.h"
 #include "spear.h"
+#include "substitute.h"
+#include "boss.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -32,7 +34,6 @@
 #define PLAYER_MAP_MOVE_SPEED	(10.0f)
 
 #define PLAYER_MOVE_SPEED	(2.0f)
-#define PLAYER_SLIDE_MAX	(MAP_TEXTURE_SIZE_X * 2)
 
 enum PLAYER_STATE_ANIME
 {
@@ -52,7 +53,6 @@ void SetTexturePlayer(VERTEX_2D *Vtx, int cntPattern);
 void SetVertexPlayer(VERTEX_2D *Vtx);
 void animPlayerState(int * animState, int * partsState);
 
-bool DownSpeed(void);
 void Invincible(void);
 void StarInvincible(void);
 void FallPlayer(void);
@@ -238,16 +238,25 @@ void UpdatePlayer(void)
 		WALL *wall = GetWall();
 		SPEAR *spear = GetSpear(0);
 		ENEMYBULLET *enemBullet = GetEnemyBullet(0);
+		SUBSTITUTE *substitute = GetSubstitute();
+		BOSS *boss = GetBoss();
 
 		if(g_player.countMove != (SCREEN_WIDTH / (int)PLAYER_MAP_MOVE_SPEED))
 		{
 			g_player.pos.x -= PLAYER_MAP_MOVE_SPEED;
+			substitute->pos.x -= PLAYER_MAP_MOVE_SPEED;
+
 			if (scene == SCENE_GAME)
 			{
 				wall->pos.x -= PLAYER_MAP_MOVE_SPEED;
 				for (int k = 0; k < ENEMY_MAX; k++, enemy++)
 				{
 					enemy->pos.x -= PLAYER_MAP_MOVE_SPEED;
+				}
+
+				for (int i = 0; i < BOSS_MAX; i++, boss++)
+				{
+					boss->pos.x -= PLAYER_MAP_MOVE_SPEED;
 				}
 			}
 			for (int i = 0; i < SPEAR_MAX; i++, spear++)
@@ -277,6 +286,7 @@ void UpdatePlayer(void)
 		{
 			g_player.scroll = false;
 			g_player.countMove = 0;
+			g_player.countScroll++;
 		}
 
 	}
@@ -297,6 +307,8 @@ void UpdatePlayer(void)
 	CheckHitItem();
 	CheckHitEnemy();
 	CheckPlayerBullet();
+	CheckSpear();
+	CheckHitPlayerSubstitute();
 
 	g_player.warpUse = CheckHitWarp();
 
@@ -469,7 +481,7 @@ void PlayerMoving(void)
 //=============================================================================
 // プレイヤーの滑る処理
 //=============================================================================
-void SlidePlayer(void)
+bool SlidePlayer(void)
 {
 	if (g_player.slideCnt <= PLAYER_SLIDE_MAX)
 	{
@@ -482,10 +494,12 @@ void SlidePlayer(void)
 			g_player.pos.x -= (PLAYER_SLIDE_MAX - (g_player.slideCnt * 1.0f));
 		}
 		g_player.slideCnt++;
+		return true;
 	}
 	else
 	{
 		g_player.slideCnt = 0;
+		return false;
 	}
 }
 
@@ -530,7 +544,8 @@ void JumpPlayer(void)
 void AttackPlayer(void)
 {
 	CHANGE_LIFE *life = GetLifeState();
-	if (GetInput(ATTACK))
+	SUBSTITUTE *substitute = GetSubstitute();
+	if (GetInput(ATTACK) && !substitute->sticking)
 	{
 		D3DXVECTOR3 pos = g_player.pos;
 		if (g_player.countShot >= PLAYER_TIME_SHOT || g_player.jumpForce > 1)	// 連射用のカウントが規定値を超えているか、二段ジャンプ中なら弾発射

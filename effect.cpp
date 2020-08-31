@@ -1,6 +1,6 @@
 //! @file	effect.cpp
-//! @author	北出真弓
-//! @date	2020-01-27
+//! @author	kitade mayumi
+//! @date	2020-08-24(編集中)
 //! @brief	エフェクト処理の実装
 
 //*****************************************************************************
@@ -13,6 +13,11 @@
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
+enum EFFECT_KIND
+{
+	ONEKIND
+};
+
 #define EMISSION_FULL 0		// 全体追加フラグon
 #define EMISSION_RATE 1		// 全体追加フラグoff
 
@@ -27,7 +32,7 @@ void ResetParticle(int nCount, int nNum);							 // パーティクルのリセット
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
-static LPDIRECT3DTEXTURE9		g_pD3DTextureEffect = NULL;		// テクスチャへのポリゴン
+static LPDIRECT3DTEXTURE9		g_pD3DTextureEffect[3] = { NULL };		// テクスチャへのポリゴン
 
 static EFFECT					effectWk[EFFECT_NUM_EFFECTS];	// エネミー構造体
 
@@ -44,14 +49,12 @@ HRESULT InitEffect(int type)
 		// テクスチャの読み込み
 		D3DXCreateTextureFromFile(pDevice,						// デバイスのポインタ
 			EFFECT_TEXTURE,										// ファイルの名前
-			&g_pD3DTextureEffect);								// 読み込むメモリのポインタ
-	}
-	else if(type == 1)
-	{
+			&g_pD3DTextureEffect[0]);								// 読み込むメモリのポインタ
+
 		// テクスチャの読み込み
 		D3DXCreateTextureFromFile(pDevice,						// デバイスのポインタ
 			EFFECT_TEXTURE_FLARE,								// ファイルの名前
-			&g_pD3DTextureEffect);								// 読み込むメモリのポインタ
+			&g_pD3DTextureEffect[1]);							// 読み込むメモリのポインタ
 	}
 
 	// 初期化処理
@@ -64,7 +67,7 @@ HRESULT InitEffect(int type)
 
 		for (int nNum = 0; nNum < EFFECT_NUM_PARTS; nNum++)
 		{
-			effectWk[nCount].pParticle[nNum].Texture = g_pD3DTextureEffect;
+			effectWk[nCount].pParticle[nNum].Texture = g_pD3DTextureEffect[1];
 			ResetParticle(nCount, nNum);
 		}
 	}
@@ -97,10 +100,13 @@ void ResetParticle(int nCount, int nNum)
 //=============================================================================
 void UninitEffect(void)
 {
-	if (g_pD3DTextureEffect != NULL)
-	{	// テクスチャの開放
-		g_pD3DTextureEffect->Release();
-		g_pD3DTextureEffect = NULL;
+	for (int i = 0; i < 3; i++)
+	{
+		if (g_pD3DTextureEffect[i] != NULL)
+		{	// テクスチャの開放
+			g_pD3DTextureEffect[i]->Release();
+			g_pD3DTextureEffect[i] = NULL;
+		}
 	}
 }
 
