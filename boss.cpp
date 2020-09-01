@@ -324,13 +324,17 @@ void UpdateTwinBoss(int i)
 				D3DXVECTOR3 pos = D3DXVECTOR3(GetPlayer()->pos.x, 
 					(SCREEN_WIDTH - BOSS_TEXTURE_SIZE_X), 0.0f) - g_boss[i].pos;
 				// •ûŒüˆ—
-				if (pos.x >= 0)
+				if (pos.x > 0)
 				{
 					g_boss[i].direction = Right;
 				}
-				else
+				else if(pos.x < 0)
 				{
 					g_boss[i].direction = Left;
+				}
+				else
+				{
+					g_boss[i].direction = Down;
 				}
 
 				// ‰ñ“]ˆ—
@@ -338,17 +342,33 @@ void UpdateTwinBoss(int i)
 				{
 					g_boss[i].rot.z = atan2f(pos.y, pos.x);
 				}
-				else
+				else if(g_boss[i].direction == Left)
 				{
 					g_boss[i].rot.z = atan2f(pos.y, pos.x) - D3DX_PI;
+				}
+				else
+				{
+					g_boss[i].rot.z = 0.0f;
 				}
 
 				// ˆÚ“®ˆ—
 				float rot = atan2f(pos.y, pos.x);
 				g_boss[i].vecUse = true;
-				g_boss[i].pos.x += cosf(rot) * g_boss[i].move.x * 2.0f;
-				g_boss[i].pos.y += sinf(rot) * g_boss[i].move.x * 2.0f;
-
+				if (g_boss[i].direction == Right)
+				{
+					g_boss[i].pos.x += cosf(rot) * g_boss[i].move.x * 2.0f;
+					g_boss[i].pos.y += sinf(rot) * g_boss[i].move.x * 2.0f;
+				}
+				else if (g_boss[i].direction == Left)
+				{
+					g_boss[i].pos.x -= cosf(rot) * g_boss[i].move.x * 2.0f;
+					g_boss[i].pos.y += sinf(rot) * g_boss[i].move.x * 2.0f;
+				}
+				else
+				{
+					g_boss[i].pos.x += g_boss[i].move.x * 2.0f;
+					g_boss[i].pos.y += g_boss[i].move.x * 2.0f;
+				}
 			}
 			if(g_boss[i].pos.y < ((float)SCREEN_HEIGHT - (MAP_TEXTURE_SIZE_Y * 4)))
 			{
@@ -362,7 +382,7 @@ void UpdateTwinBoss(int i)
 					{
 						g_boss[i].pos.x -= g_boss[i].move.x * 3.0f;
 					}
-					g_boss[i].pos.y += g_boss[i].move.x * 5.0f;
+					g_boss[i].pos.y += g_boss[i].move.x * 3.0f;
 				}
 			}
 			else if(g_boss[i].pos.y >= ((float)SCREEN_HEIGHT - (MAP_TEXTURE_SIZE_Y * 4)))

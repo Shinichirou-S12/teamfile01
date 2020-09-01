@@ -10,22 +10,22 @@
 // マクロ定義
 #define BOSS_MOVE_SPEED	(1.2f)
 
-#define BOSS_TEXTURE_SIZE_X	(50/2)		// テクスチャサイズ
-#define BOSS_TEXTURE_BB_SIZE_X	(50/2.5)	// テクスチャサイズ
+#define BOSS_TEXTURE_SIZE_X	(100/2)		// テクスチャサイズ
+#define BOSS_TEXTURE_BB_SIZE_X	(100/2.5)	// テクスチャサイズ
 
-#define BOSS_TEXTURE_SIZE_Y	(50/2)		// 同上
+#define BOSS_TEXTURE_SIZE_Y	(100/2)		// 同上
 
 // SINGLE型アニメーションテクスチャ
-#define BOSS_SINGLE_IDLE_TEXTURE			_T("data/TEXTURE/EnemyChara/ventos/idle_ventos01.png")
-#define BOSS_SINGLE_ATTACK_TEXTURE			_T("data/TEXTURE/EnemyChara/ventos/attack_ventos01.png")
-#define BOSS_SINGLE_RUN_TEXTURE			_T("data/TEXTURE/EnemyChara/ventos/attack_ventos01.png")
-#define BOSS_SINGLE_DEATH_TEXTURE			_T("data/TEXTURE/EnemyChara/ventos/death_ventos01.png")
+#define BOSS_SINGLE_IDLE_TEXTURE			_T("data/TEXTURE/EnemyChara/tiamat/idle_tiamat01.png")
+#define BOSS_SINGLE_ATTACK_TEXTURE			_T("data/TEXTURE/EnemyChara/tiamat/attack_tiamat01.png")
+#define BOSS_SINGLE_RUN_TEXTURE			_T("data/TEXTURE/EnemyChara/tiamat/run_tiamat01.png")
+#define BOSS_SINGLE_DEATH_TEXTURE			_T("data/TEXTURE/EnemyChara/tiamat/death_tiamat01.png")
 
 // TWIN型アニメーションテクスチャ
-#define BOSS_TWIN_IDLE_TEXTURE			_T("data/TEXTURE/EnemyChara/slime/idle_slime01.png")
-#define BOSS_TWIN_ATTACK_TEXTURE			_T("data/TEXTURE/EnemyChara/slime/attack_slime01.png")
-#define BOSS_TWIN_RUN_TEXTURE			_T("data/TEXTURE/EnemyChara/slime/idle_slime01.png")
-#define BOSS_TWIN_DEATH_TEXTURE			_T("data/TEXTURE/EnemyChara/slime/death_slime01.png")
+#define BOSS_TWIN_IDLE_TEXTURE			_T("data/TEXTURE/EnemyChara/tiamat/idle_tiamat01.png")
+#define BOSS_TWIN_ATTACK_TEXTURE			_T("data/TEXTURE/EnemyChara/tiamat/attack_tiamat01.png")
+#define BOSS_TWIN_RUN_TEXTURE			_T("data/TEXTURE/EnemyChara/tiamat/run_tiamat01.png")
+#define BOSS_TWIN_DEATH_TEXTURE			_T("data/TEXTURE/EnemyChara/tiamat/death_tiamat01.png")
 
 #define BOSS_TEXTURE_PATTERN_DIVIDE_X	(3)	// アニメパターンのテクスチャ内分割数（X)
 #define BOSS_TEXTURE_PATTERN_DIVIDE_Y	(1)	// アニメパターンのテクスチャ内分割数（Y)

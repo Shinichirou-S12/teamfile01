@@ -26,14 +26,14 @@
 #define ENEMY_TRACKER_DEATH_TEXTURE			_T("data/TEXTURE/EnemyChara/slime/death_slime01.png")
 
 // GUARDIAN型アニメーションテクスチャ
-#define ENEMY_GUARDIAN_IDLE_TEXTURE			_T("data/TEXTURE/EnemyChara/tiamat/idle_tiamat01.png")
-#define ENEMY_GUARDIAN_ATTACK_TEXTURE			_T("data/TEXTURE/EnemyChara/tiamat/attack_tiamat01.png")
-#define ENEMY_GUARDIAN_DEATH_TEXTURE			_T("data/TEXTURE/EnemyChara/tiamat/death_tiamat01.png")
+#define ENEMY_GUARDIAN_IDLE_TEXTURE			_T("data/TEXTURE/EnemyChara/slime02/slime02_idle.png")
+#define ENEMY_GUARDIAN_ATTACK_TEXTURE			_T("data/TEXTURE/EnemyChara/slime02/slime02_attack.png")
+#define ENEMY_GUARDIAN_DEATH_TEXTURE			_T("data/TEXTURE/EnemyChara/slime02/slime02_death.png")
 
 #define ENEMY_TEXTURE_PATTERN_DIVIDE_X	(3)	// アニメパターンのテクスチャ内分割数（X)
 #define ENEMY_TEXTURE_PATTERN_DIVIDE_Y	(1)	// アニメパターンのテクスチャ内分割数（Y)
 #define ENEMY_ANIM_PATTERN_NUM			(ENEMY_TEXTURE_PATTERN_DIVIDE_X*ENEMY_TEXTURE_PATTERN_DIVIDE_Y)	// アニメーションパターン数
-#define ENEMY_TIME_ANIMATION			(4)	// アニメーションの切り替わるカウント
+#define ENEMY_TIME_ANIMATION			(6)	// アニメーションの切り替わるカウント
 
 #define ENEMY_MAX						(15) // 敵の最大数
 
