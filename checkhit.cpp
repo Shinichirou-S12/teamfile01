@@ -768,7 +768,7 @@ void CheckHitGoal(void)
 			if (map->type == GOAL)
 			{
 				// ワープエリアとの衝突判定を行う
-				if (CheckHitBC(player->pos, map->pos, PLAYER_TEXTURE_BB_SIZE_X, SIZE_X))
+				if (CheckHitBC(player->pos, map->pos, PLAYER_TEXTURE_BB_SIZE_TOP_X, SIZE_GOAL_X))
 				{
 					PlaySound(SOUND_LABEL_SE_WARP);
 					SetFade(FADE_OUT, SCENE_RESULT, SOUND_LABEL_BGM_GAMESTAGE);

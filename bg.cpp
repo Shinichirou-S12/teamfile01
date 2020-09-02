@@ -140,6 +140,7 @@ void UpdateBg(void)
 	if (GetInput(STARTBUTTON)&& scene == SCENE_TITLE)
 	{
 		SetFade(FADE_OUT, SCENE_GAME, SOUND_LABEL_BGM_TITLE);
+		PlaySound(SOUND_LABEL_SE_STARTBUTTON);
 		player->warpUse = false;
 		player->scrollPos = D3DXVECTOR3(/*i*200.0f + */200.0f, 300.0f, 0.0f);// 座標データを初期化
 		player->partsState = PERFECT;
