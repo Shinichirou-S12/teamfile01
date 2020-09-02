@@ -19,7 +19,7 @@ void InitTitleScene(void)
 	InitBg(TITLE_BG);
 	SaveData();
 	// BGMçƒê∂
-	PlaySound(SOUND_LABEL_BGM_sample000);
+	PlaySound(SOUND_LABEL_BGM_TITLE);
 }
 
 // èIóπèàóù
@@ -27,7 +27,7 @@ void UninitTitleScene(void)
 {
 	UninitBg();
 	// BGMí‚é~
-	StopSound(SOUND_LABEL_BGM_sample000);
+	StopSound(SOUND_LABEL_BGM_TITLE);
 
 }
 

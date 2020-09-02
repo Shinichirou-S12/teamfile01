@@ -12,7 +12,7 @@
 #include "checkhit.h"
 #include "enemyBullet.h"
 #include <math.h>
-
+#include "sound.h"
 //*****************************************************************************
 // ƒ}ƒNƒ’è‹`
 //*****************************************************************************
@@ -533,6 +533,7 @@ void AttackEnemy(int i)
 		if (enemyWk[i].countShot >= ENEMY_TIME_SHOT)
 		{
 			SetEnemyBullet(enemyWk[i].pos, player->pos, enemyWk[i].type, &enemyWk[i].countShot);
+			PlaySound(SOUND_LABEL_SE_SHOT01);
 			enemyWk[i].state = ATTACK;
 			enemyWk[i].Texture = g_pD3DTextureEnemy[enemyWk[i].type][enemyWk[i].state];
 		}

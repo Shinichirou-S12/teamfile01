@@ -12,7 +12,7 @@
 #include "playerTest.h"
 #include "enemy.h"
 #include "enemyBullet.h"
-
+#include "map.h"
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
@@ -274,6 +274,23 @@ void SetEnemyBullet(D3DXVECTOR3 enemyPos, D3DXVECTOR3 playerPos, int enemyType, 
 			}
 		}
 	}
+}
+
+//=============================================================================
+// ボスエネミーの弾の着弾設定
+//=============================================================================
+bool FallEnemyBullet(void)
+{
+	ENEMYBULLET *bullet = &g_enemyBullet[0];			// バレットのポインターを初期化
+	for (int i = 0; i < BULLET_MAX; i++, bullet++)
+	{
+		if (bullet->use && bullet->pos.y >= (SCREEN_HEIGHT - (MAP_TEXTURE_SIZE_Y * 2)))
+		{
+			return true;
+		}
+
+	}
+	return false;
 }
 
 //=============================================================================

@@ -168,7 +168,7 @@ void UpdatePlayer(void)
 	int scene = GetScene();
 	if (!g_player.use)
 	{
-		SetFade(FADE_OUT, SCENE_RESULT, SOUND_LABEL_BGM_sample001);
+		SetFade(FADE_OUT, SCENE_RESULT, SOUND_LABEL_BGM_GAMESTAGE);
 		return;
 	}
 	
@@ -176,12 +176,14 @@ void UpdatePlayer(void)
 	{
 		if (scene == SCENE_GAME)
 		{
-			SetFade(FADE_OUT, SCENE_BONUS, SOUND_LABEL_BGM_sample001);
+			SetFade(FADE_OUT, SCENE_BONUS, SOUND_LABEL_BGM_GAMESTAGE);
+			PlaySound(SOUND_LABEL_SE_WARP);
 			g_player.warpUse = false;
 		}
 		else
 		{
-			SetFade(FADE_OUT, SCENE_GAME, SOUND_LABEL_BGM_sample002);
+			SetFade(FADE_OUT, SCENE_GAME, SOUND_LABEL_BGM_BOSS_STAGE);
+			PlaySound(SOUND_LABEL_SE_WARP);
 		}
 		return;
 	}
@@ -217,12 +219,13 @@ void UpdatePlayer(void)
 			g_player.dropSpeed = 0;	//重力加速度を0にすることで、再びプレイヤーが上昇をはじめる
 			g_player.jumpForce++;	// すぐ下のjump++と合わせてjumpが2以上になるので、どのようなタイミングでも「空中ジャンプ後はジャンプできない」
 									// SE再生
-			//PlaySound(SOUND_LABEL_SE_jump2);
+			PlaySound(SOUND_LABEL_SE_JUMP);
 			//playerWk[1].use = true;
 		}
 		else
 		{
-			//PlaySound(SOUND_LABEL_SE_jump);
+			// SE再生
+			PlaySound(SOUND_LABEL_SE_JUMP);
 		}
 
 		g_player.jumpForce++;		// ジャンプの切り替え、1以上でジャンプ状態になる
@@ -286,7 +289,10 @@ void UpdatePlayer(void)
 		{
 			g_player.scroll = false;
 			g_player.countMove = 0;
-			g_player.countScroll++;
+			if (scene == SCENE_GAME)
+			{
+				g_player.countScroll++;
+			}
 		}
 
 	}
@@ -309,6 +315,7 @@ void UpdatePlayer(void)
 	CheckPlayerBullet();
 	CheckSpear();
 	CheckHitPlayerSubstitute();
+	CheckHitGoal();
 
 	g_player.warpUse = CheckHitWarp();
 
@@ -556,7 +563,7 @@ void AttackPlayer(void)
 			g_player.hp--;
 			g_player.partsState--;
 			ChangeLife(-1);
-			//PlaySound(SOUND_LABEL_SE_shot2);
+			PlaySound(SOUND_LABEL_SE_SHOT01);
 		}
 	}
 }

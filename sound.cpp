@@ -32,17 +32,17 @@ DWORD g_aSizeAudio[SOUND_LABEL_MAX] = {};					// オーディオデータサイズ
 // 各音素材のパラメータ
 SOUNDPARAM g_aParam[SOUND_LABEL_MAX] =
 {
-	{ "data/BGM/sample000.wav", -1 },	// BGM0
-	{ "data/BGM/bgm_maoudamashii_neorock73.wav", -1 },	// BGM1
-	{ "data/BGM/sample001.wav", -1 },	// BGM2
-	{ "data/SE/bomb000.wav", 0 },		// 弾発射音
-	{ "data/SE/defend000.wav", 0 },		// 弾発射音
-	{ "data/SE/defend001.wav", 0 },		// 弾発射音
-	{ "data/SE/hit000.wav", 0 },		// 弾発射音
-	{ "data/SE/laser000.wav", 0 },		// 弾発射音
-	{ "data/SE/lockon000.wav", 0 },		// 弾発射音
-	{ "data/SE/shot000.wav", 0 },		// 弾発射音
-	{ "data/SE/shot001.wav", 0 },		// ヒット音
+	{ "data/BGM/sirube.wav", -1 },			// タイトルの音
+	{ "data/BGM/hajimetenotabiji.wav", -1 },// ゲーム中の音
+	{ "data/BGM/kinkyu.wav", -1 },			// ボス戦の音
+	{ "data/BGM/seijonoinori.wav", -1},		// リザルトの音
+	{ "data/SE/knife-slash-1.wav", 0 },		// 弾発射音
+	{ "data/SE/itemgetsea.wav", 0 },		// アイテム音
+	{ "data/SE/jump.wav", 0 },				// ジャンプ音
+	{ "data/SE/decision22.wav", 0 },		// スタートボタン音
+	{ "data/SE/magic-worp1.wav", 0 },		// ワープ音
+	{ "data/SE/shot000.wav", 0 },			// 弾発射音
+	{ "data/SE/hit000.wav", 0 },			// ヒット音
 };
 
 //=============================================================================

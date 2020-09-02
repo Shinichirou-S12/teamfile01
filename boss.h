@@ -30,7 +30,7 @@
 #define BOSS_TEXTURE_PATTERN_DIVIDE_X	(3)	// アニメパターンのテクスチャ内分割数（X)
 #define BOSS_TEXTURE_PATTERN_DIVIDE_Y	(1)	// アニメパターンのテクスチャ内分割数（Y)
 #define BOSS_ANIM_PATTERN_NUM			(BOSS_TEXTURE_PATTERN_DIVIDE_X*BOSS_TEXTURE_PATTERN_DIVIDE_Y)	// アニメーションパターン数
-#define BOSS_TIME_ANIMATION			(16)	// アニメーションの切り替わるカウント
+#define BOSS_TIME_ANIMATION			(8)	// アニメーションの切り替わるカウント
 
 #define BOSS_MAX						(3) // 敵の最大数
 
@@ -47,6 +47,7 @@ typedef struct	// ボス構造体
 	bool			start;						// プレイヤーがスタート位置に立った時の判定
 	bool			lenghtUse;
 	bool			attackUse;					// 攻撃判定
+	bool			attackUseBullet;			// バレットが攻撃範囲外に出ているかどうかの判定
 
 	D3DXVECTOR3		pos;						// ポリゴンの移動量
 	D3DXVECTOR3		rot;						// ポリゴンの回転量

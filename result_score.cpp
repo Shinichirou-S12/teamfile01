@@ -109,7 +109,7 @@ void UpdateResult_Score(void)
 {
 	if (GetInput(STARTBUTTON))
 	{
-		SetFade(FADE_OUT, SCENE_TITLE, SOUND_LABEL_BGM_sample002);
+		SetFade(FADE_OUT, SCENE_TITLE, SOUND_LABEL_BGM_BOSS_STAGE);
 		return;
 	}
 

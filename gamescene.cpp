@@ -86,7 +86,7 @@ void InitGameScene(void)
 	InitKiller(0);
 
 	// サウンドの開始
-	PlaySound(SOUND_LABEL_BGM_sample001);
+	PlaySound(SOUND_LABEL_BGM_GAMESTAGE);
 }
 
 // シーンの終了処理
@@ -146,7 +146,7 @@ void UninitGameScene(void)
 	}
 
 	// サウンドの終了処理
-	StopSound(SOUND_LABEL_BGM_sample001);
+	StopSound(SOUND_LABEL_BGM_GAMESTAGE);
 
 }
 
@@ -177,6 +177,9 @@ void UpdateGameScene(void)
 	// エネミーの更新処理
 	UpdateEnemy();
 
+	// エネミー用の弾の更新処理
+	UpdateEnemyBullet();
+
 	// ボスの更新処理
 	UpdateBoss();
 
@@ -185,9 +188,6 @@ void UpdateGameScene(void)
 
 	// 弾の更新処理
 	UpdateBullet();
-
-	// エネミー用の弾の更新処理
-	UpdateEnemyBullet();
 
 	// エフェクトの更新処理
 	UpdateEffect();

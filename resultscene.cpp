@@ -27,7 +27,7 @@ void InitResultScene(void)
 	InitResult_Score(0);
 
 	// サウンドの開始
-	PlaySound(SOUND_LABEL_BGM_sample002);
+	PlaySound(SOUND_LABEL_BGM_RESULT);
 }
 
 // 終了処理
@@ -41,7 +41,7 @@ void UninitResultScene(void)
 	UninitScore();
 
 	// サウンドの終了処理
-	StopSound(SOUND_LABEL_BGM_sample002);
+	StopSound(SOUND_LABEL_BGM_RESULT);
 
 }
 

@@ -25,6 +25,7 @@
 #define GATE_TEXTURE                 _T("data/TEXTURE/gate01.png")			// ワープゲート画像
 #define TRANSPARENT_TEXTURE                 _T("data/TEXTURE/clearblock01.png")	// 透明な床の画像
 #define BOG_TEXTURE                 _T("data/TEXTURE/map.png")				// 泥の床の画像
+#define GOAL_TEXTURE                 _T("data/TEXTURE/goalflug01.png")		// ゴールの画像
 
 #define TRANSPARENT_FAILEDTIME	(150)
 #define TRANSPARENT_REPOPTIME	(220)
@@ -47,6 +48,7 @@ static LPDIRECT3DTEXTURE9		g_pD3DTextureMap = NULL;				// 通常床のテクスチャへの
 static LPDIRECT3DTEXTURE9		g_pD3DTextureWarpGate = NULL;			// ワープゲートのテクスチャへのポリゴン
 static LPDIRECT3DTEXTURE9		g_pD3DTextureTransparentBlock = NULL;	// 透明な床のテクスチャへのポリゴン
 static LPDIRECT3DTEXTURE9		g_pD3DTextureBogBlock = NULL;			// 泥の床のテクスチャへのポリゴン
+static LPDIRECT3DTEXTURE9		g_pD3DTextureGoalBlock = NULL;			// ゴールのテクスチャへのポリゴン
 
 MAP mapBlock[MAP_MAXDATA][SIZE_Y][SIZE_X];
 
@@ -78,6 +80,12 @@ HRESULT InitMap(void)
 	D3DXCreateTextureFromFile(pDevice,						// デバイスのポインタ
 		BOG_TEXTURE,										// ファイルの名前
 		&g_pD3DTextureBogBlock);							// 読み込むメモリのポインタ
+
+	// テクスチャの読み込み
+	D3DXCreateTextureFromFile(pDevice,						// デバイスのポインタ
+		GOAL_TEXTURE,										// ファイルの名前
+		&g_pD3DTextureGoalBlock);							// 読み込むメモリのポインタ
+
 
 	for (int k = 0; k < MAP_MAXDATA; k++)
 	{
@@ -233,6 +241,15 @@ void DrawMap(void)
 					// ポリゴンの描画
 					pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, mapBlock[k][i][j].vertexWk, sizeof(VERTEX_2D));
 				}
+				else if (mapBlock[k][i][j].type == GOAL)
+				{
+					// テクスチャの設定
+					pDevice->SetTexture(0, g_pD3DTextureGoalBlock);
+
+					// ポリゴンの描画
+					pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, mapBlock[k][i][j].vertexWk, sizeof(VERTEX_2D));
+				}
+				
 			}
 		}
 	}
@@ -301,6 +318,8 @@ HRESULT MakeVertexMap(int x, int y, int mapData)
 
 	case BLOCK6:
 	case BLOCK12:
+	case GOAL:
+
 		mapBlock[mapData][y][x].vertexWk[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 		mapBlock[mapData][y][x].vertexWk[1].tex = D3DXVECTOR2(1.0f, 0.0f);
 		mapBlock[mapData][y][x].vertexWk[2].tex = D3DXVECTOR2(0.0f, 1.0f);

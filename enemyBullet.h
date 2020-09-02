@@ -83,5 +83,5 @@ void SetEnemyBullet(D3DXVECTOR3 enemyPos, D3DXVECTOR3 playerPos, int enemyType, 
 *//***************************************************************************/
 ENEMYBULLET *GetEnemyBullet(int no);
 
-
+bool FallEnemyBullet(void);
 #endif

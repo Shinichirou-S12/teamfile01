@@ -139,7 +139,7 @@ void UpdateBg(void)
 
 	if (GetInput(STARTBUTTON)&& scene == SCENE_TITLE)
 	{
-		SetFade(FADE_OUT, SCENE_GAME, SOUND_LABEL_BGM_sample000);
+		SetFade(FADE_OUT, SCENE_GAME, SOUND_LABEL_BGM_TITLE);
 		player->warpUse = false;
 		player->scrollPos = D3DXVECTOR3(/*i*200.0f + */200.0f, 300.0f, 0.0f);// 座標データを初期化
 		player->partsState = PERFECT;
@@ -149,12 +149,12 @@ void UpdateBg(void)
 	{
 		if (GetKeyboardTrigger(DIK_RETURN))
 		{// Enter押したら、ステージを切り替える
-			SetFade(FADE_OUT, SCENE_TITLE, SOUND_LABEL_BGM_sample002);
+			SetFade(FADE_OUT, SCENE_TITLE, SOUND_LABEL_BGM_BOSS_STAGE);
 
 		}
 		else if (IsButtonTriggered(0, BUTTON_B))
 		{
-			SetFade(FADE_OUT, SCENE_TITLE, SOUND_LABEL_BGM_sample002);
+			SetFade(FADE_OUT, SCENE_TITLE, SOUND_LABEL_BGM_BOSS_STAGE);
 		}
 	}
 

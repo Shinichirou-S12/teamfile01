@@ -13,18 +13,18 @@
 #include "enemyBullet.h"
 #include "effect.h"
 #include <math.h>
+#include "sound.h"
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
 #define BOSS_TIME_SHOT	(100)
-#define BOSS_DIRECTION_ATTACK (60)
+#define BOSS_DIRECTION_ATTACK (250)
 #define BOSS_LIMIT_WALL	(100)
-#define BOSS_DIERECTION_DISCOVERY	(200)
 #define BOSS_MAX_HP	(10)
 #define BOSS_MAX_ATTACKTYPE	(4)
 #define BOSS_MAX_COLOR_ALPHA	(255)
 
-#define BOSS_ALPHA_CHANGE_TIME	(60)
+#define BOSS_ALPHA_CHANGE_TIME	(5)
 #define BOSS_DAMAGE_TIME	(2 * 60)
 
 // #define BOSS_STAGE_APPEAR	(MAP_MAXDATA * player->scrollCount)
@@ -69,7 +69,6 @@ void SetTextureBoss( int no, int cntPattern );
 void SetVertexBoss( int no );
 void SetBoss(int i);
 
-void MovingBoss(int i);
 void AttackBoss(int i);
 void DamageBoss(int i);
 
@@ -100,6 +99,8 @@ HRESULT InitBoss(void)
 		g_boss[i].start = false;								// スタート位置
 		g_boss[i].lenghtUse = false;							// 距離判定初期化
 		g_boss[i].attackUse = false;
+		g_boss[i].attackUseBullet = false;
+
 
 		g_boss[i].hp = BOSS_MAX_HP;								// 体力
 		g_boss[i].damage = false;								// ダメージ判定
@@ -286,7 +287,7 @@ void UpdateTwinBoss(int i)
 			if (g_boss[i].lenght <= 0)
 			{
 				g_boss[i].direction = Left;
-				g_boss[i].pos.x -= g_boss[i].move.x * 3.0f;
+				g_boss[i].pos.x -= g_boss[i].move.x * 5.0f;
 				if (g_boss[i].pos.x <= ((float)SCREEN_CENTER_X + (BOSS_TEXTURE_SIZE_X * 2)))
 				{
 					SetEffect(g_boss[i].pos.x, g_boss[i].pos.y, BOSS_MAX_HP);
@@ -297,7 +298,7 @@ void UpdateTwinBoss(int i)
 			else if(g_boss[i].lenght > 0)
 			{
 				g_boss[i].direction = Right;
-				g_boss[i].pos.x += g_boss[i].move.x * 3.0f;
+				g_boss[i].pos.x += g_boss[i].move.x * 5.0f;
 				if (g_boss[i].pos.x >= ((float)SCREEN_CENTER_X - (BOSS_TEXTURE_SIZE_X * 2)))
 				{
 					SetEffect(g_boss[i].pos.x, g_boss[i].pos.y, BOSS_MAX_HP);
@@ -372,7 +373,15 @@ void UpdateTwinBoss(int i)
 			}
 			if(g_boss[i].pos.y < ((float)SCREEN_HEIGHT - (MAP_TEXTURE_SIZE_Y * 4)))
 			{
-				if (g_boss[i].attackUse && GetEnemyBullet(i - 1)->pos.y >= SCREEN_HEIGHT)
+				// 弾が着弾し終わったら、次の攻撃に移行する
+				if (FallEnemyBullet())
+				{
+					for (int j = 1; j < BOSS_MAX; j++)
+					{
+						g_boss[j].attackUseBullet = true;
+					}
+				}
+				if (g_boss[i].attackUse && g_boss[i].attackUseBullet)
 				{
 					if (g_boss[i].direction == Right)
 					{
@@ -397,6 +406,8 @@ void UpdateTwinBoss(int i)
 				{
 					g_boss[j].vecUse = false;
 					g_boss[j].rot.z = 0;
+					g_boss[j].attackUse = false;
+					g_boss[j].attackUseBullet = false;
 				}
 			}
 		}
@@ -436,6 +447,8 @@ void UpdateSingleBoss(int i)
 				g_boss[i].downUse = false;
 				SetBoss(i);
 				g_boss[i].use = false;
+				g_boss[i].rot.z = 0.0f;
+
 			}
 		}
 		// 攻撃パターン3の時の更新
@@ -445,7 +458,7 @@ void UpdateSingleBoss(int i)
 
 			if (!g_boss[i].downUse)
 			{
-				g_boss[i].pos.y = ((float)SCREEN_HEIGHT - (MAP_TEXTURE_SIZE_Y * 4));
+				g_boss[i].pos.y = ((float)SCREEN_HEIGHT - (MAP_TEXTURE_SIZE_Y * 6));
 				g_boss[i].pos.x = (float)SCREEN_WIDTH - (MAP_TEXTURE_SIZE_Y * 2);
 				vec = GetPlayer()->pos.x - g_boss[i].pos.x;
 				g_boss[i].downUse = true;
@@ -472,7 +485,6 @@ void UpdateSingleBoss(int i)
 				SetBoss(i);
 				g_boss[i].downUse = false;
 				g_boss[i].use = false;
-				g_boss[i].attackUse = false;
 			}
 		}
 	}
@@ -567,14 +579,20 @@ void SetTextureBoss( int i, int cntPattern )
 		g_boss[i].vertexWk[2].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY + sizeY);
 		g_boss[i].vertexWk[3].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY + sizeY);
 	}
-	else
+	else if(g_boss[i].direction == Right)
 	{
 		g_boss[i].vertexWk[1].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY);
 		g_boss[i].vertexWk[0].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY);
 		g_boss[i].vertexWk[3].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY + sizeY);
 		g_boss[i].vertexWk[2].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY + sizeY);
 	}
-
+	else if(g_boss[i].direction == UNDER)
+	{
+		g_boss[i].vertexWk[2].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY);
+		g_boss[i].vertexWk[0].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY);
+		g_boss[i].vertexWk[3].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y)* sizeY + sizeY);
+		g_boss[i].vertexWk[1].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY + sizeY);
+	}
 
 	int flashing = (g_boss[i].damageCnt + 1) % 2;
 
@@ -586,10 +604,10 @@ void SetTextureBoss( int i, int cntPattern )
 		}
 
 		// 反射光の設定
-		g_boss[i].vertexWk[0].diffuse = D3DCOLOR_RGBA(255, 255, 255, (int)(255 /** g_boss[i].colorCnt*/ * flashing));
-		g_boss[i].vertexWk[1].diffuse = D3DCOLOR_RGBA(255, 255, 255, (int)(255 /** g_boss[i].colorCnt*/ * flashing));
-		g_boss[i].vertexWk[2].diffuse = D3DCOLOR_RGBA(255, 255, 255, (int)(255 /** g_boss[i].colorCnt*/ * flashing));
-		g_boss[i].vertexWk[3].diffuse = D3DCOLOR_RGBA(255, 255, 255, (int)(255 /** g_boss[i].colorCnt*/ * flashing));
+		g_boss[i].vertexWk[0].diffuse = D3DCOLOR_RGBA(255, 255, 255, (int)(255 * flashing));
+		g_boss[i].vertexWk[1].diffuse = D3DCOLOR_RGBA(255, 255, 255, (int)(255 * flashing));
+		g_boss[i].vertexWk[2].diffuse = D3DCOLOR_RGBA(255, 255, 255, (int)(255 * flashing));
+		g_boss[i].vertexWk[3].diffuse = D3DCOLOR_RGBA(255, 255, 255, (int)(255 * flashing));
 	}
 }
 
@@ -634,6 +652,8 @@ void SetBoss(int i)
 				g_boss[i].Texture = g_pD3DTextureEnemy[SINGLE][IDLE];
 				g_boss[i].pos = map->pos;
 				g_boss[i].use = true;
+				g_boss[i].rot.z = (D3DX_PI / 2.0f) * 3.0f;
+
 			}
 			break;
 
@@ -659,25 +679,6 @@ void SetBoss(int i)
 		default:
 			break;
 		}
-	}
-}
-
-//=============================================================================
-// ボスの移動設定
-//=============================================================================
-void MovingBoss(int i)
-{
-	PLAYER *player = GetPlayer();
-	D3DXVECTOR3 vec;
-
-	D3DXVec3Subtract(&vec, &player->pos, &g_boss[i].pos);
-	if (vec.x <= 0)
-	{
-		g_boss[i].direction = Left;
-	}
-	else
-	{
-		g_boss[i].direction = Right;
 	}
 }
 
@@ -724,12 +725,14 @@ void AttackBoss(int i)
 		{
 			SetEnemyBullet(g_boss[i].pos,GetPlayer()->pos,
 				g_boss[i].type, &g_boss[i].countShot);
+			PlaySound(SOUND_LABEL_SE_SHOT01);
+
 			g_boss[i].state = ATTACK;
 			g_boss[i].Texture = g_pD3DTextureEnemy[g_boss[i].type][g_boss[i].state];
 			g_boss[i].attackUse = true;
 		}
 
-		if (g_boss[i].attackUse)
+		if (g_boss[i].attackUse || g_countAttack == TWINSLASH)
 		{
 			// プレイヤーとボスの距離を計算する。
 			D3DXVec3Subtract(&vec, &player->pos, &g_boss[i].pos);

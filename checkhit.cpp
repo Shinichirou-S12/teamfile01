@@ -24,6 +24,9 @@
 #include "killer.h"
 #include "spear.h"
 #include "substitute.h"
+#include "sound.h"
+#include "boss.h"
+#include "fade.h"
 
 //=============================================================================
 // マップチップとの当たり判定
@@ -428,6 +431,9 @@ void CheckHitItem(void)
 					item->use = false;
 				}
 				ChangeScore(item->point * 10);		// スコア加算
+				//SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME);
+				PlaySound(SOUND_LABEL_SE_ITEM);
+
 			}
 		}
 	}
@@ -472,10 +478,59 @@ void CheckHitEnemy(void)
 				// ライフの減少
 				ChangeScore(-SCORE_SNIPER_ENEMY);
 				damage = false;
+				SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME);
+				PlaySound(SOUND_LABEL_SE_HIT);
 			}
 		}
 	}
 }
+
+//=============================================================================
+// ボスとプレイヤーとの衝突判定
+//=============================================================================
+void CheckHitBoss(void)
+{
+	PLAYER *player = GetPlayer();
+	BOSS *boss = GetBoss();
+	CHANGE_LIFE *life = GetLifeState();
+
+	bool damage = false;
+	if (player->use)
+	{
+		for (int i = 0; i < BOSS_MAX; i++, boss++)
+		{
+			if (boss->use == false)
+			{
+				continue;
+			}
+
+			// エネミーとの衝突判定を行う
+			if (CheckHitBC(player->pos, boss->pos, PLAYER_TEXTURE_BB_SIZE_X, BOSS_TEXTURE_SIZE_X))
+			{
+				damage = true;
+				break;
+			}
+		}
+
+		if (damage && player->invincible == false)
+		{
+			if (!player->superInvincible)
+			{
+				player->invincible = true;
+				// プレイヤーのHPが減少する
+				player->hp--;
+				life--;
+				ChangeLife(-1);
+				// ライフの減少
+				ChangeScore(-SCORE_SNIPER_ENEMY);
+				damage = false;
+				SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME);
+				PlaySound(SOUND_LABEL_SE_HIT);
+			}
+		}
+	}
+}
+
 
 //=============================================================================
 // 針とプレイヤーとの衝突判定
@@ -509,6 +564,7 @@ void CheckSpear(void)
 			ChangeLife(-1);
 			// ライフの減少
 			ChangeScore(-SPEAR_DAMAGE_SCORE);
+			PlaySound(SOUND_LABEL_SE_HIT);
 		}
 		damage = false;
 		SetEffect(spear->pos.x, spear->pos.y, EFFECT_LIFE_TIME);
@@ -541,6 +597,8 @@ void CheckEnemyBullet(void)
 				ChangeScore(SCORE_SNIPER_ENEMY);
 				enemy->use = false;
 				SetEffect(enemy->pos.x, enemy->pos.y, EFFECT_LIFE_TIME);
+				PlaySound(SOUND_LABEL_SE_HIT);
+
 			}
 		}
 	}
@@ -569,6 +627,8 @@ void CheckPlayerBullet(void)
 			bullet[j].use = false;
 			ChangeScore(-SCORE_SNIPER_ENEMY);
 			SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME);
+			PlaySound(SOUND_LABEL_SE_HIT);
+
 		}
 	}
 }
@@ -612,6 +672,8 @@ void CheckHitWall(void)
 		{
 			item->use = false;
 			SetEffect(item->pos.x, item->pos.y, EFFECT_LIFE_TIME);
+			PlaySound(SOUND_LABEL_SE_HIT);
+
 		}
 	}
 }
@@ -655,6 +717,8 @@ void CheckHitKiller(void)
 				ChangeLife(-1);
 				// ライフの減少
 				ChangeScore(-SCORE_SNIPER_ENEMY);
+				PlaySound(SOUND_LABEL_SE_HIT);
+
 			}
 			damage = false;
 			SetEffect(killer->pos.x, killer->pos.y, EFFECT_LIFE_TIME);
@@ -690,6 +754,32 @@ bool CheckHitWarp(void)
 }
 
 //=============================================================================
+// ゴールとプレイヤーとの衝突判定
+//=============================================================================
+void CheckHitGoal(void)
+{
+	PLAYER *player = GetPlayer();
+	MAP * map = GetMapData();
+
+	if (player->use)
+	{
+		for (int i = 0; i < SIZE_X * SIZE_Y * MAP_MAXDATA; i++, map++)
+		{
+			if (map->type == GOAL)
+			{
+				// ワープエリアとの衝突判定を行う
+				if (CheckHitBC(player->pos, map->pos, PLAYER_TEXTURE_BB_SIZE_X, SIZE_X))
+				{
+					PlaySound(SOUND_LABEL_SE_WARP);
+					SetFade(FADE_OUT, SCENE_RESULT, SOUND_LABEL_BGM_GAMESTAGE);
+					player->use = false;
+				}
+			}
+		}
+	}
+}
+
+//=============================================================================
 // プレイヤーと身代わりアイテムの衝突判定
 //=============================================================================
 void CheckHitPlayerSubstitute(void)
@@ -707,6 +797,7 @@ void CheckHitPlayerSubstitute(void)
 				substitute->sticking = true;
 				substitute->releaseUse = false;
 				SetPosSubstitute();
+				PlaySound(SOUND_LABEL_SE_ITEM);
 			}
 		}
 	}
@@ -734,6 +825,7 @@ void CheckHitEnemySubstitute(void)
 				SetEffect(substitute->pos.x, substitute->pos.y, EFFECT_LIFE_TIME);
 				substitute->use = false;
 				enemy->use = false;
+				PlaySound(SOUND_LABEL_SE_HIT);
 			}
 		}
 	}

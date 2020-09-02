@@ -166,6 +166,7 @@ bool CheckHitWarp(void);
 	@return		‚È‚µ
 *//***************************************************************************/
 void CheckSpear(void);
+void CheckHitGoal(void);
 
 void CheckHitPlayerSubstitute(void);
 void CheckHitEnemySubstitute(void);

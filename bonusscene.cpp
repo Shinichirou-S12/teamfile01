@@ -27,7 +27,7 @@ void InitBonusScene(void)
 	InitItem(0);
 	InitPlayer();
 	InitEffect(0);
-	PlaySound(SOUND_LABEL_BGM_sample002);
+	PlaySound(SOUND_LABEL_BGM_BOSS_STAGE);
 }
 
 // シーンの終了処理
@@ -38,7 +38,7 @@ void UninitBonusScene(void)
 	UninitBg();
 	UninitItem();
 	UninitPlayer();
-	StopSound(SOUND_LABEL_BGM_sample002);
+	StopSound(SOUND_LABEL_BGM_BOSS_STAGE);
 }
 
 // シーンの更新処理

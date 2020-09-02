@@ -46,6 +46,7 @@ enum BLOCKTYPE
 	BOSS1,
 	BOSS2,
 	BOSS3,
+	GOAL,
 	MAXTYPE
 };
 

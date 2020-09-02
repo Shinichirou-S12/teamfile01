@@ -14,18 +14,18 @@
 //*****************************************************************************
 enum 
 {
-	SOUND_LABEL_BGM_sample000,	// BGM0
-	SOUND_LABEL_BGM_sample001,	// BGM1
-	SOUND_LABEL_BGM_sample002,	// BGM2
-	SOUND_LABEL_SE_bomb000,		// 爆発音
-	SOUND_LABEL_SE_defend000,	// 
-	SOUND_LABEL_SE_defend001,	// 
-	SOUND_LABEL_SE_hit000,		// 
-	SOUND_LABEL_SE_laser000,	// 
-	SOUND_LABEL_SE_lockon000,	// 
-	SOUND_LABEL_SE_shot000,		// 
-	SOUND_LABEL_SE_shot001,		// 
-	SOUND_LABEL_MAX,
+	SOUND_LABEL_BGM_TITLE,			// タイトルの音	
+	SOUND_LABEL_BGM_GAMESTAGE,		// ゲーム中の音
+	SOUND_LABEL_BGM_BOSS_STAGE,		// ボス戦の音
+	SOUND_LABEL_BGM_RESULT,			// リザルトの音
+	SOUND_LABEL_SE_SHOT01,	 		// 弾発射音
+	SOUND_LABEL_SE_ITEM,	 		// アイテム音
+	SOUND_LABEL_SE_JUMP,		 	// ジャンプ音
+	SOUND_LABEL_SE_STARTBUTTON,	 	// スタートボタン音
+	SOUND_LABEL_SE_WARP,			// ワープ音
+	SOUND_LABEL_SE_SHOT02,			// 弾発射音
+	SOUND_LABEL_SE_HIT,				// ヒット音
+	SOUND_LABEL_MAX,				// サウンドラベルの数
 };
 
 //*****************************************************************************
