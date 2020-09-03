@@ -10,6 +10,7 @@
 #define EFFECT_TEXTURE_PLAYER_BLOOD	_T("data/TEXTURE/effect/blood02.png")					// 画像
 #define EFFECT_TEXTURE_ENEMY_BLOOD	_T("data/TEXTURE/effect/blood.png")						// 画像
 #define EFFECT_TEXTURE_ITEM_HEAL	_T("data/TEXTURE/effect/healing_aurora_plus.png")		// 画像
+#define EFFECT_TEXTURE_ITEM_GET	_T("data/TEXTURE/effect/getFlash01.png")					// 画像
 #define EFFECT_TEXTURE_KILLER_APPEAR	_T("data/TEXTURE/effect/bullethit2_front.png")		// 画像
 
 #define EFFECT_TEXTURE_SIZE_X	(128.0f / 3.0f)		// テクスチャサイズ
@@ -44,7 +45,7 @@
 #define	MAX_EXPLOSION					(128)		// ビルボード最大数
 #define EFFECT_NUM_PARTS				(10)		// エフェクトの最大パターン数
 #define EFFECT_NUM_EFFECTS				(5)			// エフェクトの1段の最大パターン数
-#define EFFECT_LIFE_TIME				(15)		// エフェクトの最大パターン数
+#define EFFECT_LIFE_TIME				(10)		// エフェクトの最大パターン数
 
 // エフェクトの種類の列挙型
 enum EFFECT_KIND
@@ -52,6 +53,7 @@ enum EFFECT_KIND
 	PLAYER_BLOOD,
 	ENEMY_BLOOD,
 	ITEM_HEAL,
+	ITEM_GET,
 	KILLER_APPEAR,
 	MAX_KIND_EFFECT
 };

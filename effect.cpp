@@ -60,6 +60,11 @@ HRESULT InitEffect(int type)
 
 		// テクスチャの読み込み
 		D3DXCreateTextureFromFile(pDevice,						// デバイスのポインタ
+			EFFECT_TEXTURE_ITEM_GET,							// ファイルの名前
+			&g_pD3DTextureEffect[ITEM_GET]);					// 読み込むメモリのポインタ
+
+		// テクスチャの読み込み
+		D3DXCreateTextureFromFile(pDevice,						// デバイスのポインタ
 			EFFECT_TEXTURE_KILLER_APPEAR,							// ファイルの名前
 			&g_pD3DTextureEffect[KILLER_APPEAR]);				// 読み込むメモリのポインタ
 	}
@@ -374,6 +379,11 @@ void SetEffect(float fX, float fY, int nDuration, int type)
 	case ITEM_HEAL:
 		g_effectTexDevideX = EFFECT_TEXTURE_ITEM_HEAL_PATTERN_DIVIDE_X;
 		g_effectTexDevideY = EFFECT_TEXTURE_ITEM_HEAL_PATTERN_DIVIDE_Y;
+		break;
+
+	case ITEM_GET:
+		g_effectTexDevideX = EFFECT_TEXTURE_PLAYER_BLOOD_PATTERN_DIVIDE_X;
+		g_effectTexDevideY = EFFECT_TEXTURE_PLAYER_BLOOD_PATTERN_DIVIDE_Y;
 		break;
 
 	case KILLER_APPEAR:

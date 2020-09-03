@@ -424,6 +424,11 @@ void CheckHitItem(void)
 				if (player->hp != PLAYER_HP)
 				{
 					player->hp++;
+					SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME, ITEM_HEAL);
+				}
+				else
+				{
+					SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME, ITEM_GET);
 				}
 				if (item->type == STAR)
 				{
@@ -431,7 +436,6 @@ void CheckHitItem(void)
 					item->use = false;
 				}
 				ChangeScore(item->point * 10);		// スコア加算
-				SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME, ITEM_HEAL);
 				PlaySound(SOUND_LABEL_SE_ITEM);
 
 			}
@@ -786,7 +790,6 @@ void CheckHitPlayerSubstitute(void)
 {
 	PLAYER *player = GetPlayer();
 	SUBSTITUTE *substitute = GetSubstitute();
-
 	if (player->use)
 	{
 		// 身代わりアイテムとの衝突判定を行う
