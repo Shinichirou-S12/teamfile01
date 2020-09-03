@@ -290,7 +290,7 @@ void UpdateTwinBoss(int i)
 				g_boss[i].pos.x -= g_boss[i].move.x * 5.0f;
 				if (g_boss[i].pos.x <= ((float)SCREEN_CENTER_X + (BOSS_TEXTURE_SIZE_X * 2)))
 				{
-					SetEffect(g_boss[i].pos.x, g_boss[i].pos.y, BOSS_MAX_HP);
+					SetEffect(g_boss[i].pos.x, g_boss[i].pos.y, BOSS_MAX_HP, ENEMY_BLOOD);
 					SetBoss(i);
 					g_boss[i].use = false;
 				}
@@ -301,7 +301,7 @@ void UpdateTwinBoss(int i)
 				g_boss[i].pos.x += g_boss[i].move.x * 5.0f;
 				if (g_boss[i].pos.x >= ((float)SCREEN_CENTER_X - (BOSS_TEXTURE_SIZE_X * 2)))
 				{
-					SetEffect(g_boss[i].pos.x, g_boss[i].pos.y, BOSS_MAX_HP);
+					SetEffect(g_boss[i].pos.x, g_boss[i].pos.y, BOSS_MAX_HP, ENEMY_BLOOD);
 					SetBoss(i);
 					g_boss[i].use = false;
 				}

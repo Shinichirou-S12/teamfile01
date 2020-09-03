@@ -431,7 +431,7 @@ void CheckHitItem(void)
 					item->use = false;
 				}
 				ChangeScore(item->point * 10);		// スコア加算
-				//SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME);
+				SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME, ITEM_HEAL);
 				PlaySound(SOUND_LABEL_SE_ITEM);
 
 			}
@@ -478,7 +478,7 @@ void CheckHitEnemy(void)
 				// ライフの減少
 				ChangeScore(-SCORE_SNIPER_ENEMY);
 				damage = false;
-				SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME);
+				SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME, PLAYER_BLOOD);
 				PlaySound(SOUND_LABEL_SE_HIT);
 			}
 		}
@@ -524,7 +524,7 @@ void CheckHitBoss(void)
 				// ライフの減少
 				ChangeScore(-SCORE_SNIPER_ENEMY);
 				damage = false;
-				SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME);
+				SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME, PLAYER_BLOOD);
 				PlaySound(SOUND_LABEL_SE_HIT);
 			}
 		}
@@ -567,7 +567,7 @@ void CheckSpear(void)
 			PlaySound(SOUND_LABEL_SE_HIT);
 		}
 		damage = false;
-		SetEffect(spear->pos.x, spear->pos.y, EFFECT_LIFE_TIME);
+		SetEffect(spear->pos.x, spear->pos.y, EFFECT_LIFE_TIME, PLAYER_BLOOD);
 	}
 }
 
@@ -596,7 +596,7 @@ void CheckEnemyBullet(void)
 				bullet[j].use = false;
 				ChangeScore(SCORE_SNIPER_ENEMY);
 				enemy->use = false;
-				SetEffect(enemy->pos.x, enemy->pos.y, EFFECT_LIFE_TIME);
+				SetEffect(enemy->pos.x, enemy->pos.y, EFFECT_LIFE_TIME, ENEMY_BLOOD);
 				PlaySound(SOUND_LABEL_SE_HIT);
 
 			}
@@ -626,7 +626,7 @@ void CheckPlayerBullet(void)
 			//player->hp -= 1;
 			bullet[j].use = false;
 			ChangeScore(-SCORE_SNIPER_ENEMY);
-			SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME);
+			SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME, PLAYER_BLOOD);
 			PlaySound(SOUND_LABEL_SE_HIT);
 
 		}
@@ -647,7 +647,7 @@ void CheckHitWall(void)
 	{
 		if (wall->pos.x >= player->pos.x)
 		{
-			SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME);
+			SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME, PLAYER_BLOOD);
 			player->use = false;
 		}
 	}
@@ -660,7 +660,7 @@ void CheckHitWall(void)
 		{
 			enemy->damage = true;
 			enemy->use = false;
-			SetEffect(enemy->pos.x, enemy->pos.y, EFFECT_LIFE_TIME);
+			SetEffect(enemy->pos.x, enemy->pos.y, EFFECT_LIFE_TIME, ENEMY_BLOOD);
 		}
 	}
 
@@ -671,7 +671,7 @@ void CheckHitWall(void)
 		if (wall->pos.x >= item->pos.x)
 		{
 			item->use = false;
-			SetEffect(item->pos.x, item->pos.y, EFFECT_LIFE_TIME);
+			SetEffect(item->pos.x, item->pos.y, EFFECT_LIFE_TIME, ITEM_HEAL);
 			PlaySound(SOUND_LABEL_SE_HIT);
 
 		}
@@ -721,7 +721,7 @@ void CheckHitKiller(void)
 
 			}
 			damage = false;
-			SetEffect(killer->pos.x, killer->pos.y, EFFECT_LIFE_TIME);
+			SetEffect(killer->pos.x, killer->pos.y, EFFECT_LIFE_TIME, KILLER_APPEAR);
 			killer->use = false;
 			killer->dead = true;
 		}
@@ -822,7 +822,7 @@ void CheckHitEnemySubstitute(void)
 		{
 			if (substitute->attackUse)
 			{
-				SetEffect(substitute->pos.x, substitute->pos.y, EFFECT_LIFE_TIME);
+				SetEffect(substitute->pos.x, substitute->pos.y, EFFECT_LIFE_TIME, PLAYER_BLOOD);
 				substitute->use = false;
 				enemy->use = false;
 				PlaySound(SOUND_LABEL_SE_HIT);

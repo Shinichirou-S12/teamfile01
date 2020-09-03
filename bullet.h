@@ -11,14 +11,14 @@
 //*****************************************************************************
 #define	NUM_BULLET				(2)			// ポリゴン数
 
-#define TEXTURE_GAME_BULLET		_T("data/TEXTURE/lightning_ball.png")			// 画像
+#define TEXTURE_GAME_BULLET		_T("data/TEXTURE/blaster_flash.png")			// 画像
 
 #define TEXTURE_BULLET_SIZE_X	(50)		// テクスチャサイズ
 #define TEXTURE_BULLET_SIZE_Y	(50)		// 同上
 
 
 #define TEXTURE_PATTERN_DIVIDE_X_BULLET	(5)	// アニメパターンのテクスチャ内分割数（X)
-#define TEXTURE_PATTERN_DIVIDE_Y_BULLET	(4)	// アニメパターンのテクスチャ内分割数（Y)
+#define TEXTURE_PATTERN_DIVIDE_Y_BULLET	(3)	// アニメパターンのテクスチャ内分割数（Y)
 #define ANIM_PATTERN_NUM_BULLET			(TEXTURE_PATTERN_DIVIDE_X_BULLET*TEXTURE_PATTERN_DIVIDE_Y_BULLET)	// アニメーションパターン数
 #define TIME_ANIMATION_BULLET			(4)	// アニメーションの切り替わるカウント
 

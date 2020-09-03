@@ -7,19 +7,37 @@
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
-#define EFFECT_TEXTURE			_T("data/TEXTURE/bullethit2_front.png")	// 画像
-#define EFFECT_TEXTURE_FLARE	_T("data/TEXTURE/blood02.png")			// 画像
+#define EFFECT_TEXTURE_PLAYER_BLOOD	_T("data/TEXTURE/effect/blood02.png")					// 画像
+#define EFFECT_TEXTURE_ENEMY_BLOOD	_T("data/TEXTURE/effect/blood.png")						// 画像
+#define EFFECT_TEXTURE_ITEM_HEAL	_T("data/TEXTURE/effect/healing_aurora_plus.png")		// 画像
+#define EFFECT_TEXTURE_KILLER_APPEAR	_T("data/TEXTURE/effect/bullethit2_front.png")		// 画像
 
-#define EFFECT_TEXTURE_SIZE_X	(128.0f / 1.5f)		// テクスチャサイズ
-#define EFFECT_TEXTURE_SIZE_Y	(128.0f / 1.5f)		// 同上
+#define EFFECT_TEXTURE_SIZE_X	(128.0f / 3.0f)		// テクスチャサイズ
+#define EFFECT_TEXTURE_SIZE_Y	(128.0f / 3.0f)		// 同上
 
-#define EFFECT_TEXTURE_SIZE_FALRE_X	(1024/2)		// テクスチャサイズ
-#define EFFECT_TEXTURE_SIZE_FALRE_Y	(1024/2)		// 同上
+#define EFFECT_TEXTURE_SIZE_FALRE_X	(1024 / 2)		// テクスチャサイズ
+#define EFFECT_TEXTURE_SIZE_FALRE_Y	(1024 / 2)		// 同上
 
+// プレイヤーのダメージエフェクト
+#define EFFECT_TEXTURE_PLAYER_BLOOD_PATTERN_DIVIDE_X	(5)	// アニメパターンのテクスチャ内分割数（fX)
+#define EFFECT_TEXTURE_PLAYER_BLOOD_PATTERN_DIVIDE_Y	(2)	// アニメパターンのテクスチャ内分割数（Y)
+#define EFFECT_ANIM_PLAYER_PATTERN_NUM			(EFFECT_TEXTURE_PLAYER_BLOOD_PATTERN_DIVIDE_X*EFFECT_TEXTURE_PLAYER_BLOOD_PATTERN_DIVIDE_Y)	// アニメーションパターン数
 
-#define EFFECT_TEXTURE_PATTERN_DIVIDE_X	(5)	// アニメパターンのテクスチャ内分割数（fX)
-#define EFFECT_TEXTURE_PATTERN_DIVIDE_Y	(2)	// アニメパターンのテクスチャ内分割数（Y)
-#define EFFECT_ANIM_PATTERN_NUM			(EFFECT_TEXTURE_PATTERN_DIVIDE_X*EFFECT_TEXTURE_PATTERN_DIVIDE_Y)	// アニメーションパターン数
+// エネミーのダメージエフェクト
+#define EFFECT_TEXTURE_ENEMY_BLOOD_PATTERN_DIVIDE_X		(5)	// アニメパターンのテクスチャ内分割数（fX)
+#define EFFECT_TEXTURE_ENEMY_BLOOD_PATTERN_DIVIDE_Y		(1)	// アニメパターンのテクスチャ内分割数（Y)
+#define EFFECT_ANIM_ENEMY_PATTERN_NUM			(EFFECT_TEXTURE_ENEMY_BLOOD_PATTERN_DIVIDE_X*EFFECT_TEXTURE_ENEMY_BLOOD_PATTERN_DIVIDE_Y)	// アニメーションパターン数
+
+// アイテム取得時のエフェクト
+#define EFFECT_TEXTURE_ITEM_HEAL_PATTERN_DIVIDE_X		(5)	// アニメパターンのテクスチャ内分割数（fX)
+#define EFFECT_TEXTURE_ITEM_HEAL_PATTERN_DIVIDE_Y		(3)	// アニメパターンのテクスチャ内分割数（Y)
+#define EFFECT_ANIM_ITEM_PATTERN_NUM			(EFFECT_TEXTURE_ITEM_HEAL_PATTERN_DIVIDE_X*EFFECT_TEXTURE_ITEM_HEAL_PATTERN_DIVIDE_Y)	// アニメーションパターン数
+
+// キラー衝突時のエフェクト
+#define EFFECT_TEXTURE_KILLER_APPEAR_PATTERN_DIVIDE_X	(5)	// アニメパターンのテクスチャ内分割数（fX)
+#define EFFECT_TEXTURE_KILLER_APPEAR_PATTERN_DIVIDE_Y	(2)	// アニメパターンのテクスチャ内分割数（Y)
+#define EFFECT_ANIM_KILLER_PATTERN_NUM			(EFFECT_TEXTURE_KILLER_APPEAR_PATTERN_DIVIDE_X*EFFECT_TEXTURE_KILLER_APPEAR_PATTERN_DIVIDE_Y)	// アニメーションパターン数
+
 #define EFFECT_TIME_ANIMATION			(1)	// アニメーションの切り替わるカウント
 
 
@@ -27,6 +45,16 @@
 #define EFFECT_NUM_PARTS				(10)		// エフェクトの最大パターン数
 #define EFFECT_NUM_EFFECTS				(5)			// エフェクトの1段の最大パターン数
 #define EFFECT_LIFE_TIME				(15)		// エフェクトの最大パターン数
+
+// エフェクトの種類の列挙型
+enum EFFECT_KIND
+{
+	PLAYER_BLOOD,
+	ENEMY_BLOOD,
+	ITEM_HEAL,
+	KILLER_APPEAR,
+	MAX_KIND_EFFECT
+};
 
 /**************************************************************************//**
 	@struct		PARTICLE
@@ -111,4 +139,4 @@ void DrawEffect(void);
 	@param[in]	nDuration	アニメーション時間
 	@return		なし
 *//***************************************************************************/
-void SetEffect(float fX, float fY, int nDuration);
+void SetEffect(float fX, float fY, int nDuration, int type);

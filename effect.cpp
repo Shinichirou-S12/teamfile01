@@ -13,10 +13,6 @@
 //*****************************************************************************
 // マクロ定義
 //*****************************************************************************
-enum EFFECT_KIND
-{
-	ONEKIND
-};
 
 #define EMISSION_FULL 0		// 全体追加フラグon
 #define EMISSION_RATE 1		// 全体追加フラグoff
@@ -32,10 +28,11 @@ void ResetParticle(int nCount, int nNum);							 // パーティクルのリセット
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
-static LPDIRECT3DTEXTURE9		g_pD3DTextureEffect[3] = { NULL };		// テクスチャへのポリゴン
+static LPDIRECT3DTEXTURE9		g_pD3DTextureEffect[MAX_KIND_EFFECT] = { NULL };		// テクスチャへのポリゴン
 
 static EFFECT					effectWk[EFFECT_NUM_EFFECTS];	// エネミー構造体
-
+static int				g_effectTexDevideX;				// テクスチャのX分割数
+static int				g_effectTexDevideY;				// テクスチャのY分割数
 //=============================================================================
 // 初期化処理
 //=============================================================================
@@ -48,14 +45,28 @@ HRESULT InitEffect(int type)
 	{
 		// テクスチャの読み込み
 		D3DXCreateTextureFromFile(pDevice,						// デバイスのポインタ
-			EFFECT_TEXTURE,										// ファイルの名前
-			&g_pD3DTextureEffect[0]);								// 読み込むメモリのポインタ
+			EFFECT_TEXTURE_PLAYER_BLOOD,						// ファイルの名前
+			&g_pD3DTextureEffect[PLAYER_BLOOD]);				// 読み込むメモリのポインタ
 
 		// テクスチャの読み込み
 		D3DXCreateTextureFromFile(pDevice,						// デバイスのポインタ
-			EFFECT_TEXTURE_FLARE,								// ファイルの名前
-			&g_pD3DTextureEffect[1]);							// 読み込むメモリのポインタ
+			EFFECT_TEXTURE_ENEMY_BLOOD,							// ファイルの名前
+			&g_pD3DTextureEffect[ENEMY_BLOOD]);					// 読み込むメモリのポインタ
+
+		// テクスチャの読み込み
+		D3DXCreateTextureFromFile(pDevice,						// デバイスのポインタ
+			EFFECT_TEXTURE_ITEM_HEAL,							// ファイルの名前
+			&g_pD3DTextureEffect[ITEM_HEAL]);					// 読み込むメモリのポインタ
+
+		// テクスチャの読み込み
+		D3DXCreateTextureFromFile(pDevice,						// デバイスのポインタ
+			EFFECT_TEXTURE_KILLER_APPEAR,							// ファイルの名前
+			&g_pD3DTextureEffect[KILLER_APPEAR]);				// 読み込むメモリのポインタ
 	}
+
+
+	g_effectTexDevideX = EFFECT_TEXTURE_PLAYER_BLOOD_PATTERN_DIVIDE_X;
+	g_effectTexDevideY = EFFECT_TEXTURE_PLAYER_BLOOD_PATTERN_DIVIDE_Y;
 
 	// 初期化処理
 	for (int nCount = 0; nCount < EFFECT_NUM_EFFECTS; nCount++)
@@ -67,7 +78,7 @@ HRESULT InitEffect(int type)
 
 		for (int nNum = 0; nNum < EFFECT_NUM_PARTS; nNum++)
 		{
-			effectWk[nCount].pParticle[nNum].Texture = g_pD3DTextureEffect[1];
+			effectWk[nCount].pParticle[nNum].Texture = g_pD3DTextureEffect[PLAYER_BLOOD];
 			ResetParticle(nCount, nNum);
 		}
 	}
@@ -100,7 +111,7 @@ void ResetParticle(int nCount, int nNum)
 //=============================================================================
 void UninitEffect(void)
 {
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < MAX_KIND_EFFECT; i++)
 	{
 		if (g_pD3DTextureEffect[i] != NULL)
 		{	// テクスチャの開放
@@ -166,9 +177,9 @@ void UpdateEffect(void)
 					//アニメパターン進行
 					if (++effectWk[nCount].pParticle[effectIndex].nCountAnim > EFFECT_TIME_ANIMATION) {
 						//アニメパターンが最大値に達した場合でも終了
-						if (++effectWk[nCount].pParticle[effectIndex].nPatternAnim >= (EFFECT_ANIM_PATTERN_NUM-1))
+						if (++effectWk[nCount].pParticle[effectIndex].nPatternAnim >= ((g_effectTexDevideX * g_effectTexDevideY) -1))
 						{
-							effectWk[nCount].pParticle[effectIndex].nPatternAnim = EFFECT_ANIM_PATTERN_NUM - 1;
+							effectWk[nCount].pParticle[effectIndex].nPatternAnim = (g_effectTexDevideX * g_effectTexDevideY) - 1;
 							effectWk[nCount].pParticle[effectIndex].nLiveTime = 0;
 						}
 
@@ -283,10 +294,10 @@ HRESULT MakeVertexEffect( int nCount,LPDIRECT3DDEVICE9 pDevice)
 void SetTextureEffect( int nCount, int nNum, int nCntPattern )
 {
 	// テクスチャ座標の設定
-	int x = nCntPattern % EFFECT_TEXTURE_PATTERN_DIVIDE_X;
-	int y = nCntPattern / EFFECT_TEXTURE_PATTERN_DIVIDE_X;
-	float sizeX = 1.0f / EFFECT_TEXTURE_PATTERN_DIVIDE_X;
-	float sizeY = 1.0f / EFFECT_TEXTURE_PATTERN_DIVIDE_Y;
+	int x = nCntPattern % g_effectTexDevideX;
+	int y = nCntPattern / g_effectTexDevideX;
+	float sizeX = 1.0f / g_effectTexDevideX;
+	float sizeY = 1.0f / g_effectTexDevideY;
 
 	effectWk[nCount].pParticle[nNum].vertexWk[0].tex = D3DXVECTOR2((float)(x)* sizeX, (float)(y) * sizeY );
 	effectWk[nCount].pParticle[nNum].vertexWk[1].tex = D3DXVECTOR2((float)(x)* sizeX + sizeX, (float)(y)* sizeY);
@@ -346,8 +357,34 @@ void SetVertexEffect( int nCount, int nNum )
 //=============================================================================
 // エフェクトのセット
 //=============================================================================
-void SetEffect(float fX, float fY, int nDuration)
+void SetEffect(float fX, float fY, int nDuration, int type)
 {
+	switch (type)
+	{
+	case PLAYER_BLOOD:
+		g_effectTexDevideX = EFFECT_TEXTURE_PLAYER_BLOOD_PATTERN_DIVIDE_X;
+		g_effectTexDevideY = EFFECT_TEXTURE_PLAYER_BLOOD_PATTERN_DIVIDE_Y;
+		break;
+
+	case ENEMY_BLOOD:
+		g_effectTexDevideX = EFFECT_TEXTURE_ENEMY_BLOOD_PATTERN_DIVIDE_X;
+		g_effectTexDevideY = EFFECT_TEXTURE_ENEMY_BLOOD_PATTERN_DIVIDE_Y;
+		break;
+
+	case ITEM_HEAL:
+		g_effectTexDevideX = EFFECT_TEXTURE_ITEM_HEAL_PATTERN_DIVIDE_X;
+		g_effectTexDevideY = EFFECT_TEXTURE_ITEM_HEAL_PATTERN_DIVIDE_Y;
+		break;
+
+	case KILLER_APPEAR:
+		g_effectTexDevideX = EFFECT_TEXTURE_KILLER_APPEAR_PATTERN_DIVIDE_X;
+		g_effectTexDevideY = EFFECT_TEXTURE_KILLER_APPEAR_PATTERN_DIVIDE_Y;
+		break;
+
+	default:
+		break;
+	}
+
 	// もし未使用のエフェクトが無かったら実行しない( =これ以上表示できないって事 )
 	for (int nCount = 0; nCount < EFFECT_NUM_EFFECTS; nCount++)
 	{
@@ -369,6 +406,7 @@ void SetEffect(float fX, float fY, int nDuration)
 			//パーティクルの初期化
 			for (int nNum = 0; nNum < EFFECT_NUM_PARTS; nNum++)
 			{
+				effectWk[nCount].pParticle[nNum].Texture = g_pD3DTextureEffect[type];
 				ResetParticle(nCount, nNum);
 			}
 

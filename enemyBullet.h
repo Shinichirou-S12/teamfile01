@@ -10,6 +10,9 @@
 // マクロ定義
 //*****************************************************************************
 #define TEXTURE_GAME_ENEMY_BULLET		_T("data/TEXTURE/lightning_ball.png")	// 画像
+#define TEXTURE_PATTERN_DIVIDE_X_ENEMY_BULLET	(5)	// アニメパターンのテクスチャ内分割数（X)
+#define TEXTURE_PATTERN_DIVIDE_Y_ENEMY_BULLET	(4)	// アニメパターンのテクスチャ内分割数（Y)
+#define ANIM_PATTERN_NUM_ENEMY_BULLET			(TEXTURE_PATTERN_DIVIDE_X_BULLET*TEXTURE_PATTERN_DIVIDE_Y_BULLET)	// アニメーションパターン数
 
 /**************************************************************************//**
 	@struct		ENEMYBULLET
