@@ -35,7 +35,7 @@
 #define ENEMY_ANIM_PATTERN_NUM			(ENEMY_TEXTURE_PATTERN_DIVIDE_X*ENEMY_TEXTURE_PATTERN_DIVIDE_Y)	// アニメーションパターン数
 #define ENEMY_TIME_ANIMATION			(6)	// アニメーションの切り替わるカウント
 
-#define ENEMY_MAX						(15) // 敵の最大数
+#define ENEMY_MAX						(100) // 敵の最大数
 
 enum ENEMYTYPE
 {

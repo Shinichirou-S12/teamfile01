@@ -21,7 +21,7 @@
 #define ANIM_PATTERN_NUM_KILLER			(TEXTURE_PATTERN_DIVIDE_X_KILLER*TEXTURE_PATTERN_DIVIDE_Y_KILLER)	// アニメーションパターン数
 #define TIME_ANIMATION_KILLER			(4)	// アニメーションの切り替わるカウント
 
-#define KILLER_MAX						(6) // キラーの最大数
+#define KILLER_MAX						(30) // キラーの最大数
 
 #define KILLER_SPEED			(6.0f)		// キラーの移動スピード
 

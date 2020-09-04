@@ -17,14 +17,14 @@
 // マクロ定義
 //*****************************************************************************
 #define	TEXTURE_RESULT_SCORE		"data/TEXTURE/number000.png"	// 読み込むテクスチャファイル名
-#define	RESULT_SCORE_SIZE_X			(35.0f)							// スコアの数字の幅
-#define	RESULT_SCORE_SIZE_Y			(50.0f)							// スコアの数字の高さ
+#define	RESULT_SCORE_SIZE_X			(50.0f)							// スコアの数字の幅
+#define	RESULT_SCORE_SIZE_Y			(60.0f)							// スコアの数字の高さ
 #define	RESULT_SCORE_INTERVAL_X		(0.0f)							// スコアの数字の表示間隔
 
-#define	NUM_PLACE					(8)								// スコアの桁数
+#define	NUM_PLACE					(5)								// スコアの桁数
 
-#define	RESULT_SCORE_POS_X			(SCREEN_WIDTH - (RESULT_SCORE_INTERVAL_X + RESULT_SCORE_SIZE_X) * NUM_PLACE - 20.0f)	// スコアの表示基準位置Ｘ座標
-#define	RESULT_SCORE_POS_Y			(25.0f)																	// スコアの表示基準位置Ｙ座標
+#define	RESULT_SCORE_POS_X			(SCREEN_WIDTH - (RESULT_SCORE_INTERVAL_X + RESULT_SCORE_SIZE_X) * NUM_PLACE - (RESULT_SCORE_SIZE_Y * 3.0f))	// スコアの表示基準位置Ｘ座標
+#define	RESULT_SCORE_POS_Y			(RESULT_SCORE_SIZE_Y + 20.0f)																	// スコアの表示基準位置Ｙ座標
 
 //*****************************************************************************
 // プロトタイプ宣言
@@ -171,7 +171,8 @@ HRESULT MakeVertexResult_Score(LPDIRECT3DDEVICE9 pDevice)
 	{
 		return E_FAIL;
 	}
-
+	SAVEDATA *data = GetSaveData();
+	int score =GetScore();
 		{//頂点バッファの中身を埋める
 			VERTEX_2D *pVtx;
 
@@ -181,10 +182,10 @@ HRESULT MakeVertexResult_Score(LPDIRECT3DDEVICE9 pDevice)
 			for (int nCntPlace = 0; nCntPlace < NUM_PLACE; nCntPlace++, pVtx += 4)
 			{
 				// 頂点座標の設定
-				pVtx[0].vtx = D3DXVECTOR3(RESULT_SCORE_POS_X + nCntPlace * RESULT_SCORE_SIZE_X + RESULT_SCORE_INTERVAL_X, RESULT_SCORE_POS_Y + 50.0f*i, 0.0f);
-				pVtx[1].vtx = D3DXVECTOR3(RESULT_SCORE_POS_X + nCntPlace * (RESULT_SCORE_INTERVAL_X + RESULT_SCORE_SIZE_X) + RESULT_SCORE_SIZE_X, RESULT_SCORE_POS_Y + 50.0f*i, 0.0f);
-				pVtx[2].vtx = D3DXVECTOR3(RESULT_SCORE_POS_X + nCntPlace * RESULT_SCORE_SIZE_X + RESULT_SCORE_INTERVAL_X, RESULT_SCORE_POS_Y + 50.0f*i + RESULT_SCORE_SIZE_Y, 0.0f);
-				pVtx[3].vtx = D3DXVECTOR3(RESULT_SCORE_POS_X + nCntPlace * (RESULT_SCORE_INTERVAL_X + RESULT_SCORE_SIZE_X) + RESULT_SCORE_SIZE_X, RESULT_SCORE_POS_Y + 50.0f*i + RESULT_SCORE_SIZE_Y, 0.0f);
+				pVtx[0].vtx = D3DXVECTOR3(RESULT_SCORE_POS_X + nCntPlace * RESULT_SCORE_SIZE_X + RESULT_SCORE_INTERVAL_X, RESULT_SCORE_POS_Y + RESULT_SCORE_SIZE_Y *i, 0.0f);
+				pVtx[1].vtx = D3DXVECTOR3(RESULT_SCORE_POS_X + nCntPlace * (RESULT_SCORE_INTERVAL_X + RESULT_SCORE_SIZE_X) + RESULT_SCORE_SIZE_X, RESULT_SCORE_POS_Y + RESULT_SCORE_SIZE_Y *i, 0.0f);
+				pVtx[2].vtx = D3DXVECTOR3(RESULT_SCORE_POS_X + nCntPlace * RESULT_SCORE_SIZE_X + RESULT_SCORE_INTERVAL_X, RESULT_SCORE_POS_Y + RESULT_SCORE_SIZE_Y *i + RESULT_SCORE_SIZE_Y, 0.0f);
+				pVtx[3].vtx = D3DXVECTOR3(RESULT_SCORE_POS_X + nCntPlace * (RESULT_SCORE_INTERVAL_X + RESULT_SCORE_SIZE_X) + RESULT_SCORE_SIZE_X, RESULT_SCORE_POS_Y + RESULT_SCORE_SIZE_Y *i + RESULT_SCORE_SIZE_Y, 0.0f);
 
 				// rhwの設定
 				pVtx[0].rhw =
@@ -192,17 +193,20 @@ HRESULT MakeVertexResult_Score(LPDIRECT3DDEVICE9 pDevice)
 					pVtx[2].rhw =
 					pVtx[3].rhw = 1.0f;
 
-				// 反射光の設定
-				/*pVtx[0].diffuse = D3DXCOLOR(0.0f, 0.1f*i, 0.0f, 1.0f);
-				pVtx[1].diffuse = D3DXCOLOR(0.0f, 0.1f*i, 0.0f, 1.0f);
-				pVtx[2].diffuse = D3DXCOLOR(0.0f, 0.1f*i, 0.0f, 1.0f);
-				pVtx[3].diffuse = D3DXCOLOR(0.0f, 0.1f*i, 0.0f, 1.0f)*/
-
-				pVtx[0].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-				pVtx[1].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-				pVtx[2].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-				pVtx[3].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-
+				if (g_result_score[i] == score)
+				{
+					pVtx[0].diffuse = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+					pVtx[1].diffuse = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+					pVtx[2].diffuse = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+					pVtx[3].diffuse = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
+				}
+				else
+				{
+					pVtx[0].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[1].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[2].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+					pVtx[3].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+				}
 				// テクスチャ座標の設定
 				pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
 				pVtx[1].tex = D3DXVECTOR2(0.1f, 0.0f);

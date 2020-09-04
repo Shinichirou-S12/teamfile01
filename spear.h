@@ -21,7 +21,7 @@
 #define ANIM_PATTERN_NUM_SPEAR			(TEXTURE_PATTERN_DIVIDE_X_SPEAR*TEXTURE_PATTERN_DIVIDE_Y_SPEAR)	// アニメーションパターン数
 #define TIME_ANIMATION_SPEAR			(4)	// アニメーションの切り替わるカウント
 
-#define SPEAR_MAX						(10) // 針の最大数
+#define SPEAR_MAX						(50) // 針の最大数
 #define SPEAR_DAMAGE_SCORE				(50) // 針のスコア減算値
 
 #define SPEAR_SPEED			(6.0f)		// 針の移動スピード

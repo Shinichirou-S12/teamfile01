@@ -22,6 +22,7 @@
 #include "spear.h"
 #include "substitute.h"
 #include "boss.h"
+#include "killer.h"
 
 //*****************************************************************************
 // ƒ}ƒNƒ’è‹`
@@ -243,6 +244,7 @@ void UpdatePlayer(void)
 		ENEMYBULLET *enemBullet = GetEnemyBullet(0);
 		SUBSTITUTE *substitute = GetSubstitute();
 		BOSS *boss = GetBoss();
+		KILLER *killer = GetKiller(0);
 
 		if(g_player.countMove != (SCREEN_WIDTH / (int)PLAYER_MAP_MOVE_SPEED))
 		{
@@ -277,11 +279,18 @@ void UpdatePlayer(void)
 				item->pos.x -= PLAYER_MAP_MOVE_SPEED;
 			}
 
+			for (int l = 0; l < KILLER_MAX; l++,killer++)
+			{
+				killer->pos.x -= PLAYER_MAP_MOVE_SPEED;
+			}
+
+
 			for (int j = 0; j < (SIZE_X * SIZE_Y * MAP_MAXDATA); j++)
 			{
 				mapchip->pos.x -= PLAYER_MAP_MOVE_SPEED;
 				mapchip++;
 			}
+
 		}
 		g_player.countMove++;
 
@@ -312,6 +321,7 @@ void UpdatePlayer(void)
 
 	CheckHitItem();
 	CheckHitEnemy();
+	CheckHitBoss();
 	CheckPlayerBullet();
 	CheckSpear();
 	CheckHitPlayerSubstitute();

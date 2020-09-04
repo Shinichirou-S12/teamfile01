@@ -167,7 +167,7 @@ bool CheckHitWarp(void);
 *//***************************************************************************/
 void CheckSpear(void);
 void CheckHitGoal(void);
-
+void CheckHitBoss(void);
 void CheckHitPlayerSubstitute(void);
 void CheckHitEnemySubstitute(void);
 

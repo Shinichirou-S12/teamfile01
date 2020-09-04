@@ -23,7 +23,7 @@
 #define	TEXTURE_BG_BONUS		_T("data/TEXTURE/background/bg03.png")			// 読み込むテクスチャファイル名
 
 #define	TEXTURE_TITLE_LOGO	_T("data/TEXTURE/titlelogo.png")					// 読み込むテクスチャファイル名
-#define	TEXTURE_RESULT_LOGO	_T("data/TEXTURE/ResultTexture/result_logo.png")	// 読み込むテクスチャファイル名
+#define	TEXTURE_RESULT_LOGO	_T("data/TEXTURE/ResultTexture/boad01.png")			// 読み込むテクスチャファイル名
 //*****************************************************************************
 // プロトタイプ宣言
 //*****************************************************************************

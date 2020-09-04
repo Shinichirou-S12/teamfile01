@@ -616,6 +616,7 @@ void CheckPlayerBullet(void)
 	PLAYER *player = GetPlayer();
 	CHANGE_LIFE *life = GetLifeState();
 	ENEMYBULLET *bullet = GetEnemyBullet(0);
+	bool damage = false;
 
 	for (int j = 0; j < BULLET_MAX; j++, bullet++)
 	{
@@ -627,13 +628,30 @@ void CheckPlayerBullet(void)
 			D3DXVECTOR2(TEXTURE_BULLET_SIZE_X, TEXTURE_BULLET_SIZE_Y),
 			D3DXVECTOR2(PLAYER_TEXTURE_SIZE_X, PLAYER_TEXTURE_SIZE_Y)))
 		{
-			//player->hp -= 1;
 			bullet[j].use = false;
 			ChangeScore(-SCORE_SNIPER_ENEMY);
 			SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME, PLAYER_BLOOD);
 			PlaySound(SOUND_LABEL_SE_HIT);
+			damage = true;
 
 		}
+
+		if (damage)
+		{
+			if (player->invincible == false)
+			{
+				// プレイヤーのHPが減少する
+				player->hp--;
+				player->invincible = true;
+				life--;
+				ChangeLife(-1);
+				// ライフの減少
+				ChangeScore(-SPEAR_DAMAGE_SCORE);
+				PlaySound(SOUND_LABEL_SE_HIT);
+			}
+			damage = false;
+		}
+
 	}
 }
 
@@ -653,6 +671,7 @@ void CheckHitWall(void)
 		{
 			SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME, PLAYER_BLOOD);
 			player->use = false;
+			PlaySound(SOUND_LABEL_SE_HIT);
 		}
 	}
 
@@ -676,10 +695,19 @@ void CheckHitWall(void)
 		{
 			item->use = false;
 			SetEffect(item->pos.x, item->pos.y, EFFECT_LIFE_TIME, ITEM_HEAL);
-			PlaySound(SOUND_LABEL_SE_HIT);
 
 		}
 	}
+
+	if (GetSubstitute()->use)
+	{
+		if (wall->pos.x >= GetSubstitute()->pos.x)
+		{
+			GetSubstitute()->use = false;
+			SetEffect(GetSubstitute()->pos.x, GetSubstitute()->pos.y, EFFECT_LIFE_TIME, ITEM_HEAL);
+		}
+	}
+
 }
 
 
@@ -826,7 +854,7 @@ void CheckHitEnemySubstitute(void)
 			if (substitute->attackUse)
 			{
 				SetEffect(substitute->pos.x, substitute->pos.y, EFFECT_LIFE_TIME, PLAYER_BLOOD);
-				substitute->use = false;
+				//substitute->use = false;
 				enemy->use = false;
 				PlaySound(SOUND_LABEL_SE_HIT);
 			}

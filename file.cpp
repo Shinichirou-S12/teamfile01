@@ -21,7 +21,12 @@ const char *const fileName[MAP_MAXDATA]=
 	"data/DATA2/maptest01.csv",
 	"data/DATA2/maptest02.csv",
 	"data/DATA2/maptest03.csv",
-	"data/DATA2/maptest04.csv"
+	"data/DATA2/maptest04.csv",
+	"data/DATA2/maptest05.csv",
+	"data/DATA2/maptest06.csv",
+	"data/DATA2/maptest07.csv",
+	"data/DATA2/maptest08.csv",
+	"data/DATA2/maptest09.csv"
 };
 
 // CSVのボーナスマップファイルリスト

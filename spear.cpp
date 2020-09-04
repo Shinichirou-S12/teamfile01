@@ -133,8 +133,7 @@ void UpdateSpear(void)
 
 			MoveSpear(i);
 			// 画面外まで進んだ？
-			if (spear->pos.x < 0.0f
-				|| spear->pos.x >=SCREEN_WIDTH)	// 自分の大きさを考慮して画面外か判定している
+			if (spear->pos.x < 0.0f)	// 自分の大きさを考慮して画面外か判定している
 			{
 				spear->use = false;
 			}

@@ -83,7 +83,7 @@ HRESULT InitKiller(int type)
 
 		killer->PatternAnim = 0;								// アニメパターン番号をランダムで初期化
 		killer->CountAnim = 0;									// アニメカウントを初期化
-		killer->speed = 2.0f;									// 移動スピード
+		killer->speed =1.2f;									// 移動スピード
 		killer->type = TRACKER;
 		killer->vecUse = false;
 		killer->popCnt = 0;
@@ -129,6 +129,9 @@ void UpdateKiller(void)
 
 	for (int i = 0; i < KILLER_MAX; i++, killer++)
 	{
+		D3DXVECTOR3 vec = GetPlayer()->pos - killer->pos;
+		fabsf(vec.x);
+
 		if (killer->use == true)			// 使用している状態なら更新する
 		{
 			// アニメーション  
@@ -138,22 +141,26 @@ void UpdateKiller(void)
 				// パターンの切り替え
 				killer->PatternAnim = (killer->PatternAnim + 1) % ANIM_PATTERN_NUM_KILLER;
 			}
-			// キラーの移動処理
-			MovingKiller();
 
-			killer->move = killer->vec * killer->speed;
-
-			D3DXVec3Add(&killer->pos, &killer->pos, &killer->move);
-
-			DirectionKiller(i);
-
-			// 画面外まで進んだ？
-			if (killer->pos.x < 0.0f
-				|| killer->pos.x >=SCREEN_WIDTH
-				|| killer->pos.y <0.0f
-				|| killer->pos.y >=SCREEN_HEIGHT)	// 自分の大きさを考慮して画面外か判定している
+			if (vec.x <= SCREEN_WIDTH && killer->pos.x <= SCREEN_WIDTH)
 			{
-				killer->use = false;
+				// キラーの移動処理
+				MovingKiller();
+
+				killer->move = killer->vec * killer->speed;
+
+				D3DXVec3Add(&killer->pos, &killer->pos, &killer->move);
+
+				DirectionKiller(i);
+
+				// 画面外まで進んだ？
+				if (killer->pos.x < 0.0f
+					|| killer->pos.y < 0.0f
+					|| killer->pos.y >= SCREEN_HEIGHT)	// 自分の大きさを考慮して画面外か判定している
+				{
+					killer->use = false;
+				}
+
 			}
 
 		}
