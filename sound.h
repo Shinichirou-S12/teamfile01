@@ -15,6 +15,7 @@
 enum 
 {
 	SOUND_LABEL_BGM_TITLE,			// タイトルの音	
+	SOUND_LABEL_BGM_TUTRIAL,		// チュートリアルの音	
 	SOUND_LABEL_BGM_GAMESTAGE,		// ゲーム中の音
 	SOUND_LABEL_BGM_BOSS_STAGE,		// ボス戦の音
 	SOUND_LABEL_BGM_RESULT,			// リザルトの音

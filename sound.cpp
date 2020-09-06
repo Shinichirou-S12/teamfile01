@@ -1,7 +1,7 @@
 //=============================================================================
 //
 // サウンド処理 [sound.cpp]
-//
+// Author: kitade mayumi
 //=============================================================================
 #include "sound.h"
 
@@ -33,6 +33,7 @@ DWORD g_aSizeAudio[SOUND_LABEL_MAX] = {};					// オーディオデータサイズ
 SOUNDPARAM g_aParam[SOUND_LABEL_MAX] =
 {
 	{ "data/BGM/sirube.wav", -1 },			// タイトルの音
+	{ "data/BGM/sirube.wav", -1 },			// チュートリアルシーン中の音
 	{ "data/BGM/hajimetenotabiji.wav", -1 },// ゲーム中の音
 	{ "data/BGM/kinkyu.wav", -1 },			// ボス戦の音
 	{ "data/BGM/seijonoinori.wav", -1},		// リザルトの音

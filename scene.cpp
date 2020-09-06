@@ -1,5 +1,5 @@
 //! @file	scene.cpp
-//! @author	Ç‹ÇÊ
+//! @author	kitade mayumi
 //! @date	2020-07-13
 //! @brief	ÉVÅ[ÉìÇÃé¿ëï
 
@@ -7,6 +7,7 @@
 #include "main.h"
 #include "scene.h"
 #include "titlescene.h"
+#include "tutrialscene.h"
 #include "gamescene.h"
 #include "resultscene.h"
 #include "bonusscene.h"
@@ -25,6 +26,9 @@ void InitScene(void)
 	{
 	case SCENE_TITLE:
 		InitTitleScene();
+		break;
+	case SCENE_TUTRIAL:
+		InitTutrialScene();
 		break;
 	case SCENE_GAME:
 		InitGameScene();
@@ -49,6 +53,9 @@ void UninitScene(void)
 	case SCENE_TITLE:
 		UninitTitleScene();
 		break;
+	case SCENE_TUTRIAL:
+		UninitTutrialScene();
+		break;
 	case SCENE_GAME:
 		UninitGameScene();
 		break;
@@ -72,6 +79,9 @@ void UpdateScene(void)
 	case SCENE_TITLE:
 		UpdateTitleScene();
 		break;
+	case SCENE_TUTRIAL:
+		UpdateTutrialScene();
+		break;
 	case SCENE_GAME:
 		UpdateGameScene();
 		break;
@@ -94,6 +104,9 @@ void DrawScene(void)
 	{
 	case SCENE_TITLE:
 		DrawTitleScene();
+		break;
+	case SCENE_TUTRIAL:
+		DrawTutrialScene();
 		break;
 	case SCENE_GAME:
 		DrawGameScene();

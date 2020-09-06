@@ -1,5 +1,5 @@
 //! @file	enemyBullet.cpp
-//! @author	まよ
+//! @author	kitade mayumi
 //! @date	2020-08-04
 //! @brief	エネミー用の弾の実装
 
@@ -61,7 +61,7 @@ HRESULT InitEnemyBullet(int type)
 		bullet->rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			// 回転データを初期化
 		bullet->PatternAnim = 0;								// アニメパターン番号をランダムで初期化
 		bullet->CountAnim = 0;									// アニメカウントを初期化
-		bullet->speed = 2.0f;
+		bullet->speed = 1.4f;
 
 		bullet->Texture = g_pD3DTextureEnemyBullet;					// テクスチャ情報
 		MakeVertexEnemyBullet(i);									// 頂点情報の作成

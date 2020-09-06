@@ -1,6 +1,6 @@
 //! @file	controller.cpp
-//! @author	北出真弓
-//! @date	2019-01-07
+//! @author	kitade mayumi
+//! @date	2019-09-04
 //! @brief	コントローラーの設定の実装
 
 //*****************************************************************************
@@ -21,11 +21,11 @@ bool GetInput(int nCommand)
 		break;
 
 	case ATTACK:
-		return GetKeyboardTrigger(DIK_SPACE) || IsButtonTriggered(0, BUTTON_X);
+		return GetKeyboardTrigger(DIK_SPACE) || IsButtonTriggered(0, BUTTON_C);
 		break;
 
 	case JUMPMOVE:
-		return GetKeyboardTrigger(DIK_UP) || IsButtonTriggered(0, BUTTON_A);
+		return GetKeyboardTrigger(DIK_UP) || IsButtonTriggered(0, LSTICK_UP) || IsButtonTriggered(0, BUTTON_A);
 		break;
 
 	case RIGHTMOVE:
@@ -41,7 +41,7 @@ bool GetInput(int nCommand)
 		break;
 
 	case DOWNMOVE:
-		return GetKeyboardPress(DIK_DOWN) || IsButtonPressed(0, LSTICK_DOWN);
+		return GetKeyboardPress(DIK_RETURN) || IsButtonPressed(0, BUTTON_B);
 		break;
 	default:
 		break;

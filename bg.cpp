@@ -1,5 +1,5 @@
 //! @file	bg.cpp
-//! @author	まよ
+//! @author	kitade mayumi
 //! @date	2020-06-19
 //! @brief	タイトルの実装
 
@@ -19,6 +19,7 @@
 // マクロ定義
 //*****************************************************************************
 #define	TEXTURE_BG_TITLE		_T("data/TEXTURE/background/title01.png")		// 読み込むテクスチャファイル名
+#define	TEXTURE_BG_TUTRIAL		_T("data/TEXTURE/background/tutrial.jpg")		// 読み込むテクスチャファイル名
 #define	TEXTURE_BG_GAME		_T("data/TEXTURE/background/bg01.png")				// 読み込むテクスチャファイル名
 #define	TEXTURE_BG_BONUS		_T("data/TEXTURE/background/bg03.png")			// 読み込むテクスチャファイル名
 
@@ -58,6 +59,13 @@ HRESULT InitBg(int type)
 		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
 			TEXTURE_TITLE_LOGO,					// ファイルの名前
 			&g_pD3DTextureBGLogo);			// 読み込むメモリー
+		break;
+
+	case TUTRIAL_BG:
+		// テクスチャの読み込み
+		D3DXCreateTextureFromFile(pDevice,		// デバイスへのポインタ
+			TEXTURE_BG_TUTRIAL,					// ファイルの名前
+			&g_pD3DTextureBG);					// 読み込むメモリー
 		break;
 
 	case GAME_BG:
@@ -119,7 +127,7 @@ void UpdateBg(void)
 	PLAYER *player = GetPlayer();
 	int scene = GetScene();
 
-	if (scene != SCENE_GAME)
+	if (scene != SCENE_TUTRIAL && scene != SCENE_GAME)
 	{
 		g_scrollspeed += 0.002f;
 	}
@@ -137,46 +145,29 @@ void UpdateBg(void)
 
 	SetTextureBg();
 
-	if (GetInput(STARTBUTTON)&& scene == SCENE_TITLE)
+	if (GetInput(STARTBUTTON) && scene == SCENE_TITLE)
 	{
-		SetFade(FADE_OUT, SCENE_GAME, SOUND_LABEL_BGM_TITLE);
+		SetFade(FADE_OUT, SCENE_TUTRIAL, SOUND_LABEL_BGM_TITLE);
 		PlaySound(SOUND_LABEL_SE_STARTBUTTON);
 		player->warpUse = false;
-		player->scrollPos = D3DXVECTOR3(/*i*200.0f + */200.0f, 300.0f, 0.0f);// 座標データを初期化
 		player->partsState = PERFECT;
 		player->hp = PLAYER_HP;									// HPの初期化
-	}
-	if (scene == SCENE_RESULT)
-	{
-		if (GetKeyboardTrigger(DIK_RETURN))
-		{// Enter押したら、ステージを切り替える
-			SetFade(FADE_OUT, SCENE_TITLE, SOUND_LABEL_BGM_BOSS_STAGE);
 
-		}
-		else if (IsButtonTriggered(0, BUTTON_B))
-		{
-			SetFade(FADE_OUT, SCENE_TITLE, SOUND_LABEL_BGM_BOSS_STAGE);
-		}
+		return;
+	}
+
+	if (scene == SCENE_RESULT && GetInput(STARTBUTTON))
+	{
+		// Enter押したら、ステージを切り替える
+		SetFade(FADE_OUT, SCENE_TITLE, SOUND_LABEL_BGM_BOSS_STAGE);
+		return;
+
 	}
 
 	else
 	{
 		return;
 	}
-
-	//if(GetKeyboardTrigger(DIK_RETURN))
-	//{// Enter押したら、ステージを切り替える
-	//	SetStage(STAGE_GAME);
-	//}
-	//// ゲームパッドでで移動処理
-	//else if (IsButtonTriggered(0, BUTTON_START))
-	//{
-	//	SetStage(STAGE_GAME);
-	//}
-	//else if (IsButtonTriggered(0, BUTTON_B))
-	//{
-	//	SetStage(STAGE_GAME);
-	//}
 
 }
 

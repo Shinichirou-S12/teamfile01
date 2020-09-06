@@ -1,5 +1,5 @@
 //! @file	gamescene.cpp
-//! @author	‚Ü‚æ
+//! @author	kitade mayumi
 //! @date	2020-07-13
 //! @brief	ƒQ[ƒ€ƒV[ƒ“‚ÌÀ‘•
 

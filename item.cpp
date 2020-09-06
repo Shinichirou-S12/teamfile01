@@ -1,5 +1,5 @@
 //! @file	item.cpp
-//! @author	‚Ü‚æ
+//! @author	kitade mayumi
 //! @date	2020-06-19
 //! @brief	ƒAƒCƒeƒ€‚ÌÀ‘•
 

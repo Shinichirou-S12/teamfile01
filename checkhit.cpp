@@ -1,5 +1,5 @@
 //! @file	checkhit.cpp
-//! @author	まよ
+//! @author	kitade mayumi
 //! @date	2020-06-18
 //! @brief	衝突判定の実装
 
@@ -622,34 +622,30 @@ void CheckPlayerBullet(void)
 	{
 		if (bullet[j].use == false) continue;
 
-		if (player->use == false) continue;
-
 		if (CheckHitBB(player->pos, bullet->pos,
 			D3DXVECTOR2(TEXTURE_BULLET_SIZE_X, TEXTURE_BULLET_SIZE_Y),
 			D3DXVECTOR2(PLAYER_TEXTURE_SIZE_X, PLAYER_TEXTURE_SIZE_Y)))
 		{
 			bullet[j].use = false;
-			ChangeScore(-SCORE_SNIPER_ENEMY);
-			SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME, PLAYER_BLOOD);
-			PlaySound(SOUND_LABEL_SE_HIT);
 			damage = true;
 
 		}
 
-		if (damage)
+		if (damage && player->invincible == false)
 		{
-			if (player->invincible == false)
+			if (!player->superInvincible)
 			{
+				player->invincible = true;
 				// プレイヤーのHPが減少する
 				player->hp--;
-				player->invincible = true;
 				life--;
 				ChangeLife(-1);
 				// ライフの減少
-				ChangeScore(-SPEAR_DAMAGE_SCORE);
+				ChangeScore(-SCORE_SNIPER_ENEMY);
+				damage = false;
+				SetEffect(player->pos.x, player->pos.y, EFFECT_LIFE_TIME, PLAYER_BLOOD);
 				PlaySound(SOUND_LABEL_SE_HIT);
 			}
-			damage = false;
 		}
 
 	}
@@ -792,6 +788,7 @@ void CheckHitGoal(void)
 {
 	PLAYER *player = GetPlayer();
 	MAP * map = GetMapData();
+	int scene = GetScene();
 
 	if (player->use)
 	{
@@ -803,8 +800,21 @@ void CheckHitGoal(void)
 				if (CheckHitBC(player->pos, map->pos, PLAYER_TEXTURE_BB_SIZE_TOP_X, SIZE_GOAL_X))
 				{
 					PlaySound(SOUND_LABEL_SE_WARP);
-					SetFade(FADE_OUT, SCENE_RESULT, SOUND_LABEL_BGM_GAMESTAGE);
-					player->use = false;
+					if (scene == SCENE_GAME)
+					{
+						SetFade(FADE_OUT, SCENE_RESULT, SOUND_LABEL_BGM_GAMESTAGE);
+						player->use = false;
+						return;
+					}
+					else
+					{
+						SetFade(FADE_OUT, SCENE_GAME, SOUND_LABEL_BGM_TUTRIAL);
+						player->warpUse = false;
+						player->scrollPos = D3DXVECTOR3(/*i*200.0f + */200.0f, 300.0f, 0.0f);// 座標データを初期化
+						player->partsState = PERFECT;
+						player->hp = PLAYER_HP;									// HPの初期化
+						return;
+					}
 				}
 			}
 		}
@@ -828,7 +838,6 @@ void CheckHitPlayerSubstitute(void)
 				substitute->sticking = true;
 				substitute->releaseUse = false;
 				SetPosSubstitute();
-				PlaySound(SOUND_LABEL_SE_ITEM);
 			}
 		}
 	}

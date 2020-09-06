@@ -1,7 +1,7 @@
-/*******************************************************************************
-* scanf のwarning防止
-*******************************************************************************/
-#define _CRT_SECURE_NO_WARNINGS
+//! @file	map01.cpp
+//! @author	kitade mayumi
+//! @date	2020-07-18
+//! @brief	マップの実装
 
 /*******************************************************************************
 * インクルードファイル
@@ -60,6 +60,7 @@ HRESULT InitMap(void)
 	int scene = GetScene();
 	int *data = GetFileData();
 	int *data2 = GetBonusFileData();
+	int *data3 = GetTutrialFileData();
 
 	// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,						// デバイスのポインタ
@@ -103,6 +104,11 @@ HRESULT InitMap(void)
 				{
 					mapBlock[k][i][j].type = *data;
 					*data++;
+				}
+				else if (scene == SCENE_TUTRIAL)
+				{
+					mapBlock[k][i][j].type = *data3;
+					*data3++;
 				}
 				else if(scene == SCENE_BONUS)
 				{

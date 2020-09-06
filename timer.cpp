@@ -108,7 +108,7 @@ void UpdateTimer(void)
 {
 	PLAYER *player = GetPlayer();
 
-	if (!player->use)
+	if (!player->use || player->warpUse)
 	{
 		return;
 	}
@@ -333,19 +333,22 @@ void SetTextureTimer(int idx, int number)
 {
 	VERTEX_2D *pVtx;
 
-	// 頂点データの範囲をロックし、頂点バッファへのポインタを取得
-	g_pD3DVtxBuffTimer->Lock(0, 0, (void**)&pVtx, 0);
+	if (g_pD3DVtxBuffTimer != NULL)
+	{
+		// 頂点データの範囲をロックし、頂点バッファへのポインタを取得
+		g_pD3DVtxBuffTimer->Lock(0, 0, (void**)&pVtx, 0);
 
-	pVtx += (idx * 4);
+		pVtx += (idx * 4);
 
-	// 頂点座標の設定
-	pVtx[0].tex = D3DXVECTOR2(number * 0.1f, 0.0f);
-	pVtx[1].tex = D3DXVECTOR2(number * 0.1f + 0.1f, 0.0f);
-	pVtx[2].tex = D3DXVECTOR2(number * 0.1f, 1.0f);
-	pVtx[3].tex = D3DXVECTOR2(number * 0.1f + 0.1f, 1.0f);
+		// 頂点座標の設定
+		pVtx[0].tex = D3DXVECTOR2(number * 0.1f, 0.0f);
+		pVtx[1].tex = D3DXVECTOR2(number * 0.1f + 0.1f, 0.0f);
+		pVtx[2].tex = D3DXVECTOR2(number * 0.1f, 1.0f);
+		pVtx[3].tex = D3DXVECTOR2(number * 0.1f + 0.1f, 1.0f);
 
-	// 頂点データをアンロックする
-	g_pD3DVtxBuffTimer->Unlock();
+		// 頂点データをアンロックする
+		g_pD3DVtxBuffTimer->Unlock();
+	}
 }
 
 void SetTextureChangeTimer(int idx, int number, D3DXCOLOR color, float posY)

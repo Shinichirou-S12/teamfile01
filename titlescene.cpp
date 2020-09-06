@@ -1,5 +1,5 @@
 //! @file	titlescene.cpp
-//! @author	まよ
+//! @author	kitade mayumi
 //! @date	2020-07-13
 //! @brief	タイトルシーンの実装
 

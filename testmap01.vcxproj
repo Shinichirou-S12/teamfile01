@@ -162,6 +162,7 @@
     <ClCompile Include="substitute.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="titlescene.cpp" />
+    <ClCompile Include="tutrialscene.cpp" />
     <ClCompile Include="wall.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +197,7 @@
     <ClInclude Include="substitute.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="titlescene.h" />
+    <ClInclude Include="tutrialscene.h" />
     <ClInclude Include="wall.h" />
     <ClInclude Include="workLog.h" />
   </ItemGroup>

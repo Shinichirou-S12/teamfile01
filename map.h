@@ -12,6 +12,7 @@
 #define SIZE_Y	(15)
 #define MAP_MAXDATA	(9)
 #define MAP_BONUS_MAXDATA	(4)
+#define MAP_TUTRIAL_MAXDATA	(2)
 
 //#define MAP_TEXTURE_SIZE_BB_X			(16.0f/2.0f)		    // テクスチャサイズ
 //#define MAP_TEXTURE_SIZE_BB_Y			(16.0f/2.0f)		    // 同上
