@@ -15,7 +15,7 @@
 //*****************************************************************************
 // ƒ}ƒNƒ’è‹`
 //*****************************************************************************
-#define TEXTURE_GAME_SPEAR		_T("data/TEXTURE/spears/spear01.png")			// j‚Ì‰æ‘œ
+#define TEXTURE_GAME_SPEAR		_T("data/TEXTURE/spears/spear02.png")			// j‚Ì‰æ‘œ
 #define POP_COUNT_SPEAR	(60 * 3)
 
 // j‚ÌŒü‚¢‚Ä‚¢‚é•ûŒü

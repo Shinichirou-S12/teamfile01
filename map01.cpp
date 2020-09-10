@@ -24,7 +24,8 @@
 #define MAP_TEXTURE                 _T("data/TEXTURE/maptip.jpg")			// マップチップ画像
 #define GATE_TEXTURE                 _T("data/TEXTURE/gate01.png")			// ワープゲート画像
 #define TRANSPARENT_TEXTURE                 _T("data/TEXTURE/clearblock01.png")	// 透明な床の画像
-#define BOG_TEXTURE                 _T("data/TEXTURE/map.png")				// 泥の床の画像
+#define ICE_TEXTURE                 _T("data/TEXTURE/iceblock.jpg")				// アイスの床の画像
+#define BOG_TEXTURE                 _T("data/TEXTURE/bog.jpg")				// 泥の床の画像
 #define GOAL_TEXTURE                 _T("data/TEXTURE/goalflug01.png")		// ゴールの画像
 
 #define TRANSPARENT_FAILEDTIME	(150)
@@ -47,6 +48,7 @@ void SetVertexMapChip(int y, int x, int mapData);
 static LPDIRECT3DTEXTURE9		g_pD3DTextureMap = NULL;				// 通常床のテクスチャへのポリゴン
 static LPDIRECT3DTEXTURE9		g_pD3DTextureWarpGate = NULL;			// ワープゲートのテクスチャへのポリゴン
 static LPDIRECT3DTEXTURE9		g_pD3DTextureTransparentBlock = NULL;	// 透明な床のテクスチャへのポリゴン
+static LPDIRECT3DTEXTURE9		g_pD3DTextureIceBlock = NULL;			// 泥の床のテクスチャへのポリゴン
 static LPDIRECT3DTEXTURE9		g_pD3DTextureBogBlock = NULL;			// 泥の床のテクスチャへのポリゴン
 static LPDIRECT3DTEXTURE9		g_pD3DTextureGoalBlock = NULL;			// ゴールのテクスチャへのポリゴン
 
@@ -72,7 +74,12 @@ HRESULT InitMap(void)
 		GATE_TEXTURE,										// ファイルの名前
 		&g_pD3DTextureWarpGate);							// 読み込むメモリのポインタ
 
-	// テクスチャの読み込み
+		// テクスチャの読み込み
+	D3DXCreateTextureFromFile(pDevice,						// デバイスのポインタ
+		ICE_TEXTURE,										// ファイルの名前
+		&g_pD3DTextureIceBlock);							// 読み込むメモリのポインタ
+
+		// テクスチャの読み込み
 	D3DXCreateTextureFromFile(pDevice,						// デバイスのポインタ
 		TRANSPARENT_TEXTURE,								// ファイルの名前
 		&g_pD3DTextureTransparentBlock);					// 読み込むメモリのポインタ
@@ -211,7 +218,6 @@ void DrawMap(void)
 			{
 				if (mapBlock[k][i][j].use == true && (mapBlock[k][i][j].type == BLOCK0
 					|| mapBlock[k][i][j].type == BLOCK1
-					|| mapBlock[k][i][j].type == BLOCK3
 					|| mapBlock[k][i][j].type == BLOCK10))		// 使用している状態なら描画する
 				{
 					// テクスチャの設定
@@ -221,6 +227,15 @@ void DrawMap(void)
 					pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, mapBlock[k][i][j].vertexWk, sizeof(VERTEX_2D));
 
 				}
+				else if (mapBlock[k][i][j].type == BLOCK3)
+				{
+					// テクスチャの設定
+					pDevice->SetTexture(0, g_pD3DTextureIceBlock);
+
+					// ポリゴンの描画
+					pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, NUM_POLYGON, mapBlock[k][i][j].vertexWk, sizeof(VERTEX_2D));
+				}
+
 				else if (mapBlock[k][i][j].type == BLOCK6)
 				{
 					// テクスチャの設定
@@ -305,16 +320,7 @@ HRESULT MakeVertexMap(int x, int y, int mapData)
 		mapBlock[mapData][y][x].vertexWk[3].tex = D3DXVECTOR2(1.0f / MAP_TEXTURE_PATTERN_DIVIDE_X, 1.0f / MAP_TEXTURE_PATTERN_DIVIDE_Y);
 		break;
 
-	case BLOCK16:
-		// テクスチャ座標の設定
-		mapBlock[mapData][y][x].vertexWk[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-		mapBlock[mapData][y][x].vertexWk[1].tex = D3DXVECTOR2(1.0f / MAP_TEXTURE_PATTERN_BOG_DIVIDE_X, 0.0f);
-		mapBlock[mapData][y][x].vertexWk[2].tex = D3DXVECTOR2(0.0f, 1.0f / MAP_TEXTURE_PATTERN_BOG_DIVIDE_Y);
-		mapBlock[mapData][y][x].vertexWk[3].tex = D3DXVECTOR2(1.0f / MAP_TEXTURE_PATTERN_BOG_DIVIDE_X, 1.0f / MAP_TEXTURE_PATTERN_BOG_DIVIDE_Y);
-		break;
-
 	case BLOCK1:
-	case BLOCK3:
 		// テクスチャ座標の設定
 		mapBlock[mapData][y][x].vertexWk[0].tex = D3DXVECTOR2(1.0f / MAP_TEXTURE_PATTERN_DIVIDE_X, 0.0f / MAP_TEXTURE_PATTERN_DIVIDE_Y);
 		mapBlock[mapData][y][x].vertexWk[1].tex = D3DXVECTOR2(2.0f / MAP_TEXTURE_PATTERN_DIVIDE_X, 0.0f / MAP_TEXTURE_PATTERN_DIVIDE_Y);
@@ -322,8 +328,10 @@ HRESULT MakeVertexMap(int x, int y, int mapData)
 		mapBlock[mapData][y][x].vertexWk[3].tex = D3DXVECTOR2(2.0f / MAP_TEXTURE_PATTERN_DIVIDE_X, 1.0f / MAP_TEXTURE_PATTERN_DIVIDE_Y);
 		break;
 
+	case BLOCK3:
 	case BLOCK6:
 	case BLOCK12:
+	case BLOCK16:
 	case GOAL:
 
 		mapBlock[mapData][y][x].vertexWk[0].tex = D3DXVECTOR2(0.0f, 0.0f);
